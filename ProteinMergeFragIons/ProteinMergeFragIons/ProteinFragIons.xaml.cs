@@ -1,0 +1,1351 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace ProteinMergeFragIons
+{
+    /// <summary>
+    /// Interaction logic for UserControl1.xaml
+    /// </summary>
+    public partial class ProteinFragIons : UserControl
+    {
+        /// <summary>
+        /// Constants
+        /// </summary>
+        private const float SPACER = 26.5f;
+        private const int FRAGMENT_ION_HEIGHT = 30;
+        private const int FONTSIZE_BOX_CONDITION_SERIE = 55;
+        private const int FONTSIZE_PROTEINSEQUENCE = 42;
+        private const int FONTSIZE_AMINOACID_POSITION = 25;
+        private const int FONTSIZE_NC_TERM_NUMBERS = 16;
+        private const int X1OFFSET = 10;
+        private const int WIDTH_LINE = 12;
+
+        /// <summary>
+        /// Local variables
+        /// </summary>
+        private double HighestX { get; set; }
+        private double HighestY { get; set; }
+        private bool showUVPD { get; set; } = false;
+        private bool showEThcD { get; set; } = false;
+        private bool showHCD { get; set; } = false;
+        private bool showCID { get; set; } = false;
+        private bool showSID { get; set; } = false;
+        private bool showECD { get; set; } = false;
+        private bool showETD { get; set; } = false;
+        private bool showPrecursorChargeState { get; set; } = false;
+        private bool showActivationLevel { get; set; } = false;
+        private bool showReplicates { get; set; } = false;
+
+        private bool isPrecursorChargeState { get; set; } = false;
+        private bool isActivationLevel { get; set; } = false;
+        private bool isFragmentationMethod { get; set; } = false;
+
+        private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelList { get; set; }
+
+        private int SPACER_Y = 0;
+        private string[] PrecursorChargeStatesOrActivationLevelsColors { get; set; }
+        private SolidColorBrush labelBrush_PTN = new SolidColorBrush(Colors.Black);
+        private SolidColorBrush[] FRAGMENT_ION_LINE_COLORS { get; set; }
+        private SolidColorBrush BRUSH_LINE_COLOR_PROTEOFORMS = new SolidColorBrush(Colors.DarkOrange);
+        private SolidColorBrush BRUSH_LINE_COLOR_TRUNCATEDPROTEOFORMS = new SolidColorBrush(Colors.DarkCyan);
+        private SolidColorBrush BRUSH_LINE_COLOR_BIOMARKER_PROTEOFORMS = new SolidColorBrush(Colors.Red);
+        private SolidColorBrush BRUSH_LINE_COLOR_UNIQUEPEPTIDES = new SolidColorBrush(Colors.Blue);
+        private SolidColorBrush BRUSH_LINE_COLOR_COMMONPEPTIDES = new SolidColorBrush(Colors.DarkBlue);
+        private SolidColorBrush BRUSH_LINE_COLOR_THEORETICALPROTEIN = new SolidColorBrush(Colors.Gray);
+        private List<(string, List<string>)> ProteoformsPeptides { get; set; }
+
+        public ProteinFragIons()
+        {
+            InitializeComponent();
+            #region Initialize Color array
+            FRAGMENT_ION_LINE_COLORS = new SolidColorBrush[51];
+            FRAGMENT_ION_LINE_COLORS[0] = new SolidColorBrush(Colors.Blue);
+            FRAGMENT_ION_LINE_COLORS[1] = new SolidColorBrush(Colors.Yellow);
+            FRAGMENT_ION_LINE_COLORS[2] = new SolidColorBrush(Colors.Green);
+            FRAGMENT_ION_LINE_COLORS[3] = new SolidColorBrush(Colors.Brown);
+            FRAGMENT_ION_LINE_COLORS[4] = new SolidColorBrush(Colors.Aqua);
+            FRAGMENT_ION_LINE_COLORS[5] = new SolidColorBrush(Colors.Black);
+            FRAGMENT_ION_LINE_COLORS[6] = new SolidColorBrush(Colors.DarkGreen);
+            FRAGMENT_ION_LINE_COLORS[7] = new SolidColorBrush(Colors.DarkViolet);
+            FRAGMENT_ION_LINE_COLORS[8] = new SolidColorBrush(Colors.Navy);
+            FRAGMENT_ION_LINE_COLORS[9] = new SolidColorBrush(Colors.Gray);
+            FRAGMENT_ION_LINE_COLORS[10] = new SolidColorBrush(Colors.Maroon);
+            FRAGMENT_ION_LINE_COLORS[11] = new SolidColorBrush(Colors.Magenta);
+            FRAGMENT_ION_LINE_COLORS[12] = new SolidColorBrush(Colors.MediumAquamarine);
+            FRAGMENT_ION_LINE_COLORS[13] = new SolidColorBrush(Colors.LightSteelBlue);
+            FRAGMENT_ION_LINE_COLORS[14] = new SolidColorBrush(Colors.BurlyWood);
+            FRAGMENT_ION_LINE_COLORS[15] = new SolidColorBrush(Colors.Beige);
+            FRAGMENT_ION_LINE_COLORS[16] = new SolidColorBrush(Colors.Aqua);
+            FRAGMENT_ION_LINE_COLORS[17] = new SolidColorBrush(Colors.OliveDrab);
+            FRAGMENT_ION_LINE_COLORS[18] = new SolidColorBrush(Colors.OrangeRed);
+            FRAGMENT_ION_LINE_COLORS[19] = new SolidColorBrush(Colors.PaleGreen);
+            FRAGMENT_ION_LINE_COLORS[20] = new SolidColorBrush(Colors.PapayaWhip);
+            FRAGMENT_ION_LINE_COLORS[21] = new SolidColorBrush(Colors.Peru);
+            FRAGMENT_ION_LINE_COLORS[22] = new SolidColorBrush(Colors.Silver);
+            FRAGMENT_ION_LINE_COLORS[23] = new SolidColorBrush(Colors.SeaShell);
+            FRAGMENT_ION_LINE_COLORS[24] = new SolidColorBrush(Colors.SkyBlue);
+            FRAGMENT_ION_LINE_COLORS[25] = new SolidColorBrush(Colors.Turquoise);
+            FRAGMENT_ION_LINE_COLORS[26] = new SolidColorBrush(Colors.Tan);
+            FRAGMENT_ION_LINE_COLORS[27] = new SolidColorBrush(Colors.Teal);
+            FRAGMENT_ION_LINE_COLORS[28] = new SolidColorBrush(Colors.Thistle);
+            FRAGMENT_ION_LINE_COLORS[29] = new SolidColorBrush(Colors.Tomato);
+            FRAGMENT_ION_LINE_COLORS[30] = new SolidColorBrush(Colors.Transparent);
+            FRAGMENT_ION_LINE_COLORS[31] = new SolidColorBrush(Colors.Wheat);
+            FRAGMENT_ION_LINE_COLORS[32] = new SolidColorBrush(Colors.White);
+            FRAGMENT_ION_LINE_COLORS[33] = new SolidColorBrush(Colors.WhiteSmoke);
+            FRAGMENT_ION_LINE_COLORS[34] = new SolidColorBrush(Colors.Yellow);
+            FRAGMENT_ION_LINE_COLORS[35] = new SolidColorBrush(Colors.YellowGreen);
+            FRAGMENT_ION_LINE_COLORS[36] = new SolidColorBrush(Colors.AliceBlue);
+            FRAGMENT_ION_LINE_COLORS[37] = new SolidColorBrush(Colors.AntiqueWhite);
+            FRAGMENT_ION_LINE_COLORS[38] = new SolidColorBrush(Colors.Aqua);
+            FRAGMENT_ION_LINE_COLORS[39] = new SolidColorBrush(Colors.Aquamarine);
+            FRAGMENT_ION_LINE_COLORS[40] = new SolidColorBrush(Colors.Azure);
+            FRAGMENT_ION_LINE_COLORS[41] = new SolidColorBrush(Colors.Beige);
+            FRAGMENT_ION_LINE_COLORS[42] = new SolidColorBrush(Colors.Bisque);
+            FRAGMENT_ION_LINE_COLORS[43] = new SolidColorBrush(Colors.Black);
+            FRAGMENT_ION_LINE_COLORS[44] = new SolidColorBrush(Colors.BlanchedAlmond);
+            FRAGMENT_ION_LINE_COLORS[45] = new SolidColorBrush(Colors.Blue);
+            FRAGMENT_ION_LINE_COLORS[46] = new SolidColorBrush(Colors.BlueViolet);
+            FRAGMENT_ION_LINE_COLORS[47] = new SolidColorBrush(Colors.Brown);
+            FRAGMENT_ION_LINE_COLORS[48] = new SolidColorBrush(Colors.BurlyWood);
+            FRAGMENT_ION_LINE_COLORS[49] = new SolidColorBrush(Colors.CadetBlue);
+            FRAGMENT_ION_LINE_COLORS[50] = new SolidColorBrush(Colors.Chartreuse);
+            #endregion
+        }
+
+        private void SetCanvasScrollBarSize(double width = 4096, double height = 2028)
+        {
+            MyCanvas.Width = width;
+            MyCanvas.Height = height;
+        }
+
+        public void SetFragMethodDictionary(Dictionary<string, List<string>> fragMethodsWithPrecursorChargeList)
+        {
+            FragMethodsWithPrecursorChargeOrActivationLevelList = fragMethodsWithPrecursorChargeList;
+        }
+
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps, string proteinSequence)
+        {
+            isPrecursorChargeState = false;
+            isActivationLevel = false;
+            isFragmentationMethod = false;
+
+            //List<(fragmentationMethod, precursorCharge/activation level,IonType, aaPosition)>
+            List<(string, string, string, int)> fragmentIons = new List<(string, string, string, int)>();
+
+            FragMethodsWithPrecursorChargeOrActivationLevelList = new Dictionary<string, List<string>>();
+            List<int> allPrecursorChargeStateList = new List<int>();
+
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int)>)> entry in DictMaps)
+            {
+                if (entry.Key.StartsWith("Precursor Charge State"))
+                //one key -> many maps
+                {
+                    string[] cols = Regex.Split(entry.Key, "#");
+                    List<string> precursorChargeStateList = entry.Value.Item4.Select(a => a.Item2).OrderByDescending(a => a).Select(a => a.ToString()).Distinct().ToList();
+                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(cols[2], precursorChargeStateList);
+                    var currentFragIons = (from eachEntry in entry.Value.Item4
+                                           select (eachEntry.Item1, eachEntry.Item2, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item2).ToList();
+                    fragmentIons.AddRange((from eachEntry in currentFragIons
+                                           select (eachEntry.Item1, eachEntry.Item2.ToString(), eachEntry.Item3, eachEntry.Item4)).ToList());
+
+                    #region Get all Precursor ChargeStates
+                    isPrecursorChargeState = true;
+                    allPrecursorChargeStateList.AddRange(precursorChargeStateList.Select(a => int.Parse(a)).Distinct());
+                    #endregion
+
+                }
+                else if (entry.Key.StartsWith("Activation Level"))
+                //one key -> many maps
+                {
+                    string[] cols = Regex.Split(entry.Key, "#");
+                    List<string> activationLevelList = entry.Value.Item4.Select(a => a.Item5).Distinct().OrderByDescending(a => a).ToList();
+                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(cols[2], activationLevelList);
+                    fragmentIons.AddRange((from eachEntry in entry.Value.Item4
+                                           select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item2).ToList());
+
+                    isActivationLevel = true;
+                }
+                else if (entry.Key.StartsWith("Fragmentation Method"))
+                {
+                    List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
+                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(entry.Value.Item1, fragmentationMethodList);
+                    fragmentIons.AddRange((from eachEntry in entry.Value.Item4
+                                           select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item1).ToList());
+
+                    isFragmentationMethod = true;
+                }
+            }
+
+            if (isPrecursorChargeState)
+            {
+                #region Get all Precursor Charge States
+                allPrecursorChargeStateList = allPrecursorChargeStateList.Distinct().ToList();
+                //order precursor charge states
+                allPrecursorChargeStateList.Sort((a, b) => b.CompareTo(a));
+                PrecursorChargeStatesOrActivationLevelsColors = allPrecursorChargeStateList.Select(a => a.ToString()).ToArray();
+                #endregion
+            }
+            else if (isActivationLevel)
+            {
+                #region Get all Activation Levels
+                PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
+                                                                 select item.Item2).Distinct().OrderByDescending(a => a).ToArray();
+                #endregion
+            }
+            else if (isFragmentationMethod)
+            {
+                #region Get all Fragmentation Methods
+                PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
+                                                                 select item.Item1).Distinct().OrderByDescending(a => a).ToArray();
+                #endregion
+            }
+
+
+            PreparePictureProteinFragmentIons(true, proteinSequence, fragmentIons);
+
+        }
+        public void PreparePictureProteinFragmentIons(bool isSingleLine, string proteinSequence, List<(string, string, string, int)> fragmentIons)
+        {
+            SPACER_Y = 0;
+
+            this.DrawProteinFragmentIons(isSingleLine, proteinSequence, fragmentIons);
+        }
+
+        /// <summary>
+        /// Method responsible for cleaning all canvas
+        /// </summary>
+        public void Clear()
+        {
+            MyCanvas.Children.Clear();
+        }
+
+        public void DrawProteinFragmentIons(bool isSingleLine, string proteinSequence, List<(string, string, string, int)> fragmentIons)
+        {
+
+            //fragmentIons.Clear();
+            //for (int i = 1; i < 412; i++)
+            //{
+            //    //fragmentIons.Add(("UVPD", 25, "A", i));
+            //    //fragmentIons.Add(("UVPD", 22, "A", i));
+            //    //fragmentIons.Add(("UVPD", 17, "A", i));
+            //    //fragmentIons.Add(("UVPD", 11, "A", i));
+            //    //fragmentIons.Add(("UVPD", 25, "B", i));
+            //    //fragmentIons.Add(("UVPD", 22, "B", i));
+            //    //fragmentIons.Add(("UVPD", 17, "B", i));
+            //    //fragmentIons.Add(("UVPD", 11, "B", i));
+            //    fragmentIons.Add(("HCD", 25, "B", i));
+            //    fragmentIons.Add(("HCD", 22, "B", i));
+            //    fragmentIons.Add(("HCD", 17, "B", i));
+            //    fragmentIons.Add(("HCD", 11, "B", i));
+            //    fragmentIons.Add(("CID", 25, "B", i));
+            //    fragmentIons.Add(("CID", 22, "B", i));
+            //    //fragmentIons.Add(("UVPD", 25, "C", i));
+            //    //fragmentIons.Add(("UVPD", 22, "C", i));
+            //    //fragmentIons.Add(("UVPD", 17, "C", i));
+            //    //fragmentIons.Add(("UVPD", 11, "C", i));
+            //    //fragmentIons.Add(("ETHCD", 25, "B", i));
+            //    //fragmentIons.Add(("ETHCD", 22, "B", i));
+            //    //fragmentIons.Add(("ETHCD", 22, "C", i));
+            //    //fragmentIons.Add(("UVPD", 25, "X", i));
+            //    //fragmentIons.Add(("UVPD", 25, "Y", i));
+            //    //fragmentIons.Add(("UVPD", 25, "Z", i));
+            //    fragmentIons.Add(("HCD", 25, "Y", i));
+            //    fragmentIons.Add(("HCD", 22, "Y", i));
+            //    fragmentIons.Add(("CID", 25, "Y", i));
+            //    fragmentIons.Add(("CID", 22, "Y", i));
+            //    //fragmentIons.Add(("ETHCD", 25, "Y", i));
+            //    //fragmentIons.Add(("ETHCD", 22, "Z", i));
+            //    fragmentIons.Add(("SID", 25, "C", i));
+            //    fragmentIons.Add(("SID", 22, "C", i));
+            //    fragmentIons.Add(("SID", 25, "Z", i));
+            //    fragmentIons.Add(("SID", 22, "Z", i));
+            //    fragmentIons.Add(("ECD", 25, "C", i));
+            //    fragmentIons.Add(("ECD", 22, "C", i));
+            //    fragmentIons.Add(("ECD", 25, "Z", i));
+            //    fragmentIons.Add(("ECD", 22, "Z", i));
+            //    fragmentIons.Add(("ETD", 25, "C", i));
+            //    fragmentIons.Add(("ETD", 22, "C", i));
+            //    fragmentIons.Add(("ETD", 25, "Z", i));
+            //    fragmentIons.Add(("ETD", 22, "Z", i));
+            //}
+
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList == null)
+                return;
+
+            #region set which fragmentation method will be shown
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("UVPD"))
+                showUVPD = true;
+            else
+                showUVPD = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ETHCD"))
+                showEThcD = true;
+            else
+                showEThcD = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("CID"))
+                showCID = true;
+            else
+                showCID = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("HCD"))
+                showHCD = true;
+            else
+                showHCD = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("SID"))
+                showSID = true;
+            else
+                showSID = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ECD"))
+                showECD = true;
+            else
+                showECD = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ETD"))
+                showETD = true;
+            else
+                showETD = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Precursor Charge State"))
+                showPrecursorChargeState = true;
+            else
+                showPrecursorChargeState = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Activation Level"))
+                showActivationLevel = true;
+            else
+                showActivationLevel = false;
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Replicates"))
+                showReplicates = true;
+            else
+                showReplicates = false;
+            #endregion
+
+            #region set the order of frag method to be shown 
+            //List<(fragmentationMethod, precursorCharge, ionType, aaPos)>
+            //List<(string, string, string, int)> fragmentIons
+            List<string> fragMethods = (from fi in fragmentIons
+                                        select fi.Item1).Distinct().ToList();
+            //Sort List fragMet-> UVPD, EThcD, CID, HCD, SID, ECD, ETD
+            List<string> tmpListFragMeth = new List<string>();
+            if (fragMethods.Contains("UVPD") && showUVPD)
+                tmpListFragMeth.Add("UVPD");
+            if ((fragMethods.Contains("ETHCD") || fragMethods.Contains("ethcd") || fragMethods.Contains("EThcD")) && showEThcD)
+                tmpListFragMeth.Add("ETHCD");
+            if (fragMethods.Contains("CID") && showCID)
+                tmpListFragMeth.Add("CID");
+            if (fragMethods.Contains("HCD") && showHCD)
+                tmpListFragMeth.Add("HCD");
+            if (fragMethods.Contains("SID") && showSID)
+                tmpListFragMeth.Add("SID");
+            if (fragMethods.Contains("ECD") && showECD)
+                tmpListFragMeth.Add("ECD");
+            if (fragMethods.Contains("ETD") && showETD)
+                tmpListFragMeth.Add("ETD");
+            if (showPrecursorChargeState)
+                tmpListFragMeth.Add("Precursor Charge State");
+            if (showActivationLevel)
+                tmpListFragMeth.Add("Activation Level");
+            if (showReplicates)
+                tmpListFragMeth.Add("Replicates");
+
+            fragMethods = tmpListFragMeth;
+
+            #endregion
+
+            #region set initial variables
+            List<double> PtnCharPositions = new List<double>();
+            double initialXLine = 0;
+            double initialYLine = 0;
+
+            initialXLine = 60;
+            initialYLine = 60;
+            Color COLOR_SERIES_RECTANGLE = new Color();
+            COLOR_SERIES_RECTANGLE.R = 91;
+            COLOR_SERIES_RECTANGLE.G = 91;
+            COLOR_SERIES_RECTANGLE.B = 91;
+            COLOR_SERIES_RECTANGLE.A = 35;
+
+            #endregion
+
+            #region Plot vertical lines
+
+            #region Draw Fragment ion lines
+            double HeightRectA = 0;
+            double HeightRectB = 0;
+            double HeightRectC = 0;
+            double HeightRectX = 0;
+            double HeightRectY = 0;
+            double HeightRectZ = 0;
+            int offSetY = 0;
+            // Create a blue and a black Brush  
+            SolidColorBrush backgroundColor = new SolidColorBrush();
+            SolidColorBrush blackBrush = new SolidColorBrush();
+
+            foreach (string fragMethod in fragMethods)
+            {
+                List<string> PrecursorChargesOrActivationLevels = null;
+                if (!FragMethodsWithPrecursorChargeOrActivationLevelList.TryGetValue(fragMethod, out PrecursorChargesOrActivationLevels))
+                    continue;
+
+                List<(string, string, string, int)> currentFragmentIons = null;
+                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                    currentFragmentIons = fragmentIons;
+                else
+                    currentFragmentIons = fragmentIons.Where(a => a.Item1.Equals(fragMethod)).ToList();
+
+                //Series left -> right (a,b,c)
+                List<(string, string, string, int)> currentAFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("A")).ToList();
+                List<(string, string, string, int)> currentBFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("B")).ToList();
+                List<(string, string, string, int)> currentCFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("C")).ToList();
+                //Series right-> left (x,y,z)
+                List<(string, string, string, int)> currentXFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("X")).ToList();
+                List<(string, string, string, int)> currentYFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Y")).ToList();
+                List<(string, string, string, int)> currentZFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Z")).ToList();
+
+                if (fragMethod.Equals("UVPD"))
+                {
+                    #region UVPD -> fragmentation method
+                    HeightRectA = 0;
+                    HeightRectB = 0;
+                    HeightRectC = 0;
+                    HeightRectX = 0;
+                    HeightRectY = 0;
+                    HeightRectZ = 0;
+
+                    #region Plot protein Sequence
+                    List<Label> proteinCharsAndSpaces = new List<Label>();
+                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    #endregion
+
+                    #region Serie A
+                    int countPrecursorChargesA = 0;
+                    if (currentAFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA);
+                        HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
+
+                        // create Background rect Serie A
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
+                    }
+                    #endregion
+
+                    #region Serie B
+                    SPACER_Y = 0;
+                    offSetY = (int)initialYLine + (int)HeightRectA - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesB = 0;
+                    if (currentBFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB);
+                        HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
+
+                        // create Background rect Serie B
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                    }
+                    #endregion
+
+                    #region Serie C
+                    SPACER_Y = 0;
+                    if (HeightRectB != 0)
+                    {
+                        offSetY += (int)initialYLine + (int)HeightRectB - FRAGMENT_ION_HEIGHT - 15;
+                    }
+                    else
+                    {
+                        offSetY += (int)initialYLine - FRAGMENT_ION_HEIGHT - 15;
+                    }
+
+                    int countPrecursorChargesC = 0;
+                    if (currentCFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC);
+                        HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
+
+                        // create Background rect Serie C
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                    }
+                    #endregion
+
+                    #region Update protein position
+
+                    double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
+                    for (int i = 0; i < proteinSequence.Length; i++)
+                    {
+                        MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
+                        Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
+                    }
+                    proteinY = HeightRectA + HeightRectB + HeightRectC + 65;
+                    #endregion
+
+                    #region Serie X
+                    SPACER_Y = 0;
+                    offSetY = (int)initialYLine + (int)proteinY - 10;
+
+                    int countPrecursorChargesX = 0;
+                    if (currentXFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX);
+                        HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
+
+                        // create Background rect Serie X
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
+                    }
+                    #endregion
+
+                    #region Serie Y
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)HeightRectX - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesY = 0;
+                    if (currentYFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY);
+                        HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
+
+                        // create Background rect Serie Y
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                    }
+                    #endregion
+
+                    #region Serie Z
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)HeightRectY - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesZ = 0;
+                    if (currentZFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ);
+                        HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
+
+                        // create Background rect Serie Z
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                    }
+                    #endregion
+
+                    #region rectangle FragMethod UVPD
+                    double height_rect = (HeightRectA + HeightRectB + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 145);
+                    double font_pos_condition = HeightRectA + HeightRectB + HeightRectC + 130;
+                    RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "UVPD");
+                    #endregion
+
+                    #endregion
+                }
+                else if (fragMethod.Equals("ETHCD"))
+                {
+                    #region EThcD -> fragmentation method
+
+                    HeightRectB = 0;
+                    HeightRectC = 0;
+                    HeightRectY = 0;
+                    HeightRectZ = 0;
+                    SPACER_Y = 0;
+                    int offsetRectEThcD = offSetY;
+
+                    #region Plot protein Sequence
+                    List<Label> proteinCharsAndSpaces = new List<Label>();
+                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    #endregion
+
+                    #region Serie B
+                    int countPrecursorChargesB = 0;
+                    if (currentBFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB);
+                        HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
+
+                        // create Background rect Serie B
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                    }
+                    #endregion
+
+                    #region Serie C
+                    SPACER_Y = 0;
+                    if (HeightRectB != 0)
+                        offSetY += (int)initialYLine + (int)HeightRectB - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesC = 0;
+                    if (currentCFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC);
+                        HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
+
+                        // create Background rect Serie C
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                    }
+                    #endregion
+
+                    #region Update protein position
+                    double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
+                    for (int i = 0; i < proteinSequence.Length; i++)
+                    {
+                        MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
+                        Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
+                    }
+                    #endregion
+
+                    #region Serie Y 
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)proteinY;
+
+                    int countPrecursorChargesY = 0;
+                    if (currentYFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY);
+                        HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
+
+                        // create Background rect Serie Y
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                    }
+                    #endregion
+
+                    #region Serie Z
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)HeightRectY - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesZ = 0;
+                    if (currentZFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ);
+                        HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
+
+                        // create Background rect Serie Z
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                    }
+                    #endregion
+
+                    #region rectangle FragMethod EThcD
+                    double height_rect = 0;
+                    if (HeightRectB == 0 || HeightRectZ == 0)
+                        height_rect = (HeightRectB + HeightRectC + HeightRectY + HeightRectZ + 85);
+                    else
+                        height_rect = (HeightRectB + HeightRectC + HeightRectY + HeightRectZ + 100);
+                    double font_pos_condition = HeightRectB + HeightRectC + 130;
+
+                    RectCondition(initialYLine, blackBrush, offsetRectEThcD, height_rect, font_pos_condition, ref offSetY, "EThcD");
+                    #endregion
+
+                    SPACER_Y += 42;
+
+                    #endregion
+                }
+                else if (fragMethod.Equals("CID") || fragMethod.Equals("HCD") || fragMethod.Equals("SID"))
+                {
+                    #region CID or HCD or SID -> fragmentation method
+
+                    HeightRectB = 0;
+                    HeightRectY = 0;
+                    SPACER_Y = 0;
+                    int offsetRectCID = offSetY;
+
+                    #region Plot protein Sequence
+                    List<Label> proteinCharsAndSpaces = new List<Label>();
+                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    #endregion
+
+                    #region Serie B
+                    int countPrecursorChargesB = 0;
+                    if (currentBFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB);
+                        HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
+
+                        // create Background rect Serie B
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                    }
+                    #endregion
+
+                    #region Update protein position
+                    double proteinY = HeightRectB + 10;
+                    for (int i = 0; i < proteinSequence.Length; i++)
+                    {
+                        MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
+                        Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
+                    }
+                    #endregion
+
+                    #region Serie Y
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)proteinY;
+
+                    int countPrecursorChargesY = 0;
+                    if (currentYFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY);
+                        HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
+
+                        // create Background rect Serie Y
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                    }
+                    #endregion
+
+                    #region rectangle FragMethod
+                    double height_rect = HeightRectB + HeightRectY + 70;
+                    double font_pos_condition = HeightRectB + 90;
+                    if (fragMethod.Equals("CID"))
+                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "CID");
+                    else if (fragMethod.Equals("HCD"))
+                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "HCD");
+                    else
+                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "SID");
+                    #endregion
+
+                    #endregion
+                }
+                else if (fragMethod.Equals("ECD") || fragMethod.Equals("ETD"))
+                {
+                    #region ECD or ETD -> fragmentation method
+
+                    HeightRectC = 0;
+                    HeightRectZ = 0;
+                    SPACER_Y = 0;
+                    int offsetRectECD_ETD = offSetY;
+
+                    #region Plot protein Sequence
+                    List<Label> proteinCharsAndSpaces = new List<Label>();
+                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    #endregion
+
+                    #region Serie C
+                    int countPrecursorChargesC = 0;
+                    if (currentCFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC);
+                        HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
+
+                        // create Background rect Serie C
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                    }
+                    #endregion
+
+                    #region Update protein position
+                    double proteinY = HeightRectC + 10;
+                    for (int i = 0; i < proteinSequence.Length; i++)
+                    {
+                        MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
+                        Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
+                    }
+                    #endregion
+
+                    #region Serie Z
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)proteinY;
+
+                    int countPrecursorChargesZ = 0;
+                    if (currentZFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ);
+                        HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
+
+                        // create Background rect Serie Z
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                    }
+                    #endregion
+
+                    #region rectangle FragMethod
+                    double height_rect = HeightRectC + HeightRectZ + 70;
+                    double font_pos_condition = HeightRectC + 90;
+                    if (fragMethod.Equals("ECD"))
+                        RectCondition(initialYLine, blackBrush, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ECD");
+                    else
+                        RectCondition(initialYLine, blackBrush, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ETD");
+                    #endregion
+
+                    SPACER_Y += 45;
+                    #endregion
+                }
+                else
+                {
+                    #region fragmentation method
+                    HeightRectA = 0;
+                    HeightRectB = 0;
+                    HeightRectC = 0;
+                    HeightRectX = 0;
+                    HeightRectY = 0;
+                    HeightRectZ = 0;
+
+                    #region Plot protein Sequence
+                    List<Label> proteinCharsAndSpaces = new List<Label>();
+                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    #endregion
+
+                    #region Serie A
+                    int countPrecursorChargesA = 0;
+                    if (currentAFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA);
+                        HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
+
+                        // create Background rect Serie A
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
+                    }
+                    #endregion
+
+                    #region Serie B
+                    SPACER_Y = 0;
+                    offSetY = (int)initialYLine + (int)HeightRectA - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesB = 0;
+                    if (currentBFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB);
+                        HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
+
+                        // create Background rect Serie B
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                    }
+                    #endregion
+
+                    #region Serie C
+                    SPACER_Y = 0;
+                    if (HeightRectB != 0)
+                    {
+                        offSetY += (int)initialYLine + (int)HeightRectB - FRAGMENT_ION_HEIGHT - 15;
+                    }
+                    else
+                    {
+                        offSetY += (int)initialYLine - FRAGMENT_ION_HEIGHT - 15;
+                    }
+
+                    int countPrecursorChargesC = 0;
+                    if (currentCFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC);
+                        HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
+
+                        // create Background rect Serie C
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                    }
+                    #endregion
+
+                    #region Update protein position
+
+                    double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
+                    for (int i = 0; i < proteinSequence.Length; i++)
+                    {
+                        MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
+                        Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
+                    }
+                    proteinY = HeightRectA + HeightRectB + HeightRectC + 65;
+                    #endregion
+
+                    #region Serie X
+                    SPACER_Y = 0;
+                    offSetY = (int)initialYLine + (int)proteinY - 10;
+
+                    int countPrecursorChargesX = 0;
+                    if (currentXFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX);
+                        HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
+
+                        // create Background rect Serie X
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
+                    }
+                    #endregion
+
+                    #region Serie Y
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)HeightRectX - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesY = 0;
+                    if (currentYFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY);
+                        HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
+
+                        // create Background rect Serie Y
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                    }
+                    #endregion
+
+                    #region Serie Z
+                    SPACER_Y = 0;
+                    offSetY += (int)initialYLine + (int)HeightRectY - FRAGMENT_ION_HEIGHT - 15;
+
+                    int countPrecursorChargesZ = 0;
+                    if (currentZFragmentIons.Count > 0)
+                    {
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ);
+                        HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
+
+                        // create Background rect Serie Z
+                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                    }
+                    #endregion
+
+                    #region rectangle FragMethod
+                    double height_rect = (HeightRectA + HeightRectB + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 145);
+                    double font_pos_condition = HeightRectA + HeightRectB + HeightRectC + 130;
+                    if (showPrecursorChargeState)
+                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
+                    else if (showActivationLevel)
+                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
+                    else
+                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Replicates");
+                    #endregion
+
+                    #endregion
+                }
+            }
+
+            HighestX = initialXLine + PtnCharPositions[PtnCharPositions.Count - 1] - 40;
+            HighestY = initialYLine + offSetY;
+            this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
+
+            #region Plot Legend Precursor Charge State -> labels
+            SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
+            Label StudyConditionLabel = new Label();
+            StudyConditionLabel.FontFamily = new FontFamily("Courier New");
+            StudyConditionLabel.FontWeight = FontWeights.Bold;
+            StudyConditionLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+            StudyConditionLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+
+            StudyConditionLabel.Foreground = labelBrush_PrecursorChargeState;
+            StudyConditionLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            MyCanvas.Children.Add(StudyConditionLabel);
+            Canvas.SetLeft(StudyConditionLabel, 60);
+            Canvas.SetTop(StudyConditionLabel, HighestY);
+            #endregion
+
+            if (isPrecursorChargeState)
+            {
+                #region Plot Legend Precursor Charge State
+                StudyConditionLabel.Content = "Precursor Charge State:";
+
+                #region Plot Legend precursor charge state -> boxes
+
+                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                {
+                    // Create a Rectangle  
+                    Rectangle PrecursorChargeRetangle = new Rectangle();
+                    PrecursorChargeRetangle.Height = 20;
+                    PrecursorChargeRetangle.Width = 20;
+                    // Set Rectangle's width and color  
+                    PrecursorChargeRetangle.StrokeThickness = 0.5;
+
+                    // Fill rectangle with blue color 
+
+                    PrecursorChargeRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                    // Add Rectangle to the Grid.  
+                    MyCanvas.Children.Add(PrecursorChargeRetangle);
+                    Canvas.SetLeft(PrecursorChargeRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 44 * i + 65 * i);
+                    Canvas.SetTop(PrecursorChargeRetangle, HighestY + 15);
+                    Canvas.SetZIndex(PrecursorChargeRetangle, -1);
+
+                    Label precursorChargeStateLabelEachOne = new Label();
+                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i] + "+";
+                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 46 * i + 65 * i);
+                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
+                }
+                #endregion
+
+                #endregion
+            }
+            else if (isActivationLevel)
+            {
+                #region Plot Legend activation level
+                StudyConditionLabel.Content = "Activation Level:";
+
+                #region Plot Legend activation level -> boxes
+
+                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                {
+                    // Create a Rectangle  
+                    Rectangle ActivationLevelRetangle = new Rectangle();
+                    ActivationLevelRetangle.Height = 20;
+                    ActivationLevelRetangle.Width = 20;
+                    // Set Rectangle's width and color  
+                    ActivationLevelRetangle.StrokeThickness = 0.5;
+
+                    // Fill rectangle with blue color 
+
+                    ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                    // Add Rectangle to the Grid.  
+                    MyCanvas.Children.Add(ActivationLevelRetangle);
+                    Canvas.SetLeft(ActivationLevelRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                    Canvas.SetTop(ActivationLevelRetangle, HighestY + 15);
+                    Canvas.SetZIndex(ActivationLevelRetangle, -1);
+
+                    Label precursorChargeStateLabelEachOne = new Label();
+                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
+                }
+                #endregion
+
+                #endregion
+            }
+            else if (isFragmentationMethod)
+            {
+                #region Plot Legend Fragmentation Method
+                StudyConditionLabel.Content = "Fragmentation Method:";
+
+                #region Plot Legend Fragmentation Method -> boxes
+
+                int MaximumOffsetLegend = 0;
+                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                {
+                    if (MaximumOffsetLegend < PrecursorChargeStatesOrActivationLevelsColors[i].Length)
+                        MaximumOffsetLegend = PrecursorChargeStatesOrActivationLevelsColors[i].Length;
+                }
+
+                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                {
+                    // Create a Rectangle  
+                    Rectangle ActivationLevelRetangle = new Rectangle();
+                    ActivationLevelRetangle.Height = 20;
+                    ActivationLevelRetangle.Width = 20;
+                    // Set Rectangle's width and color  
+                    ActivationLevelRetangle.StrokeThickness = 0.5;
+
+                    // Fill rectangle with blue color 
+
+                    ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                    // Add Rectangle to the Grid.  
+                    MyCanvas.Children.Add(ActivationLevelRetangle);
+                    Canvas.SetLeft(ActivationLevelRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 80 * i + 16 * MaximumOffsetLegend * i);
+                    Canvas.SetTop(ActivationLevelRetangle, HighestY + 15);
+                    Canvas.SetZIndex(ActivationLevelRetangle, -1);
+
+                    Label precursorChargeStateLabelEachOne = new Label();
+                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 80 * i + 16 * MaximumOffsetLegend * i);
+                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
+                }
+                #endregion
+
+                #endregion
+            }
+
+            #region plot aminoacid number on the top of the sequence
+
+            //First aminoacid
+            Label numberAATop1 = new Label();
+            numberAATop1.FontFamily = new FontFamily("Courier New");
+            numberAATop1.FontWeight = FontWeights.Bold;
+            numberAATop1.FontSize = FONTSIZE_AMINOACID_POSITION;
+            numberAATop1.Content = 1;
+            numberAATop1.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            MyCanvas.Children.Add(numberAATop1);
+            Canvas.SetLeft(numberAATop1, initialXLine + 40);
+            Canvas.SetTop(numberAATop1, initialYLine - 50);
+
+            // Create a Rectangle  
+            Rectangle AANumberRectangle = new Rectangle();
+            AANumberRectangle.Height = 30;
+            AANumberRectangle.Width = PtnCharPositions[PtnCharPositions.Count - 1] + 10;
+            // Set Rectangle's width and color  
+            AANumberRectangle.StrokeThickness = 0.5;
+
+            // Fill rectangle with blue color  
+            AANumberRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
+            // Add Rectangle to the Grid.  
+            MyCanvas.Children.Add(AANumberRectangle);
+            Canvas.SetLeft(AANumberRectangle, initialXLine + 40);
+            Canvas.SetTop(AANumberRectangle, initialYLine - 48);
+
+            //float offsetSPACER = 1.5f;
+            for (int i = 0; i <= proteinSequence.Length; i += 50)
+            {
+                if (i % 50 == 0 && i > 0)
+                {
+                    Label numberAATop = new Label();
+                    numberAATop.FontFamily = new FontFamily("Courier New");
+                    numberAATop.FontWeight = FontWeights.Bold;
+                    numberAATop.FontSize = FONTSIZE_AMINOACID_POSITION;
+                    numberAATop.Content = i;
+                    numberAATop.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(numberAATop);
+                    Canvas.SetLeft(numberAATop, PtnCharPositions[i - 1]);
+                    Canvas.SetTop(numberAATop, initialYLine - 50);
+                }
+            }
+
+            if (proteinSequence.Length % 50 != 0)//Print the last AAnumber
+            {
+                Label numberAATop = new Label();
+                numberAATop.FontFamily = new FontFamily("Courier New");
+                numberAATop.FontWeight = FontWeights.Bold;
+                numberAATop.FontSize = FONTSIZE_AMINOACID_POSITION;
+                numberAATop.Content = proteinSequence.Length;
+                numberAATop.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                MyCanvas.Children.Add(numberAATop);
+                Canvas.SetLeft(numberAATop, PtnCharPositions[PtnCharPositions.Count - 1]);
+                Canvas.SetTop(numberAATop, initialYLine - 50);
+            }
+            #endregion
+
+            HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
+            #endregion
+
+            #endregion
+        }
+
+        private void RectCondition(double initialYLine, SolidColorBrush blackBrush, int offsetCondition, double Height_Rect, double font_pos_condition, ref int offsetY, string nameCondition)
+        {
+            Rectangle Rectangle_Condition = new Rectangle();
+            Rectangle_Condition.Height = Height_Rect;
+            Rectangle_Condition.Width = 80;
+            // Create a blue and a black Brush  
+            SolidColorBrush backgroundColorCondition = new SolidColorBrush();
+            backgroundColorCondition.Color = Colors.Gray;
+
+            // Fill rectangle with blue color  
+            Rectangle_Condition.Fill = backgroundColorCondition;
+            // Add Rectangle to the Grid.  
+            MyCanvas.Children.Add(Rectangle_Condition);
+            Canvas.SetLeft(Rectangle_Condition, 15);
+            Canvas.SetTop(Rectangle_Condition, initialYLine + offsetCondition);
+            Canvas.SetZIndex(Rectangle_Condition, -1);
+
+            Label label_condition = new Label();
+            label_condition.FontFamily = new FontFamily("Courier New");
+            label_condition.FontWeight = FontWeights.SemiBold;
+            label_condition.FontSize = FONTSIZE_BOX_CONDITION_SERIE - 20;
+            label_condition.Content = nameCondition;
+            label_condition.Foreground = new SolidColorBrush(Colors.White);
+            label_condition.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            label_condition.RenderTransform = new RotateTransform(270);
+            MyCanvas.Children.Add(label_condition);
+            Canvas.SetLeft(label_condition, 30);
+            if (showPrecursorChargeState)
+            {
+                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 178.5);
+            }
+            else if (showActivationLevel)
+            {
+                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 118.5);
+            }
+            else if (showReplicates)
+            {
+                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 28.5);
+            }
+            else
+            {
+                label_condition.FontSize = FONTSIZE_BOX_CONDITION_SERIE;
+                Canvas.SetLeft(label_condition, 20);
+                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition);
+            }
+
+            offsetY = (int)Canvas.GetTop(Rectangle_Condition) + (int)Rectangle_Condition.Height + 10;
+        }
+
+        private void CreateSerieRectangle(string proteinSequence, double initialXLine, double initialYLine, Color COLOR_SERIES_RECTANGLE, double HeightRect, SolidColorBrush backgroundColor, SolidColorBrush blackBrush, List<Label> proteinCharsAndSpaces, double offSetY, string serie)
+        {
+            // Create a Rectangle  
+            Rectangle ABCSeriesFullRectangle = new Rectangle();
+            ABCSeriesFullRectangle.Height = HeightRect;
+            double proteinCharPosXWidth = 10 + Canvas.GetLeft(proteinCharsAndSpaces[proteinSequence.Length - 1]);
+
+            ABCSeriesFullRectangle.Width = proteinCharPosXWidth;
+            // Set Rectangle's width and color  
+            ABCSeriesFullRectangle.StrokeThickness = 0.5;
+
+            // Fill rectangle with blue color  
+            ABCSeriesFullRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
+
+            // Add Rectangle to the Grid.  
+            MyCanvas.Children.Add(ABCSeriesFullRectangle);
+            Canvas.SetLeft(ABCSeriesFullRectangle, initialXLine - 40);
+            Canvas.SetTop(ABCSeriesFullRectangle, initialYLine + offSetY);
+            Canvas.SetZIndex(ABCSeriesFullRectangle, -1);
+
+            #region rect SERIE
+            Rectangle ABCSeriesRectangle = new Rectangle();
+            ABCSeriesRectangle.Height = HeightRect;
+            ABCSeriesRectangle.Width = 80;
+            // Create a blue and a black Brush  
+            backgroundColor.Color = Colors.Gray;
+            blackBrush.Color = Colors.Black;
+            // Set Rectangle's width and color  
+            ABCSeriesRectangle.StrokeThickness = 0.5;
+
+            // Fill rectangle with blue color  
+            ABCSeriesRectangle.Fill = backgroundColor;
+            // Add Rectangle to the Grid.  
+            MyCanvas.Children.Add(ABCSeriesRectangle);
+            Canvas.SetLeft(ABCSeriesRectangle, initialXLine + proteinCharPosXWidth - 40);
+            Canvas.SetTop(ABCSeriesRectangle, initialYLine + offSetY);
+            Canvas.SetZIndex(ABCSeriesRectangle, -1);
+
+            Label Serie = new Label();
+            Serie.FontFamily = new FontFamily("Courier New");
+            Serie.FontWeight = FontWeights.SemiBold;
+            Serie.FontSize = FONTSIZE_BOX_CONDITION_SERIE;
+            Serie.Content = serie;
+            Serie.Foreground = new SolidColorBrush(Colors.White); ;
+            Serie.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            MyCanvas.Children.Add(Serie);
+            Canvas.SetLeft(Serie, initialXLine + proteinCharPosXWidth - 20);
+            double fontY = (HeightRect - 45) / 2 - 5;
+            Canvas.SetTop(Serie, initialYLine + fontY + offSetY);
+
+            #endregion
+        }
+
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevel, List<(string, string, string, int)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState)
+        {
+            foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevel)
+            {
+                List<(string, string, string, int)> currentPrecursorCharge = null;
+
+                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                    currentPrecursorCharge = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
+                else
+                    currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
+
+                for (int count = 0; count < currentPrecursorCharge.Count; count++)
+                {
+                    // Drawing a line
+                    Line l = new Line();
+                    double proteinCharPosX = 16 + Canvas.GetLeft(proteinCharsAndSpaces[currentPrecursorCharge[count].Item4 - 1]);
+                    l.X1 = proteinCharPosX;
+                    l.X2 = proteinCharPosX;
+                    l.Y1 = SPACER_Y;
+                    l.Y2 = SPACER_Y + FRAGMENT_ION_HEIGHT;
+
+                    string currentPrecursorChargeStateOrActivationLevel = string.Empty;
+                    if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                        currentPrecursorChargeStateOrActivationLevel = currentPrecursorCharge[count].Item1;
+                    else
+                        currentPrecursorChargeStateOrActivationLevel = currentPrecursorCharge[count].Item2;
+                    int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(currentPrecursorChargeStateOrActivationLevel));
+                    l.Stroke = FRAGMENT_ION_LINE_COLORS[_index];
+                    l.StrokeThickness = WIDTH_LINE;
+                    if (isPrecursorChargeState)
+                        l.ToolTip = "Charge: " + currentPrecursorCharge[count].Item2.ToString() + "+\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    else if (isActivationLevel)
+                        l.ToolTip = "Activation Level: " + currentPrecursorCharge[count].Item2.ToString() + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    else if (isFragmentationMethod)
+                        l.ToolTip = "Fragmentation Method: " + currentPrecursorCharge[count].Item1 + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+
+                    MyCanvas.Children.Add(l);
+                    Canvas.SetTop(l, initialYLine + offSetY);
+
+                }
+                if (currentPrecursorCharge.Count > 0)
+                {
+                    countPrecursorChargeState++;
+                    SPACER_Y += 35;
+                }
+            }
+        }
+
+        private void PlotProteinSequence(string proteinSequence, List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces)
+        {
+            PtnCharPositions.Clear();
+            for (int i = 0; i < proteinSequence.Length; i++)
+            {
+                Label proteinLabel = new Label();
+                proteinLabel.FontFamily = new FontFamily("Courier New");
+                proteinLabel.FontWeight = FontWeights.Bold;
+                proteinLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                proteinLabel.Content = proteinSequence[i];
+                proteinLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                proteinLabel.Foreground = labelBrush_PTN;
+                proteinLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                proteinCharsAndSpaces.Add(proteinLabel);
+
+                Canvas.SetLeft(proteinLabel, 75 + 30 * (i + 1));
+                PtnCharPositions.Add(75 + 30 * (i + 1));
+            }
+        }
+
+        /// <summary>
+        /// Method responsable for saving SIM Net image
+        /// </summary>
+        /// <returns></returns>
+        public byte SaveFragmentIonsImage()
+        {
+            byte returnOK = 0;
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = ""; // Default file name
+            dlg.Filter = "Tiff Image|*.tiff|Png Image|*.png|Jpg Image|*.jpg";// Filter files by extension
+            dlg.Title = "Export Image Fragment Ions";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                if (!dlg.FileName.EndsWith(".ps"))
+                {
+                    try
+                    {
+                        this.SaveGraph(dlg.FileName);
+                        returnOK = 0;//0 -> ok, 1 -> failed, 2 -> cancel
+                    }
+                    catch (Exception e)
+                    {
+                        returnOK = 1;//0 -> ok, 1 -> failed, 2 -> cancel
+                    }
+                }
+                else
+                {
+                    //returnOK = ExportDataToPS(isCircularViewer, dlg.FileName);
+                }
+            }
+            else
+                returnOK = 2;//0 -> ok, 1 -> failed, 2 -> cancel
+            return returnOK;
+        }
+
+        public void SetInitialXY()
+        {
+            MyScrollBar.ScrollToHome();
+        }
+
+        /// <summary>
+        /// Saves the stage plot to an image file
+        /// </summary>
+        /// <param name="fileName"></param>
+        private void SaveGraph(string fileName)
+        {
+            int _height = (int)(MyCanvas.Height * 5);
+            _height = _height > 3000 ? _height : 3000;
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)(HighestX * 3.2), _height, 300d, 300d, System.Windows.Media.PixelFormats.Default);
+            rtb.Render(MyCanvas);
+
+            // Make a PNG encoder.
+            BitmapEncoder pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(rtb));
+
+            using (var fs = System.IO.File.OpenWrite(fileName))
+            {
+                pngEncoder.Save(fs);
+            }
+        }
+    }
+}
