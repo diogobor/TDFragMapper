@@ -32,7 +32,7 @@ namespace MergeFragIons
         {
             Core = core;
             initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)>(core.DictMaps);
-            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence);
+            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation);
             this.userControlFilterCondition1.Setup(Core, false);
         }
 
@@ -84,7 +84,7 @@ namespace MergeFragIons
             }
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence);
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation);
             this.tabControl1.SelectedIndex = 0;
         }
     }

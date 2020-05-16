@@ -19,7 +19,6 @@ namespace MergeFragIons
     {
 
         public Core mainCore { get; set; }
-
         public bool FinishProcessing { get; set; }
         public ProgramParams programParams { get; set; }
         public string version = "";
@@ -149,6 +148,8 @@ namespace MergeFragIons
                 sr.Close();
             }
             catch (Exception) { }
+
+            mainCore.SequenceInformation = programParams.SequenceInformation;
         }
 
         private void ReadFragmentIons()

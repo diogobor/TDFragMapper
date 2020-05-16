@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>131, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="openToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -278,7 +278,7 @@
     <value>2</value>
   </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>248, 17</value>
+    <value>246, 17</value>
   </metadata>
   <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>158, 17</value>
@@ -310,6 +310,9 @@
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <metadata name="timerStatus.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="tabControlMainWindow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
@@ -379,6 +382,66 @@
   <data name="groupBoxInputFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
+  <data name="textBoxSeqInfo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>877, 15</value>
+  </data>
+  <data name="textBoxSeqInfo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>287, 20</value>
+  </data>
+  <data name="textBoxSeqInfo.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>362, 17</value>
+  </metadata>
+  <data name="textBoxSeqInfo.ToolTip" xml:space="preserve">
+    <value>Specify the directory where are the RAW and result files, as well as the protein database. For more information, access the Read Me on Help menu.</value>
+  </data>
+  <data name="&gt;&gt;textBoxSeqInfo.Name" xml:space="preserve">
+    <value>textBoxSeqInfo</value>
+  </data>
+  <data name="&gt;&gt;textBoxSeqInfo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxSeqInfo.Parent" xml:space="preserve">
+    <value>groupBoxInputFiles</value>
+  </data>
+  <data name="&gt;&gt;textBoxSeqInfo.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>760, 18</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>114, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Sequence Information:</value>
+  </data>
+  <data name="label2.ToolTip" xml:space="preserve">
+    <value>Specify the directory where are the RAW and result files, as well as the protein database. For more information, access the Read Me on Help menu.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>groupBoxInputFiles</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="buttonAddInputFile.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
@@ -410,7 +473,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonAddInputFile.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <metadata name="FragMethodCol.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -467,7 +530,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;dataGridViewInputFiles.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="buttonOK.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -522,7 +585,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="buttonBrowseProteinSequence.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -554,7 +617,7 @@
     <value>NoControl</value>
   </data>
   <data name="buttonBrowseProteinSequence.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1093, 10</value>
+    <value>685, 10</value>
   </data>
   <data name="buttonBrowseProteinSequence.Size" type="System.Drawing.Size, System.Drawing">
     <value>71, 29</value>
@@ -568,9 +631,6 @@
   <data name="buttonBrowseProteinSequence.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
-  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>478, 17</value>
-  </metadata>
   <data name="buttonBrowseProteinSequence.ToolTip" xml:space="preserve">
     <value>Specify the directory where are the RAW and result files, as well as the protein database. For more information, access the Read Me on Help menu.</value>
   </data>
@@ -584,13 +644,13 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonBrowseProteinSequence.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="textBoxProteinSeq.Location" type="System.Drawing.Point, System.Drawing">
     <value>103, 15</value>
   </data>
   <data name="textBoxProteinSeq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>967, 20</value>
+    <value>576, 20</value>
   </data>
   <data name="textBoxProteinSeq.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -608,7 +668,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;textBoxProteinSeq.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -641,7 +701,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="groupBoxInputFiles.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 2</value>
@@ -837,7 +897,7 @@
     <value>0</value>
   </data>
   <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>573, 17</value>
+    <value>457, 17</value>
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -1844,6 +1904,12 @@
   </data>
   <data name="&gt;&gt;toolStripStatusLabel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;timerStatus.Name" xml:space="preserve">
+    <value>timerStatus</value>
+  </data>
+  <data name="&gt;&gt;timerStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;FragMethodCol.Name" xml:space="preserve">
     <value>FragMethodCol</value>

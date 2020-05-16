@@ -23,14 +23,20 @@ namespace MergeFragIons.Utils
         /// </summary>
         [ProtoMember(1)]
         public string ProteinSequenceFile { get; set; }
+
+        /// <summary>
+        /// Contains information about PTM
+        /// </summary>
+        [ProtoMember(2)]
+        public string SequenceInformation { get; set; }
         /// <summary>
         /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate)>
         /// </summary>
-        [ProtoMember(2)]
-        public List<(string, string, string, int, int)> InputFileList { get; set; }
         [ProtoMember(3)]
-        public byte[] ProcessingTime { get; set; }
+        public List<(string, string, string, int, int)> InputFileList { get; set; }
         [ProtoMember(4)]
+        public byte[] ProcessingTime { get; set; }
+        [ProtoMember(5)]
         public byte[] ProgramVersion { get; set; }
 
         public string msgErrorInputFiles { get; set; }

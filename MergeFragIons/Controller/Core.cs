@@ -14,6 +14,10 @@ namespace MergeFragIons.Controller
         public List<(string, int, string, int, string, int)> FragmentIons { get; set; }
         public string ProteinSequence { get; set; }
         /// <summary>
+        /// Contains information about PTM
+        /// </summary>
+        public string SequenceInformation { get; set; }
+        /// <summary>
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
         /// </summary>
         public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps { get; set; }

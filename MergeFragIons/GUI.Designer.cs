@@ -61,6 +61,8 @@
             this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.textBoxSeqInfo = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -166,6 +168,8 @@
             // groupBoxInputFiles
             // 
             resources.ApplyResources(this.groupBoxInputFiles, "groupBoxInputFiles");
+            this.groupBoxInputFiles.Controls.Add(this.textBoxSeqInfo);
+            this.groupBoxInputFiles.Controls.Add(this.label2);
             this.groupBoxInputFiles.Controls.Add(this.buttonAddInputFile);
             this.groupBoxInputFiles.Controls.Add(this.dataGridViewInputFiles);
             this.groupBoxInputFiles.Controls.Add(this.buttonOK);
@@ -277,6 +281,18 @@
             resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
             // 
+            // textBoxSeqInfo
+            // 
+            resources.ApplyResources(this.textBoxSeqInfo, "textBoxSeqInfo");
+            this.textBoxSeqInfo.Name = "textBoxSeqInfo";
+            this.toolTips.SetToolTip(this.textBoxSeqInfo, resources.GetString("textBoxSeqInfo.ToolTip"));
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            this.toolTips.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
+            // 
             // GUI
             // 
             resources.ApplyResources(this, "$this");
@@ -339,6 +355,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
         private UserControlFilterCondition userControlFilterCondition1;
         private System.Windows.Forms.Button buttonDisplay;
+        private System.Windows.Forms.TextBox textBoxSeqInfo;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -26,14 +26,15 @@ namespace ProteinMergeFragIons
         /// <summary>
         /// Constants
         /// </summary>
-        private const float SPACER = 26.5f;
+        private const float SPACER_X = 27f;
         private const int FRAGMENT_ION_HEIGHT = 30;
         private const int FONTSIZE_BOX_CONDITION_SERIE = 55;
         private const int FONTSIZE_PROTEINSEQUENCE = 42;
         private const int FONTSIZE_AMINOACID_POSITION = 25;
-        private const int FONTSIZE_NC_TERM_NUMBERS = 16;
-        private const int X1OFFSET = 10;
         private const int WIDTH_LINE = 12;
+
+        private string ProteinSequence { get; set; }
+        private string ProteinSequenceInformation { get; set; }
 
         /// <summary>
         /// Local variables
@@ -61,13 +62,6 @@ namespace ProteinMergeFragIons
         private string[] PrecursorChargeStatesOrActivationLevelsColors { get; set; }
         private SolidColorBrush labelBrush_PTN = new SolidColorBrush(Colors.Black);
         private SolidColorBrush[] FRAGMENT_ION_LINE_COLORS { get; set; }
-        private SolidColorBrush BRUSH_LINE_COLOR_PROTEOFORMS = new SolidColorBrush(Colors.DarkOrange);
-        private SolidColorBrush BRUSH_LINE_COLOR_TRUNCATEDPROTEOFORMS = new SolidColorBrush(Colors.DarkCyan);
-        private SolidColorBrush BRUSH_LINE_COLOR_BIOMARKER_PROTEOFORMS = new SolidColorBrush(Colors.Red);
-        private SolidColorBrush BRUSH_LINE_COLOR_UNIQUEPEPTIDES = new SolidColorBrush(Colors.Blue);
-        private SolidColorBrush BRUSH_LINE_COLOR_COMMONPEPTIDES = new SolidColorBrush(Colors.DarkBlue);
-        private SolidColorBrush BRUSH_LINE_COLOR_THEORETICALPROTEIN = new SolidColorBrush(Colors.Gray);
-        private List<(string, List<string>)> ProteoformsPeptides { get; set; }
 
         public ProteinFragIons()
         {
@@ -134,16 +128,13 @@ namespace ProteinMergeFragIons
             MyCanvas.Height = height;
         }
 
-        public void SetFragMethodDictionary(Dictionary<string, List<string>> fragMethodsWithPrecursorChargeList)
-        {
-            FragMethodsWithPrecursorChargeOrActivationLevelList = fragMethodsWithPrecursorChargeList;
-        }
-
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps, string proteinSequence)
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps, string proteinSequence, string proteinSequenceInformation)
         {
             isPrecursorChargeState = false;
             isActivationLevel = false;
             isFragmentationMethod = false;
+            ProteinSequence = proteinSequence;
+            ProteinSequenceInformation = proteinSequenceInformation;
 
             //List<(fragmentationMethod, precursorCharge/activation level,IonType, aaPosition)>
             List<(string, string, string, int)> fragmentIons = new List<(string, string, string, int)>();
@@ -217,14 +208,14 @@ namespace ProteinMergeFragIons
             }
 
 
-            PreparePictureProteinFragmentIons(true, proteinSequence, fragmentIons);
+            PreparePictureProteinFragmentIons(true, fragmentIons);
 
         }
-        public void PreparePictureProteinFragmentIons(bool isSingleLine, string proteinSequence, List<(string, string, string, int)> fragmentIons)
+        public void PreparePictureProteinFragmentIons(bool isSingleLine, List<(string, string, string, int)> fragmentIons)
         {
             SPACER_Y = 0;
 
-            this.DrawProteinFragmentIons(isSingleLine, proteinSequence, fragmentIons);
+            this.DrawProteinFragmentIons(isSingleLine, fragmentIons);
         }
 
         /// <summary>
@@ -235,7 +226,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Children.Clear();
         }
 
-        public void DrawProteinFragmentIons(bool isSingleLine, string proteinSequence, List<(string, string, string, int)> fragmentIons)
+        public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int)> fragmentIons)
         {
 
             //fragmentIons.Clear();
@@ -425,7 +416,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
                     #endregion
 
                     #region Serie A
@@ -436,7 +427,7 @@ namespace ProteinMergeFragIons
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
                     }
                     #endregion
 
@@ -451,7 +442,7 @@ namespace ProteinMergeFragIons
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
                     }
                     #endregion
 
@@ -473,14 +464,14 @@ namespace ProteinMergeFragIons
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
                     #endregion
 
                     #region Update protein position
 
                     double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
-                    for (int i = 0; i < proteinSequence.Length; i++)
+                    for (int i = 0; i < ProteinSequence.Length; i++)
                     {
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
@@ -499,7 +490,7 @@ namespace ProteinMergeFragIons
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
                     }
                     #endregion
 
@@ -514,7 +505,7 @@ namespace ProteinMergeFragIons
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
                     }
                     #endregion
 
@@ -529,7 +520,7 @@ namespace ProteinMergeFragIons
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
                     #endregion
 
@@ -554,7 +545,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
                     #endregion
 
                     #region Serie B
@@ -565,7 +556,7 @@ namespace ProteinMergeFragIons
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
                     }
                     #endregion
 
@@ -581,13 +572,13 @@ namespace ProteinMergeFragIons
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
                     #endregion
 
                     #region Update protein position
                     double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
-                    for (int i = 0; i < proteinSequence.Length; i++)
+                    for (int i = 0; i < ProteinSequence.Length; i++)
                     {
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
@@ -605,7 +596,7 @@ namespace ProteinMergeFragIons
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
                     }
                     #endregion
 
@@ -620,7 +611,7 @@ namespace ProteinMergeFragIons
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
                     #endregion
 
@@ -650,7 +641,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
                     #endregion
 
                     #region Serie B
@@ -661,13 +652,13 @@ namespace ProteinMergeFragIons
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
                     }
                     #endregion
 
                     #region Update protein position
                     double proteinY = HeightRectB + 10;
-                    for (int i = 0; i < proteinSequence.Length; i++)
+                    for (int i = 0; i < ProteinSequence.Length; i++)
                     {
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
@@ -685,7 +676,7 @@ namespace ProteinMergeFragIons
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
                     }
                     #endregion
 
@@ -713,7 +704,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
                     #endregion
 
                     #region Serie C
@@ -724,13 +715,13 @@ namespace ProteinMergeFragIons
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
                     #endregion
 
                     #region Update protein position
                     double proteinY = HeightRectC + 10;
-                    for (int i = 0; i < proteinSequence.Length; i++)
+                    for (int i = 0; i < ProteinSequence.Length; i++)
                     {
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
@@ -748,7 +739,7 @@ namespace ProteinMergeFragIons
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
                     #endregion
 
@@ -776,7 +767,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(proteinSequence, PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
                     #endregion
 
                     #region Serie A
@@ -787,7 +778,7 @@ namespace ProteinMergeFragIons
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectA, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "A");
                     }
                     #endregion
 
@@ -802,7 +793,7 @@ namespace ProteinMergeFragIons
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectB, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "B");
                     }
                     #endregion
 
@@ -824,14 +815,14 @@ namespace ProteinMergeFragIons
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
                     #endregion
 
                     #region Update protein position
 
                     double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
-                    for (int i = 0; i < proteinSequence.Length; i++)
+                    for (int i = 0; i < ProteinSequence.Length; i++)
                     {
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
@@ -850,7 +841,7 @@ namespace ProteinMergeFragIons
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectX, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "X");
                     }
                     #endregion
 
@@ -865,7 +856,7 @@ namespace ProteinMergeFragIons
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
                     }
                     #endregion
 
@@ -880,7 +871,7 @@ namespace ProteinMergeFragIons
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
-                        CreateSerieRectangle(proteinSequence, initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
+                        CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
                     #endregion
 
@@ -903,7 +894,7 @@ namespace ProteinMergeFragIons
             HighestY = initialYLine + offSetY;
             this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
 
-            #region Plot Legend Precursor Charge State -> labels
+            #region Plot Legend Study condition -> labels
             SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
             Label StudyConditionLabel = new Label();
             StudyConditionLabel.FontFamily = new FontFamily("Courier New");
@@ -1007,30 +998,30 @@ namespace ProteinMergeFragIons
 
                 #region Plot Legend Fragmentation Method -> boxes
 
-                int MaximumOffsetLegend = 0;
-                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
-                {
-                    if (MaximumOffsetLegend < PrecursorChargeStatesOrActivationLevelsColors[i].Length)
-                        MaximumOffsetLegend = PrecursorChargeStatesOrActivationLevelsColors[i].Length;
-                }
+                double[] location_x = new double[PrecursorChargeStatesOrActivationLevelsColors.Length];
 
                 for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
                 {
                     // Create a Rectangle  
-                    Rectangle ActivationLevelRetangle = new Rectangle();
-                    ActivationLevelRetangle.Height = 20;
-                    ActivationLevelRetangle.Width = 20;
+                    Rectangle FragmentationMethodRetangle = new Rectangle();
+                    FragmentationMethodRetangle.Height = 20;
+                    FragmentationMethodRetangle.Width = 20;
                     // Set Rectangle's width and color  
-                    ActivationLevelRetangle.StrokeThickness = 0.5;
+                    FragmentationMethodRetangle.StrokeThickness = 0.5;
 
                     // Fill rectangle with blue color 
 
-                    ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                    FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
                     // Add Rectangle to the Grid.  
-                    MyCanvas.Children.Add(ActivationLevelRetangle);
-                    Canvas.SetLeft(ActivationLevelRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 80 * i + 16 * MaximumOffsetLegend * i);
-                    Canvas.SetTop(ActivationLevelRetangle, HighestY + 15);
-                    Canvas.SetZIndex(ActivationLevelRetangle, -1);
+                    MyCanvas.Children.Add(FragmentationMethodRetangle);
+                    if (i > 0)
+                        location_x[i] = location_x[i - 1] + SPACER_X * PrecursorChargeStatesOrActivationLevelsColors[i - 1].Length + 40;
+                    else
+                        location_x[i] = initialYLine + SPACER_X * StudyConditionLabel.Content.ToString().Length;
+
+                    Canvas.SetLeft(FragmentationMethodRetangle, location_x[i]);
+                    Canvas.SetTop(FragmentationMethodRetangle, HighestY + 15);
+                    Canvas.SetZIndex(FragmentationMethodRetangle, -1);
 
                     Label precursorChargeStateLabelEachOne = new Label();
                     precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
@@ -1041,13 +1032,30 @@ namespace ProteinMergeFragIons
                     precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
                     precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                     MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 80 * i + 16 * MaximumOffsetLegend * i);
+                    Canvas.SetLeft(precursorChargeStateLabelEachOne, location_x[i] + 25);
                     Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
                 }
                 #endregion
 
                 #endregion
             }
+
+            Label proteinSeqInformationLabel = new Label();
+            #region Plot Legend Protein Sequence Information
+            if (!String.IsNullOrEmpty(ProteinSequenceInformation))
+            {
+                proteinSeqInformationLabel.FontFamily = new FontFamily("Courier New");
+                proteinSeqInformationLabel.FontWeight = FontWeights.Bold;
+                proteinSeqInformationLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                proteinSeqInformationLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                proteinSeqInformationLabel.Content = "Sequence information: " + ProteinSequenceInformation;
+                proteinSeqInformationLabel.Foreground = labelBrush_PrecursorChargeState;
+                proteinSeqInformationLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                MyCanvas.Children.Add(proteinSeqInformationLabel);
+                Canvas.SetLeft(proteinSeqInformationLabel, 60);
+                Canvas.SetTop(proteinSeqInformationLabel, HighestY + FONTSIZE_PROTEINSEQUENCE);
+            }
+            #endregion
 
             #region plot aminoacid number on the top of the sequence
 
@@ -1077,7 +1085,7 @@ namespace ProteinMergeFragIons
             Canvas.SetTop(AANumberRectangle, initialYLine - 48);
 
             //float offsetSPACER = 1.5f;
-            for (int i = 0; i <= proteinSequence.Length; i += 50)
+            for (int i = 0; i <= ProteinSequence.Length; i += 50)
             {
                 if (i % 50 == 0 && i > 0)
                 {
@@ -1093,13 +1101,13 @@ namespace ProteinMergeFragIons
                 }
             }
 
-            if (proteinSequence.Length % 50 != 0)//Print the last AAnumber
+            if (ProteinSequence.Length % 50 != 0)//Print the last AAnumber
             {
                 Label numberAATop = new Label();
                 numberAATop.FontFamily = new FontFamily("Courier New");
                 numberAATop.FontWeight = FontWeights.Bold;
                 numberAATop.FontSize = FONTSIZE_AMINOACID_POSITION;
-                numberAATop.Content = proteinSequence.Length;
+                numberAATop.Content = ProteinSequence.Length;
                 numberAATop.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 MyCanvas.Children.Add(numberAATop);
                 Canvas.SetLeft(numberAATop, PtnCharPositions[PtnCharPositions.Count - 1]);
@@ -1107,7 +1115,10 @@ namespace ProteinMergeFragIons
             }
             #endregion
 
-            HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
+            if (String.IsNullOrEmpty(ProteinSequenceInformation))
+                HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
+            else
+                HighestY = Canvas.GetTop(proteinSeqInformationLabel) + AANumberRectangle.Height;
             #endregion
 
             #endregion
@@ -1162,12 +1173,12 @@ namespace ProteinMergeFragIons
             offsetY = (int)Canvas.GetTop(Rectangle_Condition) + (int)Rectangle_Condition.Height + 10;
         }
 
-        private void CreateSerieRectangle(string proteinSequence, double initialXLine, double initialYLine, Color COLOR_SERIES_RECTANGLE, double HeightRect, SolidColorBrush backgroundColor, SolidColorBrush blackBrush, List<Label> proteinCharsAndSpaces, double offSetY, string serie)
+        private void CreateSerieRectangle(double initialXLine, double initialYLine, Color COLOR_SERIES_RECTANGLE, double HeightRect, SolidColorBrush backgroundColor, SolidColorBrush blackBrush, List<Label> proteinCharsAndSpaces, double offSetY, string serie)
         {
             // Create a Rectangle  
             Rectangle ABCSeriesFullRectangle = new Rectangle();
             ABCSeriesFullRectangle.Height = HeightRect;
-            double proteinCharPosXWidth = 10 + Canvas.GetLeft(proteinCharsAndSpaces[proteinSequence.Length - 1]);
+            double proteinCharPosXWidth = 10 + Canvas.GetLeft(proteinCharsAndSpaces[ProteinSequence.Length - 1]);
 
             ABCSeriesFullRectangle.Width = proteinCharPosXWidth;
             // Set Rectangle's width and color  
@@ -1263,16 +1274,16 @@ namespace ProteinMergeFragIons
             }
         }
 
-        private void PlotProteinSequence(string proteinSequence, List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces)
+        private void PlotProteinSequence(List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces)
         {
             PtnCharPositions.Clear();
-            for (int i = 0; i < proteinSequence.Length; i++)
+            for (int i = 0; i < ProteinSequence.Length; i++)
             {
                 Label proteinLabel = new Label();
                 proteinLabel.FontFamily = new FontFamily("Courier New");
                 proteinLabel.FontWeight = FontWeights.Bold;
                 proteinLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                proteinLabel.Content = proteinSequence[i];
+                proteinLabel.Content = ProteinSequence[i];
                 proteinLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
                 proteinLabel.Foreground = labelBrush_PTN;
                 proteinLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));

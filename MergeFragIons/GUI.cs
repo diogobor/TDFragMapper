@@ -183,6 +183,8 @@ namespace MergeFragIons
         {
             ProgramParams myParams = new ProgramParams();
             myParams.ProteinSequenceFile = textBoxProteinSeq.Text;
+            myParams.SequenceInformation = textBoxSeqInfo.Text;
+
             /// <summary>
             /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate)>
             /// </summary>
