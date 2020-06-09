@@ -28,6 +28,9 @@ namespace MergeFragIons.Controller
         public List<string> AllActivationLevels { get; set; }
         public List<int> AllReplicates { get; set; }
 
+        /// <summary>
+        /// Method responsible for updating inverse amino acids positions (x, y and z series)
+        /// </summary>
         public void ProcessFragIons()
         {
             int proteinLength = ProteinSequence.Length;
@@ -40,44 +43,6 @@ namespace MergeFragIons.Controller
 
             FragmentIons.RemoveAll(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z"));
             FragmentIons.AddRange(fragmentIons);
-            this.SetDictionaryFragMethPrecursorChargeStates();
-        }
-
-        private void SetDictionaryFragMethPrecursorChargeStates()
-        {
-            //List<int> allPrecursorChargeStates = (from fragIon in FragmentIons
-            //                                      select fragIon.Item2).Distinct().ToList();
-
-            //List<string> fragMethods = (from fi in FragmentIons
-            //                            select fi.Item1).Distinct().ToList();
-            ////Sort List fragMet-> UVPD, EThcD, CID, HCD, SID, ECD, ETD
-            //List<string> tmpListFragMeth = new List<string>();
-            //if (fragMethods.Contains("UVPD"))
-            //    tmpListFragMeth.Add("UVPD");
-            //if ((fragMethods.Contains("ETHCD") || fragMethods.Contains("ethcd") || fragMethods.Contains("EThcD")))
-            //    tmpListFragMeth.Add("ETHCD");
-            //if (fragMethods.Contains("CID"))
-            //    tmpListFragMeth.Add("CID");
-            //if (fragMethods.Contains("HCD"))
-            //    tmpListFragMeth.Add("HCD");
-            //if (fragMethods.Contains("SID"))
-            //    tmpListFragMeth.Add("SID");
-            //if (fragMethods.Contains("ECD"))
-            //    tmpListFragMeth.Add("ECD");
-            //if (fragMethods.Contains("ETD"))
-            //    tmpListFragMeth.Add("ETD");
-            //fragMethods = tmpListFragMeth;
-
-            //FragMethodsWithPrecursorChargeStates = new Dictionary<string, List<int>>();
-            //foreach (string fragMethod in fragMethods)
-            //    FragMethodsWithPrecursorChargeStates.Add(fragMethod, allPrecursorChargeStates);
-
-            //AllFragmentationMethods = fragMethods;
-            //AllPrecursorChargeStates = allPrecursorChargeStates;
-            //AllActivationLevels = (from fragIon in FragmentIons
-            //                       select fragIon.Item5).Distinct().ToList();
-            //AllReplicates = (from fragIon in FragmentIons
-            //                 select fragIon.Item6).Distinct().ToList();
         }
     }
 }

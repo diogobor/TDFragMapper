@@ -201,11 +201,22 @@ namespace MergeFragIons
                     (GridRow.Cells[3].Value != null && !String.IsNullOrEmpty(GridRow.Cells[3].Value.ToString())) &&
                     (GridRow.Cells[4].Value != null && !String.IsNullOrEmpty(GridRow.Cells[4].Value.ToString())))
                 {
-                    inputFileList.Add((GridRow.Cells[4].Value.ToString(),
-                        GridRow.Cells[0].Value.ToString(),
-                        GridRow.Cells[1].Value.ToString(),
-                        Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
-                        Convert.ToInt32(GridRow.Cells[3].Value.ToString())));
+                    if (GridRow.Cells[0].Value.ToString().ToLower().Equals("etchd"))
+                    {
+                        inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                            "EThcD",
+                            GridRow.Cells[1].Value.ToString(),
+                            Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
+                            Convert.ToInt32(GridRow.Cells[3].Value.ToString())));
+                    }
+                    else
+                    {
+                        inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                            GridRow.Cells[0].Value.ToString(),
+                            GridRow.Cells[1].Value.ToString(),
+                            Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
+                            Convert.ToInt32(GridRow.Cells[3].Value.ToString())));
+                    }
                 }
                 else
                     sbError.Append((iRow + 1) + ", ");

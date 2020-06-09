@@ -71,7 +71,7 @@
             this.groupBoxMap_0.Size = new System.Drawing.Size(1159, 230);
             this.groupBoxMap_0.TabIndex = 1;
             this.groupBoxMap_0.TabStop = false;
-            this.groupBoxMap_0.Text = "Map";
+            this.groupBoxMap_0.Text = "Map 1";
             // 
             // groupBoxStudyCondition1
             // 
@@ -380,7 +380,6 @@
             // 
             // buttonAddMap_0
             // 
-            this.buttonAddMap_0.Enabled = false;
             this.buttonAddMap_0.Image = global::MergeFragIons.Properties.Resources.addButton;
             this.buttonAddMap_0.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonAddMap_0.Location = new System.Drawing.Point(9, 196);

@@ -409,8 +409,10 @@ namespace MergeFragIons
                     comboBoxCondition3_0.Enabled = true;
                     comboBoxStudyCondition_0.Enabled = true;
 
-                    if (EnableAddNewMapBtn(comboBoxCondition1_0, comboBoxCondition2_0, comboBoxCondition3_0, comboBoxStudyCondition_0))
-                        buttonAddMap_0.Enabled = true;
+                    if (_DictMaps.Count > 1)
+                        buttonAddMap_0.Enabled = false;
+                    //else if (EnableAddNewMapBtn(comboBoxCondition1_0, comboBoxCondition2_0, comboBoxCondition3_0, comboBoxStudyCondition_0))
+                    //    buttonAddMap_0.Enabled = true;
                 }
                 else
                 {
@@ -738,7 +740,7 @@ namespace MergeFragIons
             cbFixedCondition1.Location = new Point(17, 23);
             cbFixedCondition1.Size = new Size(120, 21);
             cbFixedCondition1.Text = "Select one option...";
-            cbFixedCondition1.Items.AddRange(new object[] { "Fragmentation Method" });
+            cbFixedCondition1.Items.AddRange(new object[] { "Fragmentation Method", "Activation Level", "Replicates", "Precursor Charge State" });
             cbFixedCondition1.SelectedIndexChanged += new System.EventHandler(this.comboBoxCondition_SelectedIndexChanged);
             cbFixedCondition1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboBoxCondition_KeyPress);
             groupBoxFixedCondition.Controls.Add(cbFixedCondition1);
@@ -1006,7 +1008,7 @@ namespace MergeFragIons
             btn_add_map.TextAlign = ContentAlignment.MiddleCenter;
             btn_add_map.UseVisualStyleBackColor = true;
             btn_add_map.TabIndex = 3;
-            btn_add_map.Enabled = false;
+            btn_add_map.Enabled = true;
             btn_add_map.Click += new System.EventHandler(this.buttonAddMap_Click);
 
             btn_remove_map.Location = new Point(160, 196);
@@ -1081,21 +1083,28 @@ namespace MergeFragIons
                 listboxSelectedFixedCondition3.Items.AddRange(SelectedItemsCondition3.ToArray());
                 listboxSelectedStudyCondition.Items.AddRange(SelectedItemsStudyCondition.ToArray());
 
-                if (EnableAddNewMapBtn(cbFixedCondition1, cbFixedCondition2, cbFixedCondition3, cbStudyCondition))
-                {
-                    btn_add_map.Enabled = true;
-                }
+                //if (EnableAddNewMapBtn(cbFixedCondition1, cbFixedCondition2, cbFixedCondition3, cbStudyCondition))
+                //{
+                //    btn_add_map.Enabled = true;
+                //}
             }
 
             #endregion
 
+
             groupBoxMainMap.Name = "groupBoxMap_" + numberOfConditions;
-            groupBoxMainMap.Location = new Point(3, numberOfConditions * SPACE_Y);
+            if (isNewData)
+                groupBoxMainMap.Location = new Point(3, numberOfConditions * SPACE_Y);
+            else
+                groupBoxMainMap.Location = new Point(3, (numberOfConditions - 1) * SPACE_Y);
             groupBoxMainMap.Size = new Size(1160, 230);
             groupBoxMainMap.MinimumSize = new Size(1160, 230);
             groupBoxMainMap.AutoSizeMode = AutoSizeMode.GrowOnly;
             groupBoxMainMap.AutoSize = false;
-            groupBoxMainMap.Text = "Map";
+            if (isNewData)
+                groupBoxMainMap.Text = "Map " + (numberOfConditions + 1);
+            else
+                groupBoxMainMap.Text = "Map " + numberOfConditions;
             groupBoxMainMap.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
 
             this.Controls.Add(groupBoxMainMap);
@@ -2337,13 +2346,13 @@ namespace MergeFragIons
                 }
             }
 
-            if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
-            {
-                if (listBoxSelectedStudyCondition.Items.Count == 0)
-                    addNewMap.Enabled = false;
-                else
-                    addNewMap.Enabled = true;
-            }
+            //if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
+            //{
+            //    if (listBoxSelectedStudyCondition.Items.Count == 0)
+            //        addNewMap.Enabled = false;
+            //    else
+            //        addNewMap.Enabled = true;
+            //}
         }
 
         private void buttonRemoveSelectedCondition_Click(object sender, EventArgs e)
@@ -2739,7 +2748,7 @@ namespace MergeFragIons
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
                         }
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Replicates
                         {
@@ -2843,18 +2852,22 @@ namespace MergeFragIons
                 }
             }
 
-            if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
-            {
-                if (listBoxSelectedStudyCondition.Items.Count == 0)
-                    addNewMap.Enabled = false;
-                else
-                    addNewMap.Enabled = true;
-            }
+            //if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
+            //{
+            //    if (listBoxSelectedStudyCondition.Items.Count == 0)
+            //        addNewMap.Enabled = false;
+            //    else
+            //        addNewMap.Enabled = true;
+            //}
         }
 
         private void buttonAddMap_Click(object sender, EventArgs e)
         {
-            (Button, Button) previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
+            (Button, Button) previousAddRemoveMap;
+            //if (isNewResults)
+                previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
+            //else
+            //    previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 2];
             previousAddRemoveMap.Item1.Enabled = false;
             if (previousAddRemoveMap.Item2 != null)
                 previousAddRemoveMap.Item2.Enabled = false;

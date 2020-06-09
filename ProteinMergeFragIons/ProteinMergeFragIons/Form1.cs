@@ -204,9 +204,9 @@ namespace ProteinMergeFragIons
             //Example: CID, Act level: 10,15,20, Repl: 1, Prec Charge: 25,22,17,11
             List<(string, int, string, int, string, int)> currentFragIons = new List<(string, int, string, int, string, int)>();
 
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
-            string _key = "Precursor Charge State#Fragmentation Method#CID";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
+            //string _key = "Precursor Charge State#Fragmentation Method#CID";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && a.Item6 == 1 && (a.Item5.Equals("8") || a.Item5.Equals("10") || a.Item5.Equals("12"))).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#HCD";
@@ -220,9 +220,9 @@ namespace ProteinMergeFragIons
             //string _key = "Activation Level#Fragmentation Method#CID#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("ETHCD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 && (a.Item5.Equals("5/5") || a.Item5.Equals("10/8") || a.Item5.Equals("10/10"))).ToList();
-            //string _key = "Activation Level#Fragmentation Method#ETHCD#0";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("ETHCD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 && (a.Item5.Equals("5/5") || a.Item5.Equals("10/8") || a.Item5.Equals("10/10"))).ToList();
+            string _key = "Activation Level#Fragmentation Method#ETHCD#0";
+            DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item2 == 25).ToList();
             //string _key = "Fragmentation Method#Precursor Charge State#25#0";

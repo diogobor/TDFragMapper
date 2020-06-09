@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace ProteinMergeFragIons
         /// Constants
         /// </summary>
         private const float SPACER_X = 27f;
+        private const double ROWWIDTH_TABLE = 40;
         private const int FRAGMENT_ION_HEIGHT = 30;
         private const int FONTSIZE_BOX_CONDITION_SERIE = 55;
         private const int FONTSIZE_PROTEINSEQUENCE = 42;
@@ -62,6 +64,7 @@ namespace ProteinMergeFragIons
         private string[] PrecursorChargeStatesOrActivationLevelsColors { get; set; }
         private SolidColorBrush labelBrush_PTN = new SolidColorBrush(Colors.Black);
         private SolidColorBrush[] FRAGMENT_ION_LINE_COLORS { get; set; }
+        private Dictionary<string, SolidColorBrush> FRAGMENT_ION_LINE_COLORS_DICT { get; set; }
 
         public ProteinFragIons()
         {
@@ -127,7 +130,6 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-
         public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps, string proteinSequence, string proteinSequenceInformation)
         {
             isPrecursorChargeState = false;
@@ -138,9 +140,9 @@ namespace ProteinMergeFragIons
 
             //List<(fragmentationMethod, precursorCharge/activation level,IonType, aaPosition)>
             List<(string, string, string, int)> fragmentIons = new List<(string, string, string, int)>();
-
             FragMethodsWithPrecursorChargeOrActivationLevelList = new Dictionary<string, List<string>>();
             List<int> allPrecursorChargeStateList = new List<int>();
+            PrecursorChargeStatesOrActivationLevelsColors = null;
 
             foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int)>)> entry in DictMaps)
             {
@@ -189,21 +191,40 @@ namespace ProteinMergeFragIons
                 allPrecursorChargeStateList = allPrecursorChargeStateList.Distinct().ToList();
                 //order precursor charge states
                 allPrecursorChargeStateList.Sort((a, b) => b.CompareTo(a));
-                PrecursorChargeStatesOrActivationLevelsColors = allPrecursorChargeStateList.Select(a => a.ToString()).ToArray();
+                if (PrecursorChargeStatesOrActivationLevelsColors == null)
+                    PrecursorChargeStatesOrActivationLevelsColors = allPrecursorChargeStateList.Select(a => a.ToString()).ToArray();
+                else
+                    PrecursorChargeStatesOrActivationLevelsColors = PrecursorChargeStatesOrActivationLevelsColors.Concat(allPrecursorChargeStateList.Select(a => a.ToString())).ToArray();
                 #endregion
             }
-            else if (isActivationLevel)
+            if (isActivationLevel)
             {
                 #region Get all Activation Levels
-                PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
-                                                                 select item.Item2).Distinct().OrderByDescending(a => a).ToArray();
+                if (PrecursorChargeStatesOrActivationLevelsColors == null)
+                {
+                    PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
+                                                                     select item.Item2).Distinct().OrderByDescending(a => a).ToArray();
+                }
+                else
+                {
+                    PrecursorChargeStatesOrActivationLevelsColors = PrecursorChargeStatesOrActivationLevelsColors.Concat((from item in fragmentIons
+                                                                                                                          select item.Item2).Distinct().OrderByDescending(a => a)).ToArray();
+                }
                 #endregion
             }
-            else if (isFragmentationMethod)
+            if (isFragmentationMethod)
             {
                 #region Get all Fragmentation Methods
-                PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
-                                                                 select item.Item1).Distinct().OrderByDescending(a => a).ToArray();
+                if (PrecursorChargeStatesOrActivationLevelsColors == null)
+                {
+                    PrecursorChargeStatesOrActivationLevelsColors = (from item in fragmentIons
+                                                                     select item.Item1).Distinct().OrderByDescending(a => a).ToArray();
+                }
+                else
+                {
+                    PrecursorChargeStatesOrActivationLevelsColors = PrecursorChargeStatesOrActivationLevelsColors.Concat((from item in fragmentIons
+                                                                                                                          select item.Item1).Distinct().OrderByDescending(a => a)).ToArray();
+                }
                 #endregion
             }
 
@@ -228,54 +249,6 @@ namespace ProteinMergeFragIons
 
         public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int)> fragmentIons)
         {
-
-            //fragmentIons.Clear();
-            //for (int i = 1; i < 412; i++)
-            //{
-            //    //fragmentIons.Add(("UVPD", 25, "A", i));
-            //    //fragmentIons.Add(("UVPD", 22, "A", i));
-            //    //fragmentIons.Add(("UVPD", 17, "A", i));
-            //    //fragmentIons.Add(("UVPD", 11, "A", i));
-            //    //fragmentIons.Add(("UVPD", 25, "B", i));
-            //    //fragmentIons.Add(("UVPD", 22, "B", i));
-            //    //fragmentIons.Add(("UVPD", 17, "B", i));
-            //    //fragmentIons.Add(("UVPD", 11, "B", i));
-            //    fragmentIons.Add(("HCD", 25, "B", i));
-            //    fragmentIons.Add(("HCD", 22, "B", i));
-            //    fragmentIons.Add(("HCD", 17, "B", i));
-            //    fragmentIons.Add(("HCD", 11, "B", i));
-            //    fragmentIons.Add(("CID", 25, "B", i));
-            //    fragmentIons.Add(("CID", 22, "B", i));
-            //    //fragmentIons.Add(("UVPD", 25, "C", i));
-            //    //fragmentIons.Add(("UVPD", 22, "C", i));
-            //    //fragmentIons.Add(("UVPD", 17, "C", i));
-            //    //fragmentIons.Add(("UVPD", 11, "C", i));
-            //    //fragmentIons.Add(("ETHCD", 25, "B", i));
-            //    //fragmentIons.Add(("ETHCD", 22, "B", i));
-            //    //fragmentIons.Add(("ETHCD", 22, "C", i));
-            //    //fragmentIons.Add(("UVPD", 25, "X", i));
-            //    //fragmentIons.Add(("UVPD", 25, "Y", i));
-            //    //fragmentIons.Add(("UVPD", 25, "Z", i));
-            //    fragmentIons.Add(("HCD", 25, "Y", i));
-            //    fragmentIons.Add(("HCD", 22, "Y", i));
-            //    fragmentIons.Add(("CID", 25, "Y", i));
-            //    fragmentIons.Add(("CID", 22, "Y", i));
-            //    //fragmentIons.Add(("ETHCD", 25, "Y", i));
-            //    //fragmentIons.Add(("ETHCD", 22, "Z", i));
-            //    fragmentIons.Add(("SID", 25, "C", i));
-            //    fragmentIons.Add(("SID", 22, "C", i));
-            //    fragmentIons.Add(("SID", 25, "Z", i));
-            //    fragmentIons.Add(("SID", 22, "Z", i));
-            //    fragmentIons.Add(("ECD", 25, "C", i));
-            //    fragmentIons.Add(("ECD", 22, "C", i));
-            //    fragmentIons.Add(("ECD", 25, "Z", i));
-            //    fragmentIons.Add(("ECD", 22, "Z", i));
-            //    fragmentIons.Add(("ETD", 25, "C", i));
-            //    fragmentIons.Add(("ETD", 22, "C", i));
-            //    fragmentIons.Add(("ETD", 25, "Z", i));
-            //    fragmentIons.Add(("ETD", 22, "Z", i));
-            //}
-
             if (FragMethodsWithPrecursorChargeOrActivationLevelList == null)
                 return;
 
@@ -284,7 +257,7 @@ namespace ProteinMergeFragIons
                 showUVPD = true;
             else
                 showUVPD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ETHCD"))
+            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("EThcD"))
                 showEThcD = true;
             else
                 showEThcD = false;
@@ -332,7 +305,7 @@ namespace ProteinMergeFragIons
             if (fragMethods.Contains("UVPD") && showUVPD)
                 tmpListFragMeth.Add("UVPD");
             if ((fragMethods.Contains("ETHCD") || fragMethods.Contains("ethcd") || fragMethods.Contains("EThcD")) && showEThcD)
-                tmpListFragMeth.Add("ETHCD");
+                tmpListFragMeth.Add("EThcD");
             if (fragMethods.Contains("CID") && showCID)
                 tmpListFragMeth.Add("CID");
             if (fragMethods.Contains("HCD") && showHCD)
@@ -379,6 +352,7 @@ namespace ProteinMergeFragIons
             double HeightRectY = 0;
             double HeightRectZ = 0;
             int offSetY = 0;
+            int leftOffsetProtein = 0;
             // Create a blue and a black Brush  
             SolidColorBrush backgroundColor = new SolidColorBrush();
             SolidColorBrush blackBrush = new SolidColorBrush();
@@ -388,6 +362,8 @@ namespace ProteinMergeFragIons
                 List<string> PrecursorChargesOrActivationLevels = null;
                 if (!FragMethodsWithPrecursorChargeOrActivationLevelList.TryGetValue(fragMethod, out PrecursorChargesOrActivationLevels))
                     continue;
+
+                leftOffsetProtein = PrecursorChargesOrActivationLevels.Max(a => a.Length);
 
                 List<(string, string, string, int)> currentFragmentIons = null;
                 if (showPrecursorChargeState || showActivationLevel || showReplicates)
@@ -416,7 +392,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
                     #endregion
 
                     #region Serie A
@@ -527,12 +503,12 @@ namespace ProteinMergeFragIons
                     #region rectangle FragMethod UVPD
                     double height_rect = (HeightRectA + HeightRectB + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 145);
                     double font_pos_condition = HeightRectA + HeightRectB + HeightRectC + 130;
-                    RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "UVPD");
+                    RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "UVPD");
                     #endregion
 
                     #endregion
                 }
-                else if (fragMethod.Equals("ETHCD"))
+                else if (fragMethod.Equals("EThcD"))
                 {
                     #region EThcD -> fragmentation method
 
@@ -545,7 +521,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
                     #endregion
 
                     #region Serie B
@@ -623,7 +599,7 @@ namespace ProteinMergeFragIons
                         height_rect = (HeightRectB + HeightRectC + HeightRectY + HeightRectZ + 100);
                     double font_pos_condition = HeightRectB + HeightRectC + 130;
 
-                    RectCondition(initialYLine, blackBrush, offsetRectEThcD, height_rect, font_pos_condition, ref offSetY, "EThcD");
+                    RectCondition(initialYLine, offsetRectEThcD, height_rect, font_pos_condition, ref offSetY, "EThcD");
                     #endregion
 
                     SPACER_Y += 42;
@@ -641,7 +617,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
                     #endregion
 
                     #region Serie B
@@ -684,11 +660,11 @@ namespace ProteinMergeFragIons
                     double height_rect = HeightRectB + HeightRectY + 70;
                     double font_pos_condition = HeightRectB + 90;
                     if (fragMethod.Equals("CID"))
-                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "CID");
+                        RectCondition(initialYLine, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "CID");
                     else if (fragMethod.Equals("HCD"))
-                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "HCD");
+                        RectCondition(initialYLine, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "HCD");
                     else
-                        RectCondition(initialYLine, blackBrush, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "SID");
+                        RectCondition(initialYLine, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "SID");
                     #endregion
 
                     #endregion
@@ -704,7 +680,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
                     #endregion
 
                     #region Serie C
@@ -747,9 +723,9 @@ namespace ProteinMergeFragIons
                     double height_rect = HeightRectC + HeightRectZ + 70;
                     double font_pos_condition = HeightRectC + 90;
                     if (fragMethod.Equals("ECD"))
-                        RectCondition(initialYLine, blackBrush, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ECD");
+                        RectCondition(initialYLine, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ECD");
                     else
-                        RectCondition(initialYLine, blackBrush, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ETD");
+                        RectCondition(initialYLine, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ETD");
                     #endregion
 
                     SPACER_Y += 45;
@@ -767,7 +743,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
-                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces);
+                    PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
                     #endregion
 
                     #region Serie A
@@ -879,171 +855,177 @@ namespace ProteinMergeFragIons
                     double height_rect = (HeightRectA + HeightRectB + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 145);
                     double font_pos_condition = HeightRectA + HeightRectB + HeightRectC + 130;
                     if (showPrecursorChargeState)
-                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
+                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
                     else if (showActivationLevel)
-                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
+                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
                     else
-                        RectCondition(initialYLine, blackBrush, 0, height_rect, font_pos_condition, ref offSetY, "Replicates");
+                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Replicates");
                     #endregion
 
                     #endregion
                 }
+
+                #region Plot Legend Study condition -> labels
+                SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
+                Label StudyConditionLabel = new Label();
+                StudyConditionLabel.FontFamily = new FontFamily("Courier New");
+                StudyConditionLabel.FontWeight = FontWeights.Bold;
+                StudyConditionLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                StudyConditionLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+
+                StudyConditionLabel.Foreground = labelBrush_PrecursorChargeState;
+                StudyConditionLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                MyCanvas.Children.Add(StudyConditionLabel);
+                Canvas.SetLeft(StudyConditionLabel, 100);
+                Canvas.SetTop(StudyConditionLabel, offSetY);
+
+                if (isPrecursorChargeState)
+                {
+                    #region Plot Legend Precursor Charge State
+                    StudyConditionLabel.Content = "Precursor Charge State:";
+
+                    #region Plot Legend precursor charge state -> boxes
+
+                    for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
+                    {
+                        // Create a Rectangle  
+                        Rectangle PrecursorChargeRetangle = new Rectangle();
+                        PrecursorChargeRetangle.Height = 20;
+                        PrecursorChargeRetangle.Width = 20;
+                        // Set Rectangle's width and color  
+                        PrecursorChargeRetangle.StrokeThickness = 0.5;
+
+                        // Fill rectangle with blue color 
+
+                        PrecursorChargeRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Add Rectangle to the Grid.  
+                        MyCanvas.Children.Add(PrecursorChargeRetangle);
+                        Canvas.SetLeft(PrecursorChargeRetangle, 100 + 27 * StudyConditionLabel.Content.ToString().Length + 44 * i + 65 * i);
+                        Canvas.SetTop(PrecursorChargeRetangle, offSetY + 15);
+                        Canvas.SetZIndex(PrecursorChargeRetangle, -1);
+
+                        Label precursorChargeStateLabelEachOne = new Label();
+                        precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                        precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                        precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                        precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i] + "+";
+                        precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                        precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * StudyConditionLabel.Content.ToString().Length + 46 * i + 65 * i);
+                        Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
+                    }
+                    #endregion
+
+                    #endregion
+                }
+                else if (isActivationLevel)
+                {
+                    #region Plot Legend activation level
+                    StudyConditionLabel.Content = "Activation Level:";
+
+                    #region Plot Legend activation level -> boxes
+
+                    for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                    {
+                        // Create a Rectangle  
+                        Rectangle ActivationLevelRetangle = new Rectangle();
+                        ActivationLevelRetangle.Height = 20;
+                        ActivationLevelRetangle.Width = 20;
+                        // Set Rectangle's width and color  
+                        ActivationLevelRetangle.StrokeThickness = 0.5;
+
+                        // Fill rectangle with blue color 
+
+                        ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Add Rectangle to the Grid.  
+                        MyCanvas.Children.Add(ActivationLevelRetangle);
+                        Canvas.SetLeft(ActivationLevelRetangle, 100 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                        Canvas.SetTop(ActivationLevelRetangle, offSetY + 15);
+                        Canvas.SetZIndex(ActivationLevelRetangle, -1);
+
+                        Label precursorChargeStateLabelEachOne = new Label();
+                        precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                        precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                        precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                        precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                        precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                        precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                        Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
+                    }
+                    #endregion
+
+                    #endregion
+                }
+                else if (isFragmentationMethod)
+                {
+                    #region Plot Legend Fragmentation Method
+                    StudyConditionLabel.Content = "Fragmentation Method:";
+
+                    #region Plot Legend Fragmentation Method -> boxes
+
+                    double[] location_x = new double[PrecursorChargeStatesOrActivationLevelsColors.Length];
+
+                    for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                    {
+                        // Create a Rectangle  
+                        Rectangle FragmentationMethodRetangle = new Rectangle();
+                        FragmentationMethodRetangle.Height = 20;
+                        FragmentationMethodRetangle.Width = 20;
+                        // Set Rectangle's width and color  
+                        FragmentationMethodRetangle.StrokeThickness = 0.5;
+
+                        // Fill rectangle with blue color 
+
+                        FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Add Rectangle to the Grid.  
+                        MyCanvas.Children.Add(FragmentationMethodRetangle);
+                        if (i > 0)
+                            location_x[i] = location_x[i - 1] + SPACER_X * PrecursorChargeStatesOrActivationLevelsColors[i - 1].Length + 40;
+                        else
+                            location_x[i] = initialYLine + SPACER_X * StudyConditionLabel.Content.ToString().Length;
+
+                        Canvas.SetLeft(FragmentationMethodRetangle, location_x[i] + 10);
+                        Canvas.SetTop(FragmentationMethodRetangle, offSetY + 15);
+                        Canvas.SetZIndex(FragmentationMethodRetangle, -1);
+
+                        Label precursorChargeStateLabelEachOne = new Label();
+                        precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                        precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                        precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                        precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                        precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                        precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, location_x[i] + 35);
+                        Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
+                    }
+                    #endregion
+
+                    #endregion
+                }
+
+                #region Plot Residue cleavages table
+                CreateResidueCleavagesTable(PrecursorChargesOrActivationLevels, currentFragmentIons, ref offSetY);
+                #endregion
+
+                #endregion
             }
 
             HighestX = initialXLine + PtnCharPositions[PtnCharPositions.Count - 1] - 40;
-            HighestY = initialYLine + offSetY;
+            HighestY = initialYLine + offSetY - 10;
             this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
-
-            #region Plot Legend Study condition -> labels
-            SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
-            Label StudyConditionLabel = new Label();
-            StudyConditionLabel.FontFamily = new FontFamily("Courier New");
-            StudyConditionLabel.FontWeight = FontWeights.Bold;
-            StudyConditionLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
-            StudyConditionLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-
-            StudyConditionLabel.Foreground = labelBrush_PrecursorChargeState;
-            StudyConditionLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-            MyCanvas.Children.Add(StudyConditionLabel);
-            Canvas.SetLeft(StudyConditionLabel, 60);
-            Canvas.SetTop(StudyConditionLabel, HighestY);
-            #endregion
-
-            if (isPrecursorChargeState)
-            {
-                #region Plot Legend Precursor Charge State
-                StudyConditionLabel.Content = "Precursor Charge State:";
-
-                #region Plot Legend precursor charge state -> boxes
-
-                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
-                {
-                    // Create a Rectangle  
-                    Rectangle PrecursorChargeRetangle = new Rectangle();
-                    PrecursorChargeRetangle.Height = 20;
-                    PrecursorChargeRetangle.Width = 20;
-                    // Set Rectangle's width and color  
-                    PrecursorChargeRetangle.StrokeThickness = 0.5;
-
-                    // Fill rectangle with blue color 
-
-                    PrecursorChargeRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
-                    // Add Rectangle to the Grid.  
-                    MyCanvas.Children.Add(PrecursorChargeRetangle);
-                    Canvas.SetLeft(PrecursorChargeRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 44 * i + 65 * i);
-                    Canvas.SetTop(PrecursorChargeRetangle, HighestY + 15);
-                    Canvas.SetZIndex(PrecursorChargeRetangle, -1);
-
-                    Label precursorChargeStateLabelEachOne = new Label();
-                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
-                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
-                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i] + "+";
-                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
-                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 46 * i + 65 * i);
-                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
-                }
-                #endregion
-
-                #endregion
-            }
-            else if (isActivationLevel)
-            {
-                #region Plot Legend activation level
-                StudyConditionLabel.Content = "Activation Level:";
-
-                #region Plot Legend activation level -> boxes
-
-                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
-                {
-                    // Create a Rectangle  
-                    Rectangle ActivationLevelRetangle = new Rectangle();
-                    ActivationLevelRetangle.Height = 20;
-                    ActivationLevelRetangle.Width = 20;
-                    // Set Rectangle's width and color  
-                    ActivationLevelRetangle.StrokeThickness = 0.5;
-
-                    // Fill rectangle with blue color 
-
-                    ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
-                    // Add Rectangle to the Grid.  
-                    MyCanvas.Children.Add(ActivationLevelRetangle);
-                    Canvas.SetLeft(ActivationLevelRetangle, 60 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
-                    Canvas.SetTop(ActivationLevelRetangle, HighestY + 15);
-                    Canvas.SetZIndex(ActivationLevelRetangle, -1);
-
-                    Label precursorChargeStateLabelEachOne = new Label();
-                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
-                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
-                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
-                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
-                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                    Canvas.SetLeft(precursorChargeStateLabelEachOne, 80 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
-                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
-                }
-                #endregion
-
-                #endregion
-            }
-            else if (isFragmentationMethod)
-            {
-                #region Plot Legend Fragmentation Method
-                StudyConditionLabel.Content = "Fragmentation Method:";
-
-                #region Plot Legend Fragmentation Method -> boxes
-
-                double[] location_x = new double[PrecursorChargeStatesOrActivationLevelsColors.Length];
-
-                for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
-                {
-                    // Create a Rectangle  
-                    Rectangle FragmentationMethodRetangle = new Rectangle();
-                    FragmentationMethodRetangle.Height = 20;
-                    FragmentationMethodRetangle.Width = 20;
-                    // Set Rectangle's width and color  
-                    FragmentationMethodRetangle.StrokeThickness = 0.5;
-
-                    // Fill rectangle with blue color 
-
-                    FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
-                    // Add Rectangle to the Grid.  
-                    MyCanvas.Children.Add(FragmentationMethodRetangle);
-                    if (i > 0)
-                        location_x[i] = location_x[i - 1] + SPACER_X * PrecursorChargeStatesOrActivationLevelsColors[i - 1].Length + 40;
-                    else
-                        location_x[i] = initialYLine + SPACER_X * StudyConditionLabel.Content.ToString().Length;
-
-                    Canvas.SetLeft(FragmentationMethodRetangle, location_x[i]);
-                    Canvas.SetTop(FragmentationMethodRetangle, HighestY + 15);
-                    Canvas.SetZIndex(FragmentationMethodRetangle, -1);
-
-                    Label precursorChargeStateLabelEachOne = new Label();
-                    precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
-                    precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
-                    precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                    precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                    precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
-                    precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
-                    precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                    MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                    Canvas.SetLeft(precursorChargeStateLabelEachOne, location_x[i] + 25);
-                    Canvas.SetTop(precursorChargeStateLabelEachOne, HighestY);
-                }
-                #endregion
-
-                #endregion
-            }
 
             Label proteinSeqInformationLabel = new Label();
             #region Plot Legend Protein Sequence Information
             if (!String.IsNullOrEmpty(ProteinSequenceInformation))
             {
+                SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
                 proteinSeqInformationLabel.FontFamily = new FontFamily("Courier New");
                 proteinSeqInformationLabel.FontWeight = FontWeights.Bold;
                 proteinSeqInformationLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
@@ -1052,8 +1034,8 @@ namespace ProteinMergeFragIons
                 proteinSeqInformationLabel.Foreground = labelBrush_PrecursorChargeState;
                 proteinSeqInformationLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 MyCanvas.Children.Add(proteinSeqInformationLabel);
-                Canvas.SetLeft(proteinSeqInformationLabel, 60);
-                Canvas.SetTop(proteinSeqInformationLabel, HighestY + FONTSIZE_PROTEINSEQUENCE);
+                Canvas.SetLeft(proteinSeqInformationLabel, 100);
+                Canvas.SetTop(proteinSeqInformationLabel, HighestY);
             }
             #endregion
 
@@ -1067,7 +1049,8 @@ namespace ProteinMergeFragIons
             numberAATop1.Content = 1;
             numberAATop1.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
             MyCanvas.Children.Add(numberAATop1);
-            Canvas.SetLeft(numberAATop1, initialXLine + 40);
+            double initialXProtein = PtnCharPositions[0];
+            Canvas.SetLeft(numberAATop1, initialXProtein);
             Canvas.SetTop(numberAATop1, initialYLine - 50);
 
             // Create a Rectangle  
@@ -1115,16 +1098,151 @@ namespace ProteinMergeFragIons
             }
             #endregion
 
-            if (String.IsNullOrEmpty(ProteinSequenceInformation))
-                HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
-            else
-                HighestY = Canvas.GetTop(proteinSeqInformationLabel) + AANumberRectangle.Height;
+            //if (String.IsNullOrEmpty(ProteinSequenceInformation))
+            //    HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
+            //else
+            //    HighestY = Canvas.GetTop(proteinSeqInformationLabel) + AANumberRectangle.Height;
             #endregion
 
             #endregion
         }
 
-        private void RectCondition(double initialYLine, SolidColorBrush blackBrush, int offsetCondition, double Height_Rect, double font_pos_condition, ref int offsetY, string nameCondition)
+        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int)> currentFragmentIons, ref int offsetY)
+        {
+            List<(string, double)> precursorChargeStatesOrActivationLevelsOrFragMethods = new List<(string, double)>();
+
+            foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevels)
+            {
+                List<(string, string, string, int)> currentPrecursorCharge = null;
+
+                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                    currentPrecursorCharge = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
+                else
+                    currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
+
+                List<int> positions = currentPrecursorCharge.Select(a => a.Item4).Distinct().ToList();
+                precursorChargeStatesOrActivationLevelsOrFragMethods.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100));
+
+            }
+
+            int maxWidth = precursorChargeStatesOrActivationLevelsOrFragMethods.Select(a => a.Item1.Length).Max();
+            if (maxWidth < 6) maxWidth = 5;
+
+            // Create the Grid
+            Grid DynamicGrid = new Grid();
+            DynamicGrid.HorizontalAlignment = HorizontalAlignment.Center;
+            DynamicGrid.VerticalAlignment = VerticalAlignment.Center;
+
+            // Create Columns
+            ColumnDefinition gridCol1 = new ColumnDefinition();
+            gridCol1.Width = new GridLength(600);
+            DynamicGrid.ColumnDefinitions.Add(gridCol1);
+
+            for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethods.Count; i++)
+            {
+                double gridLength = maxWidth * ROWWIDTH_TABLE;
+                ColumnDefinition gridCol = new ColumnDefinition();
+                gridCol.Width = new GridLength(gridLength);
+                DynamicGrid.ColumnDefinitions.Add(gridCol);
+            }
+
+            // Create Rows
+            // Title
+            RowDefinition gridRow1 = new RowDefinition();
+            gridRow1.Height = new GridLength(45);
+            //Content
+            RowDefinition gridRow2 = new RowDefinition();
+            gridRow2.Height = new GridLength(45);
+            DynamicGrid.RowDefinitions.Add(gridRow1);
+            DynamicGrid.RowDefinitions.Add(gridRow2);
+
+            for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethods.Count; i++)
+            {
+                //Borders
+                Rectangle rectRowColor = new Rectangle();
+                rectRowColor.StrokeThickness = 1;
+                rectRowColor.Stroke = new SolidColorBrush(Colors.Black);
+                Grid.SetRow(rectRowColor, 0);
+                Grid.SetColumn(rectRowColor, (i + 1));
+                DynamicGrid.Children.Add(rectRowColor);
+
+                // Add row header
+                TextBlock txtBlock = new TextBlock();
+                if (isPrecursorChargeState)
+                    txtBlock.Text = precursorChargeStatesOrActivationLevelsOrFragMethods[i].Item1 + "+";
+                else
+                    txtBlock.Text = precursorChargeStatesOrActivationLevelsOrFragMethods[i].Item1;
+                txtBlock.FontFamily = new FontFamily("Courier New");
+                txtBlock.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                txtBlock.FontWeight = FontWeights.Bold;
+                txtBlock.Foreground = new SolidColorBrush(Colors.Black);
+                txtBlock.VerticalAlignment = VerticalAlignment.Center;
+                txtBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetRow(txtBlock, 0);
+                Grid.SetColumn(txtBlock, (i + 1));
+                DynamicGrid.Children.Add(txtBlock);
+            }
+
+            Rectangle rectRowResidueCleavagesTitle = new Rectangle();
+            rectRowResidueCleavagesTitle.StrokeThickness = 1;
+            rectRowResidueCleavagesTitle.Stroke = new SolidColorBrush(Colors.Black);
+            Grid.SetRow(rectRowResidueCleavagesTitle, 0);
+            Grid.SetColumn(rectRowResidueCleavagesTitle, 0);
+            DynamicGrid.Children.Add(rectRowResidueCleavagesTitle);
+
+            Rectangle rectRowResidueCleavagesLabel = new Rectangle();
+            rectRowResidueCleavagesLabel.StrokeThickness = 1;
+            rectRowResidueCleavagesLabel.Stroke = new SolidColorBrush(Colors.Black);
+            rectRowResidueCleavagesLabel.Fill = new SolidColorBrush(Colors.LightGray);
+            Grid.SetRow(rectRowResidueCleavagesLabel, 1);
+            Grid.SetColumn(rectRowResidueCleavagesLabel, 0);
+            DynamicGrid.Children.Add(rectRowResidueCleavagesLabel);
+
+            TextBlock txtBlock_content = new TextBlock();
+            txtBlock_content.Text = "Residue cleavages (%)";
+            txtBlock_content.FontFamily = new FontFamily("Courier New");
+            txtBlock_content.FontSize = FONTSIZE_PROTEINSEQUENCE;
+            txtBlock_content.FontWeight = FontWeights.Bold;
+            txtBlock_content.Foreground = new SolidColorBrush(Colors.Black);
+            txtBlock_content.VerticalAlignment = VerticalAlignment.Center;
+            txtBlock_content.HorizontalAlignment = HorizontalAlignment.Center;
+            Grid.SetRow(txtBlock_content, 1);
+            Grid.SetColumn(txtBlock_content, 0);
+            DynamicGrid.Children.Add(txtBlock_content);
+
+            for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethods.Count; i++)
+            {
+                //Background color and borders
+                Rectangle rectRowColor = new Rectangle();
+                rectRowColor.StrokeThickness = 1;
+                rectRowColor.Stroke = new SolidColorBrush(Colors.Black);
+                rectRowColor.Fill = new SolidColorBrush(Colors.LightGray);
+                Grid.SetRow(rectRowColor, 1);
+                Grid.SetColumn(rectRowColor, (i + 1));
+                DynamicGrid.Children.Add(rectRowColor);
+
+                // Add row text
+                TextBlock txtBlock = new TextBlock();
+                txtBlock.Text = precursorChargeStatesOrActivationLevelsOrFragMethods[i].Item2.ToString("0.00");
+                txtBlock.FontFamily = new FontFamily("Courier New");
+                txtBlock.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                txtBlock.FontWeight = FontWeights.Bold;
+                txtBlock.Foreground = new SolidColorBrush(Colors.Black);
+                txtBlock.VerticalAlignment = VerticalAlignment.Center;
+                txtBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetRow(txtBlock, 1);
+                Grid.SetColumn(txtBlock, (i + 1));
+                DynamicGrid.Children.Add(txtBlock);
+            }
+
+            MyCanvas.Children.Add(DynamicGrid);
+            Canvas.SetLeft(DynamicGrid, 100);
+            Canvas.SetTop(DynamicGrid, offsetY + 70);
+
+            offsetY += 130;
+        }
+
+        private void RectCondition(double initialYLine, int offsetCondition, double Height_Rect, double font_pos_condition, ref int offsetY, string nameCondition)
         {
             Rectangle Rectangle_Condition = new Rectangle();
             Rectangle_Condition.Height = Height_Rect;
@@ -1226,9 +1344,9 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
-        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevel, List<(string, string, string, int)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState)
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState)
         {
-            foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevel)
+            foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevelOrFragMethods)
             {
                 List<(string, string, string, int)> currentPrecursorCharge = null;
 
@@ -1268,14 +1386,32 @@ namespace ProteinMergeFragIons
                 }
                 if (currentPrecursorCharge.Count > 0)
                 {
+                    #region plot fragment legend on the left
+                    Label fragmentLabel = new Label();
+                    fragmentLabel.FontFamily = new FontFamily("Courier New");
+                    fragmentLabel.FontWeight = FontWeights.Bold;
+                    fragmentLabel.FontSize = FONTSIZE_PROTEINSEQUENCE - 12;
+                    if (isPrecursorChargeState)
+                        fragmentLabel.Content = precursorChargeOrActivationLevel + "+";
+                    else
+                        fragmentLabel.Content = precursorChargeOrActivationLevel;
+                    fragmentLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                    fragmentLabel.Foreground = labelBrush_PTN;
+                    fragmentLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(fragmentLabel);
+                    Canvas.SetLeft(fragmentLabel, 100);
+                    Canvas.SetTop(fragmentLabel, initialYLine + offSetY + SPACER_Y);
+
+                    #endregion
                     countPrecursorChargeState++;
                     SPACER_Y += 35;
                 }
             }
         }
 
-        private void PlotProteinSequence(List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces)
+        private void PlotProteinSequence(List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces, int leftOffset)
         {
+            if (isPrecursorChargeState) leftOffset++;
             PtnCharPositions.Clear();
             for (int i = 0; i < ProteinSequence.Length; i++)
             {
@@ -1289,8 +1425,8 @@ namespace ProteinMergeFragIons
                 proteinLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 proteinCharsAndSpaces.Add(proteinLabel);
 
-                Canvas.SetLeft(proteinLabel, 75 + 30 * (i + 1));
-                PtnCharPositions.Add(75 + 30 * (i + 1));
+                Canvas.SetLeft(proteinLabel, leftOffset * SPACER_X + 75 + 30 * (i + 1));
+                PtnCharPositions.Add(leftOffset * SPACER_X + 75 + 30 * (i + 1));
             }
         }
 
