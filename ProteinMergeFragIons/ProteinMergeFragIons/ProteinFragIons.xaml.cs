@@ -58,7 +58,7 @@ namespace ProteinMergeFragIons
         private bool isActivationLevel { get; set; } = false;
         private bool isFragmentationMethod { get; set; } = false;
 
-        private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelList { get; set; }
+        private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelDict { get; set; }
 
         private int SPACER_Y = 0;
         private string[] PrecursorChargeStatesOrActivationLevelsColors { get; set; }
@@ -140,7 +140,7 @@ namespace ProteinMergeFragIons
 
             //List<(fragmentationMethod, precursorCharge/activation level,IonType, aaPosition)>
             List<(string, string, string, int)> fragmentIons = new List<(string, string, string, int)>();
-            FragMethodsWithPrecursorChargeOrActivationLevelList = new Dictionary<string, List<string>>();
+            FragMethodsWithPrecursorChargeOrActivationLevelDict = new Dictionary<string, List<string>>();
             List<int> allPrecursorChargeStateList = new List<int>();
             PrecursorChargeStatesOrActivationLevelsColors = null;
 
@@ -151,7 +151,7 @@ namespace ProteinMergeFragIons
                 {
                     string[] cols = Regex.Split(entry.Key, "#");
                     List<string> precursorChargeStateList = entry.Value.Item4.Select(a => a.Item2).OrderByDescending(a => a).Select(a => a.ToString()).Distinct().ToList();
-                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(cols[2], precursorChargeStateList);
+                    FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#PCS", precursorChargeStateList);
                     var currentFragIons = (from eachEntry in entry.Value.Item4
                                            select (eachEntry.Item1, eachEntry.Item2, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item2).ToList();
                     fragmentIons.AddRange((from eachEntry in currentFragIons
@@ -168,7 +168,7 @@ namespace ProteinMergeFragIons
                 {
                     string[] cols = Regex.Split(entry.Key, "#");
                     List<string> activationLevelList = entry.Value.Item4.Select(a => a.Item5).Distinct().OrderByDescending(a => a).ToList();
-                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(cols[2], activationLevelList);
+                    FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#AL", activationLevelList);
                     fragmentIons.AddRange((from eachEntry in entry.Value.Item4
                                            select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item2).ToList());
 
@@ -177,7 +177,7 @@ namespace ProteinMergeFragIons
                 else if (entry.Key.StartsWith("Fragmentation Method"))
                 {
                     List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
-                    FragMethodsWithPrecursorChargeOrActivationLevelList.Add(entry.Value.Item1, fragmentationMethodList);
+                    FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#FM", fragmentationMethodList);
                     fragmentIons.AddRange((from eachEntry in entry.Value.Item4
                                            select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4)).OrderByDescending(a => a.Item1).ToList());
 
@@ -228,6 +228,10 @@ namespace ProteinMergeFragIons
                 #endregion
             }
 
+            PrecursorChargeStatesOrActivationLevelsColors = PrecursorChargeStatesOrActivationLevelsColors.Distinct().ToArray();
+
+            Array.Sort<string>(PrecursorChargeStatesOrActivationLevelsColors, new Comparison<string>(
+                  (i1, i2) => i2.Length.CompareTo(i1.Length)));
 
             PreparePictureProteinFragmentIons(true, fragmentIons);
 
@@ -249,82 +253,113 @@ namespace ProteinMergeFragIons
 
         public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int)> fragmentIons)
         {
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList == null)
+            if (FragMethodsWithPrecursorChargeOrActivationLevelDict == null)
                 return;
 
-            #region set which fragmentation method will be shown
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("UVPD"))
+            #region set which fragmentation method will be shown and the order
+            Dictionary<string, List<string>> tmpFragMethodsWithPrecursorChargeOrActivationLevelDict = new Dictionary<string, List<string>>();
+
+            Dictionary<string, List<string>> currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("UVPD")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showUVPD = true;
+            }
             else
                 showUVPD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("EThcD"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("EThcD")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showEThcD = true;
+            }
             else
                 showEThcD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("CID"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("CID")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showCID = true;
+            }
             else
                 showCID = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("HCD"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("HCD")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showHCD = true;
+            }
             else
                 showHCD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("SID"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("SID")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showSID = true;
+            }
             else
                 showSID = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ECD"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("ECD")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showECD = true;
+            }
             else
                 showECD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("ETD"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("ETD")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showETD = true;
+            }
             else
                 showETD = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Precursor Charge State"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("Precursor Charge State")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showPrecursorChargeState = true;
+            }
             else
                 showPrecursorChargeState = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Activation Level"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("Activation Level")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showActivationLevel = true;
+            }
             else
                 showActivationLevel = false;
-            if (FragMethodsWithPrecursorChargeOrActivationLevelList.ContainsKey("Replicates"))
+
+            currentDict = FragMethodsWithPrecursorChargeOrActivationLevelDict.Where(a => Regex.Split(a.Key, "#")[0].Contains("Replicates")).ToDictionary(x => x.Key, y => y.Value);
+            if (currentDict.Count > 0)
+            {
+                foreach (KeyValuePair<string, List<string>> kvp in currentDict)
+                    tmpFragMethodsWithPrecursorChargeOrActivationLevelDict.Add(kvp.Key, kvp.Value);
                 showReplicates = true;
+            }
             else
                 showReplicates = false;
-            #endregion
 
-            #region set the order of frag method to be shown 
-            //List<(fragmentationMethod, precursorCharge, ionType, aaPos)>
-            //List<(string, string, string, int)> fragmentIons
-            List<string> fragMethods = (from fi in fragmentIons
-                                        select fi.Item1).Distinct().ToList();
-            //Sort List fragMet-> UVPD, EThcD, CID, HCD, SID, ECD, ETD
-            List<string> tmpListFragMeth = new List<string>();
-            if (fragMethods.Contains("UVPD") && showUVPD)
-                tmpListFragMeth.Add("UVPD");
-            if ((fragMethods.Contains("ETHCD") || fragMethods.Contains("ethcd") || fragMethods.Contains("EThcD")) && showEThcD)
-                tmpListFragMeth.Add("EThcD");
-            if (fragMethods.Contains("CID") && showCID)
-                tmpListFragMeth.Add("CID");
-            if (fragMethods.Contains("HCD") && showHCD)
-                tmpListFragMeth.Add("HCD");
-            if (fragMethods.Contains("SID") && showSID)
-                tmpListFragMeth.Add("SID");
-            if (fragMethods.Contains("ECD") && showECD)
-                tmpListFragMeth.Add("ECD");
-            if (fragMethods.Contains("ETD") && showETD)
-                tmpListFragMeth.Add("ETD");
-            if (showPrecursorChargeState)
-                tmpListFragMeth.Add("Precursor Charge State");
-            if (showActivationLevel)
-                tmpListFragMeth.Add("Activation Level");
-            if (showReplicates)
-                tmpListFragMeth.Add("Replicates");
-
-            fragMethods = tmpListFragMeth;
-
+            FragMethodsWithPrecursorChargeOrActivationLevelDict = tmpFragMethodsWithPrecursorChargeOrActivationLevelDict;
             #endregion
 
             #region set initial variables
@@ -357,16 +392,28 @@ namespace ProteinMergeFragIons
             SolidColorBrush backgroundColor = new SolidColorBrush();
             SolidColorBrush blackBrush = new SolidColorBrush();
 
-            foreach (string fragMethod in fragMethods)
+            foreach (KeyValuePair<string, List<string>> currentFragMethod in FragMethodsWithPrecursorChargeOrActivationLevelDict)
             {
-                List<string> PrecursorChargesOrActivationLevels = null;
-                if (!FragMethodsWithPrecursorChargeOrActivationLevelList.TryGetValue(fragMethod, out PrecursorChargesOrActivationLevels))
-                    continue;
+                isPrecursorChargeState = false;
+                isActivationLevel = false;
+                isFragmentationMethod = false;
+
+                List<string> PrecursorChargesOrActivationLevels = currentFragMethod.Value;
+
+                string[] cols = Regex.Split(currentFragMethod.Key, "#");
+                string fragMethod = cols[0];
+                string studyCondition = cols[1];
+                if (studyCondition.Equals("PCS"))
+                    isPrecursorChargeState = true;
+                else if (studyCondition.Equals("AL"))
+                    isActivationLevel = true;
+                else if (studyCondition.Equals("FM"))
+                    isFragmentationMethod = true;
 
                 leftOffsetProtein = PrecursorChargesOrActivationLevels.Max(a => a.Length);
 
                 List<(string, string, string, int)> currentFragmentIons = null;
-                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                     currentFragmentIons = fragmentIons;
                 else
                     currentFragmentIons = fragmentIons.Where(a => a.Item1.Equals(fragMethod)).ToList();
@@ -740,6 +787,8 @@ namespace ProteinMergeFragIons
                     HeightRectX = 0;
                     HeightRectY = 0;
                     HeightRectZ = 0;
+                    SPACER_Y = 0;
+                    int offsetRectFragmentation = offSetY;
 
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
@@ -760,7 +809,7 @@ namespace ProteinMergeFragIons
 
                     #region Serie B
                     SPACER_Y = 0;
-                    offSetY = (int)initialYLine + (int)HeightRectA - FRAGMENT_ION_HEIGHT - 15;
+                    offSetY += (int)initialYLine + (int)HeightRectA - FRAGMENT_ION_HEIGHT - 15;
 
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
@@ -803,12 +852,11 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
-                    proteinY = HeightRectA + HeightRectB + HeightRectC + 65;
                     #endregion
 
                     #region Serie X
                     SPACER_Y = 0;
-                    offSetY = (int)initialYLine + (int)proteinY - 10;
+                    offSetY += (int)initialYLine + (int)proteinY + 15;
 
                     int countPrecursorChargesX = 0;
                     if (currentXFragmentIons.Count > 0)
@@ -855,11 +903,11 @@ namespace ProteinMergeFragIons
                     double height_rect = (HeightRectA + HeightRectB + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 145);
                     double font_pos_condition = HeightRectA + HeightRectB + HeightRectC + 130;
                     if (showPrecursorChargeState)
-                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
                     else if (showActivationLevel)
-                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
                     else
-                        RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "Replicates");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Replicates");
                     #endregion
 
                     #endregion
@@ -879,7 +927,7 @@ namespace ProteinMergeFragIons
                 Canvas.SetLeft(StudyConditionLabel, 100);
                 Canvas.SetTop(StudyConditionLabel, offSetY);
 
-                if (isPrecursorChargeState)
+                if (isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod)
                 {
                     #region Plot Legend Precursor Charge State
                     StudyConditionLabel.Content = "Precursor Charge State:";
@@ -895,12 +943,14 @@ namespace ProteinMergeFragIons
                         // Set Rectangle's width and color  
                         PrecursorChargeRetangle.StrokeThickness = 0.5;
 
-                        // Fill rectangle with blue color 
-
-                        PrecursorChargeRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Fill rectangle with color 
+                        int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
+                        PrecursorChargeRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
                         // Add Rectangle to the Grid.  
                         MyCanvas.Children.Add(PrecursorChargeRetangle);
-                        Canvas.SetLeft(PrecursorChargeRetangle, 100 + 27 * StudyConditionLabel.Content.ToString().Length + 44 * i + 65 * i);
+                        int sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 3;
+                        Canvas.SetLeft(PrecursorChargeRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(PrecursorChargeRetangle, offSetY + 15);
                         Canvas.SetZIndex(PrecursorChargeRetangle, -1);
 
@@ -913,21 +963,23 @@ namespace ProteinMergeFragIons
                         precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
                         precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * StudyConditionLabel.Content.ToString().Length + 46 * i + 65 * i);
+                        sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 3;
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
                     }
                     #endregion
 
                     #endregion
                 }
-                else if (isActivationLevel)
+                else if (isActivationLevel && !isPrecursorChargeState && !isFragmentationMethod)
                 {
                     #region Plot Legend activation level
                     StudyConditionLabel.Content = "Activation Level:";
 
                     #region Plot Legend activation level -> boxes
 
-                    for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                    for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
                     {
                         // Create a Rectangle  
                         Rectangle ActivationLevelRetangle = new Rectangle();
@@ -936,12 +988,14 @@ namespace ProteinMergeFragIons
                         // Set Rectangle's width and color  
                         ActivationLevelRetangle.StrokeThickness = 0.5;
 
-                        // Fill rectangle with blue color 
-
-                        ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Fill rectangle with color 
+                        int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
+                        ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
                         // Add Rectangle to the Grid.  
                         MyCanvas.Children.Add(ActivationLevelRetangle);
-                        Canvas.SetLeft(ActivationLevelRetangle, 100 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                        int sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                        Canvas.SetLeft(ActivationLevelRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(ActivationLevelRetangle, offSetY + 15);
                         Canvas.SetZIndex(ActivationLevelRetangle, -1);
 
@@ -950,27 +1004,27 @@ namespace ProteinMergeFragIons
                         precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
                         precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
                         precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                        precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                        precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
                         precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
                         precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * StudyConditionLabel.Content.ToString().Length + 60 * i + 16 * PrecursorChargeStatesOrActivationLevelsColors[i].Length * i);
+                        sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
                     }
                     #endregion
 
                     #endregion
                 }
-                else if (isFragmentationMethod)
+                else if (isFragmentationMethod && !isPrecursorChargeState && !isActivationLevel)
                 {
                     #region Plot Legend Fragmentation Method
                     StudyConditionLabel.Content = "Fragmentation Method:";
 
                     #region Plot Legend Fragmentation Method -> boxes
 
-                    double[] location_x = new double[PrecursorChargeStatesOrActivationLevelsColors.Length];
-
-                    for (int i = 0; i < PrecursorChargeStatesOrActivationLevelsColors.Length; i++)
+                    for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
                     {
                         // Create a Rectangle  
                         Rectangle FragmentationMethodRetangle = new Rectangle();
@@ -979,17 +1033,14 @@ namespace ProteinMergeFragIons
                         // Set Rectangle's width and color  
                         FragmentationMethodRetangle.StrokeThickness = 0.5;
 
-                        // Fill rectangle with blue color 
-
-                        FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[i];
+                        // Fill rectangle with color 
+                        int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
+                        FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
                         // Add Rectangle to the Grid.  
                         MyCanvas.Children.Add(FragmentationMethodRetangle);
-                        if (i > 0)
-                            location_x[i] = location_x[i - 1] + SPACER_X * PrecursorChargeStatesOrActivationLevelsColors[i - 1].Length + 40;
-                        else
-                            location_x[i] = initialYLine + SPACER_X * StudyConditionLabel.Content.ToString().Length;
-
-                        Canvas.SetLeft(FragmentationMethodRetangle, location_x[i] + 10);
+                        int sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                        Canvas.SetLeft(FragmentationMethodRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(FragmentationMethodRetangle, offSetY + 15);
                         Canvas.SetZIndex(FragmentationMethodRetangle, -1);
 
@@ -998,11 +1049,14 @@ namespace ProteinMergeFragIons
                         precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
                         precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
                         precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                        precursorChargeStateLabelEachOne.Content = PrecursorChargeStatesOrActivationLevelsColors[i];
+                        precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
                         precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
                         precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                        Canvas.SetLeft(precursorChargeStateLabelEachOne, location_x[i] + 35);
+
+                        sumXoffset = 0;
+                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
                         Canvas.SetTop(precursorChargeStateLabelEachOne, offSetY);
                     }
                     #endregion
@@ -1017,6 +1071,7 @@ namespace ProteinMergeFragIons
                 #endregion
             }
 
+            if (PtnCharPositions.Count == 0) return;
             HighestX = initialXLine + PtnCharPositions[PtnCharPositions.Count - 1] - 40;
             HighestY = initialYLine + offSetY - 10;
             this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
@@ -1098,10 +1153,6 @@ namespace ProteinMergeFragIons
             }
             #endregion
 
-            //if (String.IsNullOrEmpty(ProteinSequenceInformation))
-            //    HighestY = Canvas.GetTop(StudyConditionLabel) + AANumberRectangle.Height;
-            //else
-            //    HighestY = Canvas.GetTop(proteinSeqInformationLabel) + AANumberRectangle.Height;
             #endregion
 
             #endregion
@@ -1115,7 +1166,7 @@ namespace ProteinMergeFragIons
             {
                 List<(string, string, string, int)> currentPrecursorCharge = null;
 
-                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
                 else
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
@@ -1269,15 +1320,15 @@ namespace ProteinMergeFragIons
             label_condition.RenderTransform = new RotateTransform(270);
             MyCanvas.Children.Add(label_condition);
             Canvas.SetLeft(label_condition, 30);
-            if (showPrecursorChargeState)
+            if (isFragmentationMethod && showPrecursorChargeState)
             {
                 Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 178.5);
             }
-            else if (showActivationLevel)
+            else if (isFragmentationMethod && showActivationLevel)
             {
                 Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 118.5);
             }
-            else if (showReplicates)
+            else if (isFragmentationMethod && showReplicates)
             {
                 Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 28.5);
             }
@@ -1302,7 +1353,7 @@ namespace ProteinMergeFragIons
             // Set Rectangle's width and color  
             ABCSeriesFullRectangle.StrokeThickness = 0.5;
 
-            // Fill rectangle with blue color  
+            // Fill rectangle with light gray color  
             ABCSeriesFullRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
 
             // Add Rectangle to the Grid.  
@@ -1321,7 +1372,7 @@ namespace ProteinMergeFragIons
             // Set Rectangle's width and color  
             ABCSeriesRectangle.StrokeThickness = 0.5;
 
-            // Fill rectangle with blue color  
+            // Fill rectangle with gray color  
             ABCSeriesRectangle.Fill = backgroundColor;
             // Add Rectangle to the Grid.  
             MyCanvas.Children.Add(ABCSeriesRectangle);
@@ -1350,7 +1401,7 @@ namespace ProteinMergeFragIons
             {
                 List<(string, string, string, int)> currentPrecursorCharge = null;
 
-                if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
                 else
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
@@ -1366,18 +1417,18 @@ namespace ProteinMergeFragIons
                     l.Y2 = SPACER_Y + FRAGMENT_ION_HEIGHT;
 
                     string currentPrecursorChargeStateOrActivationLevel = string.Empty;
-                    if (showPrecursorChargeState || showActivationLevel || showReplicates)
+                    if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                         currentPrecursorChargeStateOrActivationLevel = currentPrecursorCharge[count].Item1;
                     else
                         currentPrecursorChargeStateOrActivationLevel = currentPrecursorCharge[count].Item2;
                     int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(currentPrecursorChargeStateOrActivationLevel));
                     l.Stroke = FRAGMENT_ION_LINE_COLORS[_index];
                     l.StrokeThickness = WIDTH_LINE;
-                    if (isPrecursorChargeState)
+                    if (isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod)
                         l.ToolTip = "Charge: " + currentPrecursorCharge[count].Item2.ToString() + "+\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
-                    else if (isActivationLevel)
+                    else if (isActivationLevel && !isPrecursorChargeState && !isFragmentationMethod)
                         l.ToolTip = "Activation Level: " + currentPrecursorCharge[count].Item2.ToString() + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
-                    else if (isFragmentationMethod)
+                    else if (isFragmentationMethod && !isPrecursorChargeState && !isActivationLevel)
                         l.ToolTip = "Fragmentation Method: " + currentPrecursorCharge[count].Item1 + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
 
                     MyCanvas.Children.Add(l);

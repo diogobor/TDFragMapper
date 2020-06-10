@@ -416,7 +416,8 @@ namespace MergeFragIons
                 }
                 else
                 {
-                    numberOfConditions = _DictMaps.Count;
+                    string[] cols = Regex.Split(entry.Key, "#");
+                    numberOfConditions = Convert.ToInt32(cols[3]);
                     #region fill comboboxes
                     int _indexcb1 = 0;
                     if (entry.Value.Item1.ToString().StartsWith("Frag"))
@@ -647,6 +648,11 @@ namespace MergeFragIons
                     }
 
                     #endregion
+
+                    (Button, Button) previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
+                    previousAddRemoveMap.Item1.Enabled = false;
+                    if (previousAddRemoveMap.Item2 != null)
+                        previousAddRemoveMap.Item2.Enabled = false;
 
                     CreateNewMap(false,
                         _indexcb1,
@@ -1093,18 +1099,18 @@ namespace MergeFragIons
 
 
             groupBoxMainMap.Name = "groupBoxMap_" + numberOfConditions;
-            if (isNewData)
-                groupBoxMainMap.Location = new Point(3, numberOfConditions * SPACE_Y);
-            else
-                groupBoxMainMap.Location = new Point(3, (numberOfConditions - 1) * SPACE_Y);
+            //if (isNewData)
+            groupBoxMainMap.Location = new Point(3, numberOfConditions * SPACE_Y);
+            //else
+            //    groupBoxMainMap.Location = new Point(3, (numberOfConditions - 1) * SPACE_Y);
             groupBoxMainMap.Size = new Size(1160, 230);
             groupBoxMainMap.MinimumSize = new Size(1160, 230);
             groupBoxMainMap.AutoSizeMode = AutoSizeMode.GrowOnly;
             groupBoxMainMap.AutoSize = false;
-            if (isNewData)
-                groupBoxMainMap.Text = "Map " + (numberOfConditions + 1);
-            else
-                groupBoxMainMap.Text = "Map " + numberOfConditions;
+            //if (isNewData)
+            groupBoxMainMap.Text = "Map " + (numberOfConditions + 1);
+            //else
+            //    groupBoxMainMap.Text = "Map " + numberOfConditions;
             groupBoxMainMap.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
 
             this.Controls.Add(groupBoxMainMap);
@@ -1504,7 +1510,41 @@ namespace MergeFragIons
             {
                 listboxSelectedCondition3.Items.Clear();
                 List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+
+                #region filter 1
+                if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
+                {
+                    foreach (string item in listboxSelectedCondition1.Items)//Frag Method
+                    {
+                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
+                    }
+                }
+                else if (listboxSelectedCondition1.Tag.Equals("Activation Level"))
+                {
+                    foreach (string item in listboxSelectedCondition1.Items)//Activation Level
+                    {
+                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
+                    }
+                }
+                else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
+                {
+                    foreach (int item in listboxSelectedCondition1.Items)//Replicates
+                    {
+                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                    }
+                }
+                else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
+                {
+                    foreach (int item in listboxSelectedCondition1.Items)//Precursor Charge State
+                    {
+                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                    }
+                }
+                allFragmentIonsAllConditions = _tempFragMethods;
+                #endregion
+
                 #region filter 2
+                _tempFragMethods = new List<(string, int, string, int, string, int)>();
 
                 if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -2863,11 +2903,7 @@ namespace MergeFragIons
 
         private void buttonAddMap_Click(object sender, EventArgs e)
         {
-            (Button, Button) previousAddRemoveMap;
-            //if (isNewResults)
-                previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
-            //else
-            //    previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 2];
+            (Button, Button) previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
             previousAddRemoveMap.Item1.Enabled = false;
             if (previousAddRemoveMap.Item2 != null)
                 previousAddRemoveMap.Item2.Enabled = false;
