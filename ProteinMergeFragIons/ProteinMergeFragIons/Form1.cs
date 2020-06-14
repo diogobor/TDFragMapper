@@ -27,7 +27,7 @@ namespace ProteinMergeFragIons
             /// <summary>
             /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
             /// </summary>
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)>();
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>();
 
             //string protein = "EVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKI";
             string protein = "QSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKSHRSYSCQVTHEGSTVEKTVAPTECSQSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKS";
@@ -36,8 +36,8 @@ namespace ProteinMergeFragIons
             /// <summary>
             /// List of Fragment Ions
             /// </summary>
-            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate
-            List<(string, int, string, int, string, int)> fragIons = new List<(string, int, string, int, string, int)>();
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+            List<(string, int, string, int, string, int, double)> fragIons = new List<(string, int, string, int, string, int, double)>();
 
 
             List<(string, string, string, int, int)> inputFiles = new List<(string, string, string, int, int)>();
@@ -186,7 +186,7 @@ namespace ProteinMergeFragIons
                                 countCell++;
                             }
                             if (!String.IsNullOrEmpty(ionType))
-                                fragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate));
+                                fragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, 0));
                         }
                     }
                 }
@@ -200,11 +200,19 @@ namespace ProteinMergeFragIons
                 }
             }
 
+            List<(string, int, string, int, string, int, double)> tmpFragIons = new List<(string, int, string, int, string, int, double)>();
+            double count = 0.5;
+            foreach ((string, int, string, int, string, int, double) frag in fragIons)
+            {
+                tmpFragIons.Add((frag.Item1, frag.Item2, frag.Item3, frag.Item4, frag.Item5, frag.Item6, count));
+                count += 1.75;
+            }
+            fragIons = tmpFragIons;
 
             //Example: CID, Act level: 10,15,20, Repl: 1, Prec Charge: 25,22,17,11
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate)>
-            List<(string, int, string, int, string, int)> currentFragIons = new List<(string, int, string, int, string, int)>();
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate. intensity)>
+            List<(string, int, string, int, string, int, double)> currentFragIons = new List<(string, int, string, int, string, int, double)>();
             string _key = string.Empty;
 
             ////currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && a.Item6 == 1 && (a.Item5.Equals("8") || a.Item5.Equals("10") || a.Item5.Equals("12"))).ToList();
@@ -212,14 +220,14 @@ namespace ProteinMergeFragIons
             //_key = "Precursor Charge State#Fragmentation Method#HCD";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 22)).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#EThcD";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
-
-            ////currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#CID";
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 22)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#EThcD";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#CID";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#UVPD";
@@ -233,11 +241,11 @@ namespace ProteinMergeFragIons
             //_key = "Activation Level#Fragmentation Method#EThcD#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
-            currentFragIons = fragIons.Where(a => a.Item2 == 25).ToList();
-            _key = "Fragmentation Method#Precursor Charge State#25#0";
-            DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item2 == 25).ToList();
+            //_key = "Fragmentation Method#Precursor Charge State#25#0";
+            //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons));
 
-            this.proteinFragIons1.SetFragMethodDictionary(DictMaps, protein, "N-Term Pyro-Glu");
+            this.proteinFragIons1.SetFragMethodDictionary(DictMaps, protein, "N-Term Pyro-Glu", true, false);
 
             return;
 

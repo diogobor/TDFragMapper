@@ -30,14 +30,16 @@ namespace MergeFragIons.Utils
         [ProtoMember(2)]
         public string SequenceInformation { get; set; }
         /// <summary>
-        /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate)>
+        /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intensity Data)>
         /// </summary>
         [ProtoMember(3)]
-        public List<(string, string, string, int, int)> InputFileList { get; set; }
+        public List<(string, string, string, int, int, string)> InputFileList { get; set; }
         [ProtoMember(4)]
         public byte[] ProcessingTime { get; set; }
         [ProtoMember(5)]
         public byte[] ProgramVersion { get; set; }
+        [ProtoMember(6)]
+        public bool HasIntensities { get; set; }
 
         public string msgErrorInputFiles { get; set; }
 

@@ -16,9 +16,10 @@ namespace MergeFragIons
     {
         private Core Core { get; set; }
         private bool isNewResults { get; set; }
+        private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
 
-        // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate
-        private List<(string, int, string, int, string, int)> allFragmentIonsAllConditions { get; set; }
+        // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+        private List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions { get; set; }
 
         private List<(Button, Button)> Add_Remove_MapBtnList { get; set; }
 
@@ -121,7 +122,7 @@ namespace MergeFragIons
             allFragmentIonsAllConditions = Core.FragmentIons;
             SetTagsInitialCondition();
             if (isInitialResults)
-                Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)>();
+                Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>();
             else
                 UpdateMaps();
         }
@@ -129,23 +130,23 @@ namespace MergeFragIons
         private void UpdateMaps()
         {
             int countCondition = 0;
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(Core.DictMaps);
             List<string> selectedItemsCondition1 = null;
             List<string> selectedItemsCondition2 = null;
             List<string> selectedItemsCondition3 = null;
             List<string> selectedItemsStudyCondition = null;
 
-            List<(string, int, string, int, string, int)> allFragmentIonsAllConditions = null;
-            List<(string, int, string, int, string, int)> _tempFragMethods = null;
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double)> _tempFragMethods = null;
             List<string> RemainItemscondition1 = null;
             List<string> RemainItemscondition2 = null;
             List<string> RemainItemscondition3 = null;
             List<string> RemainItemsstudycondition = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int)>)> entry in _DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> entry in _DictMaps)
             {
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (countCondition == 0)
                 {
                     //For filtering
@@ -224,11 +225,15 @@ namespace MergeFragIons
                         selectedItemsCondition1 = (from item in entry.Value.Item4
                                                    select item.Item6.ToString()).Distinct().ToList();
                         RemainItemscondition1 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition1).ToList();
-                        listBoxAllFixedCondition1.Items.AddRange(RemainItemscondition1.ToArray());
+                        listBoxAllFixedCondition1.Items.AddRange((from item in RemainItemscondition1
+                                                                  select "R" + item).ToArray());
 
                         //Filter
-                        foreach (string item in selectedItemsCondition1)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.Equals(item)).ToList());
+                        foreach (string item in selectedItemsCondition1)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
                     else if (entry.Value.Item1.ToString().StartsWith("Precursor"))
@@ -244,12 +249,16 @@ namespace MergeFragIons
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
 
-                    listBoxSelectedFixedCondition1.Items.AddRange(selectedItemsCondition1.ToArray());
+                    if (entry.Value.Item1.ToString().StartsWith("Replicates"))
+                        listBoxSelectedFixedCondition1.Items.AddRange((from item in selectedItemsCondition1
+                                                                       select "R" + item).ToArray());
+                    else
+                        listBoxSelectedFixedCondition1.Items.AddRange(selectedItemsCondition1.ToArray());
                     #endregion
 
                     #region fill fixed condition2 selected items
                     listBoxAllFixedCondition2.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -282,11 +291,15 @@ namespace MergeFragIons
                                                    select item.Item6.ToString()).Distinct().ToList();
 
                         RemainItemscondition2 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition2).ToList();
-                        listBoxAllFixedCondition2.Items.AddRange(RemainItemscondition2.ToArray());
+                        listBoxAllFixedCondition2.Items.AddRange((from item in RemainItemscondition2
+                                                                  select "R" + item).ToArray());
 
                         //Filter
-                        foreach (string item in selectedItemsCondition2)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.Equals(item)).ToList());
+                        foreach (string item in selectedItemsCondition2)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
                     else if (entry.Value.Item2.ToString().StartsWith("Precursor"))
@@ -303,12 +316,16 @@ namespace MergeFragIons
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
 
-                    listBoxSelectedFixedCondition2.Items.AddRange(selectedItemsCondition2.ToArray());
+                    if (entry.Value.Item2.ToString().StartsWith("Replicates"))
+                        listBoxSelectedFixedCondition2.Items.AddRange((from item in selectedItemsCondition2
+                                                                       select "R" + item).ToArray());
+                    else
+                        listBoxSelectedFixedCondition2.Items.AddRange(selectedItemsCondition2.ToArray());
                     #endregion
 
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -342,11 +359,15 @@ namespace MergeFragIons
                                                    select item.Item6.ToString()).Distinct().ToList();
 
                         RemainItemscondition3 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition3).ToList();
-                        listBoxAllFixedCondition3.Items.AddRange(RemainItemscondition3.ToArray());
+                        listBoxAllFixedCondition3.Items.AddRange((from item in RemainItemscondition3
+                                                                  select "R" + item).ToArray());
 
                         //Filter
-                        foreach (string item in selectedItemsCondition3)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList().ToList());
+                        foreach (string item in selectedItemsCondition3)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
                     else if (entry.Value.Item3.ToString().StartsWith("Precursor"))
@@ -363,7 +384,11 @@ namespace MergeFragIons
                         allFragmentIonsAllConditions = _tempFragMethods;
                     }
 
-                    listBoxSelectedFixedCondition3.Items.AddRange(selectedItemsCondition3.ToArray());
+                    if (entry.Value.Item3.ToString().StartsWith("Replicates"))
+                        listBoxSelectedFixedCondition3.Items.AddRange((from item in selectedItemsCondition3
+                                                                       select "R" + item).ToArray());
+                    else
+                        listBoxSelectedFixedCondition3.Items.AddRange(selectedItemsCondition3.ToArray());
                     #endregion
 
                     #region fill Study selected items
@@ -388,9 +413,9 @@ namespace MergeFragIons
                     {
                         selectedItemsStudyCondition = (from item in entry.Value.Item4
                                                        select item.Item6.ToString()).Distinct().ToList();
-
                         RemainItemsstudycondition = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsStudyCondition).ToList();
-                        listBoxAllStudyCondition.Items.AddRange(RemainItemsstudycondition.ToArray());
+                        listBoxAllStudyCondition.Items.AddRange((from item in RemainItemsstudycondition
+                                                                 select "R" + item).ToArray());
                     }
                     else if (entry.Key.ToString().StartsWith("Precursor"))
                     {
@@ -401,7 +426,11 @@ namespace MergeFragIons
                         listBoxAllStudyCondition.Items.AddRange(RemainItemsstudycondition.ToArray());
                     }
 
-                    listBoxSelectedStudyCondition0.Items.AddRange(selectedItemsStudyCondition.ToArray());
+                    if (entry.Value.Item1.ToString().StartsWith("Replicates"))
+                        listBoxSelectedStudyCondition0.Items.AddRange((from item in selectedItemsStudyCondition
+                                                                       select "R" + item).ToArray());
+                    else
+                        listBoxSelectedStudyCondition0.Items.AddRange(selectedItemsStudyCondition.ToArray());
                     #endregion
 
                     comboBoxCondition1_0.Enabled = true;
@@ -487,12 +516,20 @@ namespace MergeFragIons
                     {
                         selectedItemsCondition1 = (from item in entry.Value.Item4
                                                    select item.Item6.ToString()).Distinct().ToList();
-                        RemainItemscondition1 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition1).ToList();
+
+                        RemainItemscondition1 = (from item in allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition1)
+                                                 select "R" + item).ToList();
 
                         //Filter
-                        foreach (string item in selectedItemsCondition1)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.Equals(item)).ToList());
+                        foreach (string item in selectedItemsCondition1)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
+
+                        selectedItemsCondition1 = (from item in selectedItemsCondition1
+                                                   select "R" + item).ToList();
                     }
                     else if (entry.Value.Item1.ToString().StartsWith("Precursor"))
                     {
@@ -509,7 +546,7 @@ namespace MergeFragIons
                     #endregion
 
                     #region fill fixed condition2 selected items
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -539,12 +576,19 @@ namespace MergeFragIons
                         selectedItemsCondition2 = (from item in entry.Value.Item4
                                                    select item.Item6.ToString()).Distinct().ToList();
 
-                        RemainItemscondition2 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition2).ToList();
+                        RemainItemscondition2 = (from item in allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition2)
+                                                 select "R" + item).ToList();
 
                         //Filter
-                        foreach (string item in selectedItemsCondition2)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.Equals(item)).ToList());
+                        foreach (string item in selectedItemsCondition2)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
+
+                        selectedItemsCondition2 = (from item in selectedItemsCondition2
+                                                   select "R" + item).ToList();
                     }
                     else if (entry.Value.Item2.ToString().StartsWith("Precursor"))
                     {
@@ -563,7 +607,7 @@ namespace MergeFragIons
 
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -594,12 +638,19 @@ namespace MergeFragIons
                         selectedItemsCondition3 = (from item in entry.Value.Item4
                                                    select item.Item6.ToString()).Distinct().ToList();
 
-                        RemainItemscondition3 = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition3).ToList();
+                        RemainItemscondition3 = (from item in allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsCondition3)
+                                                 select "R" + item).ToList();
 
                         //Filter
-                        foreach (string item in selectedItemsCondition3)
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList().ToList());
+                        foreach (string item in selectedItemsCondition3)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                         allFragmentIonsAllConditions = _tempFragMethods;
+
+                        selectedItemsCondition3 = (from item in selectedItemsCondition3
+                                                   select "R" + item).ToList();
                     }
                     else if (entry.Value.Item3.ToString().StartsWith("Precursor"))
                     {
@@ -635,9 +686,10 @@ namespace MergeFragIons
                     else if (entry.Key.ToString().StartsWith("Replicates"))
                     {
                         selectedItemsStudyCondition = (from item in entry.Value.Item4
-                                                       select item.Item6.ToString()).Distinct().ToList();
+                                                       select "R" + item.Item6.ToString()).Distinct().ToList();
 
-                        RemainItemsstudycondition = allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsStudyCondition).ToList();
+                        RemainItemsstudycondition = (from item in allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsStudyCondition)
+                                                     select "R" + item).ToList();
                     }
                     else if (entry.Key.ToString().StartsWith("Precursor"))
                     {
@@ -1234,7 +1286,7 @@ namespace MergeFragIons
             ListBox listBoxSelectedStudyCondition = null;
             Button addNewMap = null;
             Button addSelectedCondition = null;
-            List<(string, int, string, int, string, int)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
 
             if (((ComboBox)sender).Name.StartsWith("comboBoxCondition1"))
             {
@@ -1252,7 +1304,7 @@ namespace MergeFragIons
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)sender).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)sender).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)sender).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int)>)((object[])((ComboBox)sender).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)sender).Tag)[14];
             }
             else
             {
@@ -1270,7 +1322,7 @@ namespace MergeFragIons
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
             }
 
 
@@ -1412,7 +1464,7 @@ namespace MergeFragIons
                 return false;
         }
 
-        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int)> allFragmentIonsAllConditions)
+        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions)
         {
             string condition = currentCombobox.SelectedItem.ToString();
             listboxAllConditions.Items.Clear();
@@ -1448,13 +1500,13 @@ namespace MergeFragIons
                 else if (condition.StartsWith("Repl"))
                 {
                     foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderBy(a => a).ToList())
-                        listboxAllConditions.Items.Add(replicate);
+                        listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
             else if (currentCombobox.Name.StartsWith("comboBoxCondition2"))
             {
                 listboxSelectedCondition2.Items.Clear();
-                List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Frag Method
@@ -1471,9 +1523,20 @@ namespace MergeFragIons
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
                 {
-                    foreach (int item in listboxSelectedCondition1.Items)//Replicates
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        foreach (int item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                     }
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
@@ -1503,13 +1566,13 @@ namespace MergeFragIons
                 else if (condition.StartsWith("Repl"))
                 {
                     foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
-                        listboxAllConditions.Items.Add(replicate);
+                        listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
             else if (currentCombobox.Name.StartsWith("comboBoxCondition3"))
             {
                 listboxSelectedCondition3.Items.Clear();
-                List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 #region filter 1
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
@@ -1528,9 +1591,20 @@ namespace MergeFragIons
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
                 {
-                    foreach (int item in listboxSelectedCondition1.Items)//Replicates
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        foreach (int item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                     }
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
@@ -1544,7 +1618,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -1562,9 +1636,20 @@ namespace MergeFragIons
                 }
                 else if (listboxSelectedCondition2.Tag.Equals("Replicates"))
                 {
-                    foreach (int item in listboxSelectedCondition2.Items)//Replicates
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        foreach (int item in listboxSelectedCondition2.Items)//Replicates
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition2.Items)//Replicates
+                        {
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                        }
                     }
                 }
                 else if (listboxSelectedCondition2.Tag.Equals("Precursor Charge State"))
@@ -1595,14 +1680,14 @@ namespace MergeFragIons
                 else if (condition.StartsWith("Repl"))
                 {
                     foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
-                        listboxAllConditions.Items.Add(replicate);
+                        listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
             else if (currentCombobox.Name.StartsWith("comboBoxStudyCondition"))
             {
                 listboxSelectedStudyCondition.Items.Clear();
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 #region filter 1
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
@@ -1632,7 +1717,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listboxSelectedCondition1.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -1647,7 +1733,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listboxSelectedCondition1.Items)//Replicates
+                        foreach (string item in listboxSelectedCondition1.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -1657,7 +1743,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -1686,7 +1772,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listboxSelectedCondition2.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -1701,7 +1788,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listboxSelectedCondition2.Items)//Replicates
+                        foreach (string item in listboxSelectedCondition2.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -1711,7 +1798,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter 3
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition3.Tag.Equals("Fragmentation Method"))
                 {
@@ -1740,7 +1827,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listboxSelectedCondition3.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -1755,7 +1843,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listboxSelectedCondition3.Items)//Replicates
+                        foreach (string item in listboxSelectedCondition3.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -1782,7 +1870,7 @@ namespace MergeFragIons
                 else if (condition.StartsWith("Repl"))
                 {
                     foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
-                        listboxAllConditions.Items.Add(replicate);
+                        listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
         }
@@ -1849,7 +1937,7 @@ namespace MergeFragIons
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
 
             ListBox currentListBoxAllConditions = null;
             ListBox currentListBoxSelectedCondition = null;
@@ -1936,7 +2024,7 @@ namespace MergeFragIons
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -1964,7 +2052,8 @@ namespace MergeFragIons
                         {
                             foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
                             {
-                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                             }
                         }
                     }
@@ -1979,7 +2068,7 @@ namespace MergeFragIons
                         }
                         catch (Exception)
                         {
-                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
                             {
                                 _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                             }
@@ -2007,7 +2096,7 @@ namespace MergeFragIons
                     comboBoxStudyCondition.Enabled = true;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2035,7 +2124,8 @@ namespace MergeFragIons
                         {
                             foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
                             {
-                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                             }
                         }
                     }
@@ -2050,7 +2140,7 @@ namespace MergeFragIons
                         }
                         catch (Exception)
                         {
-                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
                             {
                                 _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                             }
@@ -2060,7 +2150,7 @@ namespace MergeFragIons
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -2080,15 +2170,16 @@ namespace MergeFragIons
                     {
                         try
                         {
-                            foreach (int item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            foreach (int item in listBoxSelectedFixedCondition2.Items)//Replicates
                             {
                                 _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
                             }
                         }
                         catch (Exception)
                         {
-                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
                             {
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
                                 _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
                             }
                         }
@@ -2104,9 +2195,10 @@ namespace MergeFragIons
                         }
                         catch (Exception)
                         {
-                            foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
+                            foreach (string item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
                             {
-                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                             }
                         }
                     }
@@ -2124,7 +2216,7 @@ namespace MergeFragIons
 
                 #region filter Condition1
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                 {
                     foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2152,7 +2244,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2167,7 +2260,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2177,7 +2270,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Condition2
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -2206,7 +2299,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2221,7 +2315,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2231,7 +2325,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Condition3
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
                 {
@@ -2260,7 +2354,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2275,7 +2370,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition3.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition3.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2285,7 +2380,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Study Condition
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
                 {
@@ -2314,7 +2409,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2329,7 +2425,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedStudyCondition.Items)//Replicates
+                        foreach (string item in listBoxSelectedStudyCondition.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2346,7 +2442,7 @@ namespace MergeFragIons
                 string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                 /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                (string, string, string, List<(string, int, string, int, string, int)>) currentMap;
+                (string, string, string, List<(string, int, string, int, string, int, double)>) currentMap;
 
                 string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                 string _key = studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString() + "#" + numberOfCondition;
@@ -2411,7 +2507,7 @@ namespace MergeFragIons
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
 
             ListBox currentListBoxAllConditions = null;
             ListBox currentListBoxSelectedCondition = null;
@@ -2505,7 +2601,7 @@ namespace MergeFragIons
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2522,9 +2618,20 @@ namespace MergeFragIons
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition1.Items)//Replicates
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                            }
                         }
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
@@ -2558,7 +2665,7 @@ namespace MergeFragIons
 
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2575,9 +2682,20 @@ namespace MergeFragIons
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition1.Items)//Replicates
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                            }
                         }
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
@@ -2591,7 +2709,7 @@ namespace MergeFragIons
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -2609,9 +2727,20 @@ namespace MergeFragIons
                     }
                     else if (listBoxSelectedFixedCondition2.Tag.Equals("Replicates"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition2.Items)//Replicates
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition2.Items)//Replicates
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
+                            {
+                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                            }
                         }
                     }
                     else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
@@ -2656,7 +2785,7 @@ namespace MergeFragIons
 
                 #region filter Condition1
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                List<(string, int, string, int, string, int)> _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                 {
                     foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2684,7 +2813,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2699,7 +2829,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2709,7 +2839,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Condition2
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -2738,7 +2868,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2753,7 +2884,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2763,7 +2894,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Condition3
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
                 {
@@ -2792,7 +2923,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2807,7 +2939,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedFixedCondition3.Items)//Replicates
+                        foreach (string item in listBoxSelectedFixedCondition3.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2817,7 +2949,7 @@ namespace MergeFragIons
                 #endregion
 
                 #region filter Study Condition
-                _tempFragMethods = new List<(string, int, string, int, string, int)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
                 {
@@ -2846,7 +2978,8 @@ namespace MergeFragIons
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Replicates
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6.ToString().Equals(item)).ToList());
+                            int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
                         }
                     }
                 }
@@ -2861,7 +2994,7 @@ namespace MergeFragIons
                     }
                     catch (Exception)
                     {
-                        foreach (string item in listBoxSelectedStudyCondition.Items)//Replicates
+                        foreach (string item in listBoxSelectedStudyCondition.Items)//Precursor Charge State
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2.ToString().Equals(item)).ToList());
                         }
@@ -2878,7 +3011,7 @@ namespace MergeFragIons
                 string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                 /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                (string, string, string, List<(string, int, string, int, string, int)>) currentMap;
+                (string, string, string, List<(string, int, string, int, string, int, double)>) currentMap;
 
                 string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                 string _key = studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString() + "#" + numberOfCondition;

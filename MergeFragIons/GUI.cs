@@ -30,6 +30,7 @@ namespace MergeFragIons
         private TextWriter _writer = null; // That's our custom TextWriter class
         private Thread mainThread { get; set; }
         private Program mainProgramGUI { get; set; }
+        private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
 
         private string[] args { get; set; }
 
@@ -42,11 +43,17 @@ namespace MergeFragIons
             ActiveListBoxControl();
 
             // Create a Save button column
-            DataGridViewImageButtonBrowseColumn columnBrowse = new DataGridViewImageButtonBrowseColumn();
+            DataGridViewImageButtonBrowseColumn columnBrowseMSMSData = new DataGridViewImageButtonBrowseColumn();
             // Set column values
-            columnBrowse.Name = "btnMSMSInputFile";
-            columnBrowse.HeaderText = "";
-            this.dataGridViewInputFiles.Columns.Add(columnBrowse);
+            columnBrowseMSMSData.Name = "btnMSMSInputFile";
+            columnBrowseMSMSData.HeaderText = "";
+            this.dataGridViewInputFiles.Columns.Insert(5, columnBrowseMSMSData);
+
+            DataGridViewImageButtonBrowseColumn columnBrowseDeconvSpectra = new DataGridViewImageButtonBrowseColumn();
+            // Set column values
+            columnBrowseDeconvSpectra.Name = "btnDeconvSpectraInputFile";
+            columnBrowseDeconvSpectra.HeaderText = "";
+            this.dataGridViewInputFiles.Columns.Insert(7, columnBrowseDeconvSpectra);
 
             AddNewRowDatagridInputFiles();
         }
@@ -67,6 +74,10 @@ namespace MergeFragIons
                 DataGridViewButtonCell btnCell = (DataGridViewButtonCell)row.Cells[5];
                 btnCell.FlatStyle = FlatStyle.Standard;
                 btnCell.Value = "Browse file";
+
+                DataGridViewButtonCell btnCell2 = (DataGridViewButtonCell)row.Cells[7];
+                btnCell2.FlatStyle = FlatStyle.Standard;
+                btnCell2.Value = "Browse file";
             }
             dataGridViewInputFiles.RowHeadersWidth = 50;
         }
@@ -186,9 +197,9 @@ namespace MergeFragIons
             myParams.SequenceInformation = textBoxSeqInfo.Text;
 
             /// <summary>
-            /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate)>
+            /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intesity Data)>
             /// </summary>
-            List<(string, string, string, int, int)> inputFileList = new List<(string, string, string, int, int)>();
+            List<(string, string, string, int, int, string)> inputFileList = new List<(string, string, string, int, int, string)>();
 
             #region Read datagridviewInputfiles
             StringBuilder sbError = new StringBuilder();
@@ -199,23 +210,56 @@ namespace MergeFragIons
                     (GridRow.Cells[1].Value != null && !String.IsNullOrEmpty(GridRow.Cells[1].Value.ToString())) &&
                     (GridRow.Cells[2].Value != null && !String.IsNullOrEmpty(GridRow.Cells[2].Value.ToString())) &&
                     (GridRow.Cells[3].Value != null && !String.IsNullOrEmpty(GridRow.Cells[3].Value.ToString())) &&
-                    (GridRow.Cells[4].Value != null && !String.IsNullOrEmpty(GridRow.Cells[4].Value.ToString())))
+                    (GridRow.Cells[4].Value != null && !String.IsNullOrEmpty(GridRow.Cells[4].Value.ToString()))) /*&&*/
+                                                                                                                  //(GridRow.Cells[6].Value != null && !String.IsNullOrEmpty(GridRow.Cells[6].Value.ToString())))
                 {
+                    int replicate = Convert.ToInt32(numberCaptured.Matches(GridRow.Cells[3].Value.ToString())[0].Value);
                     if (GridRow.Cells[0].Value.ToString().ToLower().Equals("etchd"))
                     {
-                        inputFileList.Add((GridRow.Cells[4].Value.ToString(),
-                            "EThcD",
-                            GridRow.Cells[1].Value.ToString(),
-                            Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
-                            Convert.ToInt32(GridRow.Cells[3].Value.ToString())));
+                        if (GridRow.Cells[6].Value != null && !String.IsNullOrEmpty(GridRow.Cells[6].Value.ToString()))
+                        {
+                            inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                                "EThcD",
+                                GridRow.Cells[1].Value.ToString(),
+                                Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
+                                Convert.ToInt32(replicate),
+                                GridRow.Cells[6].Value.ToString()));
+                            myParams.HasIntensities = true;
+                        }
+                        else
+                        {
+                            inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                                "EThcD",
+                                GridRow.Cells[1].Value.ToString(),
+                                Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
+                                Convert.ToInt32(replicate),
+                                string.Empty));
+                            myParams.HasIntensities = false;
+                        }
+
                     }
                     else
                     {
-                        inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                        if (GridRow.Cells[6].Value != null && !String.IsNullOrEmpty(GridRow.Cells[6].Value.ToString()))
+                        {
+                            inputFileList.Add((GridRow.Cells[4].Value.ToString(),
                             GridRow.Cells[0].Value.ToString(),
                             GridRow.Cells[1].Value.ToString(),
                             Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
-                            Convert.ToInt32(GridRow.Cells[3].Value.ToString())));
+                            Convert.ToInt32(replicate),
+                            GridRow.Cells[6].Value.ToString()));
+                            myParams.HasIntensities = true;
+                        }
+                        else
+                        {
+                            inputFileList.Add((GridRow.Cells[4].Value.ToString(),
+                            GridRow.Cells[0].Value.ToString(),
+                            GridRow.Cells[1].Value.ToString(),
+                            Convert.ToInt32(GridRow.Cells[2].Value.ToString()),
+                            Convert.ToInt32(replicate),
+                            string.Empty));
+                            myParams.HasIntensities = false;
+                        }
                     }
                 }
                 else
@@ -322,14 +366,17 @@ namespace MergeFragIons
                     Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
                     dlg.FileName = ""; // Default file name
                     dlg.DefaultExt = ".xlsx"; // Default file extension
-                    dlg.Filter = "Excel File(*.xlsx)|*.xlsx|CSV File (*.csv)|*.csv";
+                    dlg.Filter = "Excel File(*.xlsx)|*.xlsx|Excel File(*.xls)|*.xls|CSV File (*.csv)|*.csv";
                     dlg.Title = "Open input files";
 
                     // Show open file dialog box
                     Nullable<bool> result = dlg.ShowDialog();
                     if (result == true)
                     {
-                        dataGridViewInputFiles[4, e.RowIndex].Value = dlg.FileName;
+                        if (e.ColumnIndex == 5)
+                            dataGridViewInputFiles[4, e.RowIndex].Value = dlg.FileName;
+                        else if (e.ColumnIndex == 7)
+                            dataGridViewInputFiles[6, e.RowIndex].Value = dlg.FileName;
                     }
                 }
             }
@@ -457,7 +504,10 @@ namespace MergeFragIons
                         {
                             if (iCol + i < this.dataGridViewInputFiles.ColumnCount)
                             {
-                                oCell = dataGridViewInputFiles[iCol + i, iRow];
+                                if (i == 5)
+                                    oCell = dataGridViewInputFiles[iCol + (i + 1), iRow];
+                                else
+                                    oCell = dataGridViewInputFiles[iCol + i, iRow];
                                 oCell.Value = Convert.ChangeType(sCells[i], oCell.ValueType);
                             }
                             else break;
@@ -501,7 +551,7 @@ namespace MergeFragIons
 
         private void buttonDisplay_Click(object sender, EventArgs e)
         {
-            if(mainProgramGUI.mainCore.DictMaps.Count==0)
+            if (mainProgramGUI.mainCore.DictMaps.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show(
                         "There is no Map. Please, create one before displaying results.",

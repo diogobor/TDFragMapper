@@ -1,9 +1,11 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using ExcelDataReader;
 using MergeFragIons.Controller;
 using MergeFragIons.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +19,14 @@ namespace MergeFragIons
 {
     class Program
     {
+        /// <summary>
+        /// List of Fragment Ions
+        /// </summary>
+        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile
+        private List<(string, int, string, int, string, int, double, string)> FragIons { get; set; }
 
+        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+        private List<(string, int, string, int, string, int, double)> FragIonsWithIntensities { get; set; }
         public Core mainCore { get; set; }
         public bool FinishProcessing { get; set; }
         public ProgramParams programParams { get; set; }
@@ -91,7 +100,40 @@ namespace MergeFragIons
             #endregion
 
             #region debug
-
+            //DataTableCollection dataTableCollection;
+            //string path = @"Z:\data\Data_files 2\Xtract_files\CID\Xtract_LC_CID20_Precursor17_Replicate01.xls";
+            //using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
+            //{
+            //    using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
+            //    {
+            //        DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration()
+            //        {
+            //            ConfigureDataTable = (_) => new ExcelDataTableConfiguration() { UseHeaderRow = true }
+            //        });
+            //        dataTableCollection = result.Tables;
+            //        bool isSubRow = false;
+            //        foreach (DataRow dataRow in dataTableCollection[0].Rows)
+            //        {
+            //            var values = dataRow.ItemArray;
+            //            if (String.IsNullOrEmpty(values[1].ToString()))
+            //            {
+            //                isSubRow = false;
+            //                continue;
+            //            }
+            //            if (values[1].ToString().StartsWith("Charge"))
+            //            {
+            //                isSubRow = true;
+            //                continue;
+            //            }
+            //            if (isSubRow) continue;
+            //            double monoIsotopicMass = Convert.ToDouble(values[1]);
+            //            double intensity = Convert.ToDouble(values[2]);
+            //            //ionType = values[1].ToString();
+            //            //aminoacidPos = Convert.ToInt32(values[2]);
+            //            //FragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, dataFile.Item6));
+            //        }
+            //    }
+            //}
             #endregion
 
             Application.EnableVisualStyles();
@@ -117,14 +159,20 @@ namespace MergeFragIons
             }
 
             Console.WriteLine("#################################################################################################################################################################");
-            Console.WriteLine("                                                                                                                                                                                    Merge Fragment Ions - v. " + version + "\n");
-            Console.WriteLine("                                                                                                                                                  Engineered by Diogo Borges Lima (CeMM) and MSBio - Institut Pasteur             \n");
+            Console.WriteLine("                                                                                                                                                                                Merge Fragment Ions - v. " + version + "\n");
+            Console.WriteLine("                                                                                                                                              Engineered by Diogo Borges Lima (CeMM) and MSBio - Institut Pasteur             \n");
             Console.WriteLine("#################################################################################################################################################################");
 
             ReadProteinSequence();
             ReadFragmentIons();
+            if (programParams.HasIntensities)
+                ReadIntensities();
+            else
+                SetNullIntensitiesFragIons();
 
             mainCore.ProcessFragIons();
+
+            Console.WriteLine(" Files have been loaded successfully!");
 
             FinishProcessing = true;
         }
@@ -158,17 +206,18 @@ namespace MergeFragIons
             /// <summary>
             /// List of Fragment Ions
             /// </summary>
-            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate
-            List<(string, int, string, int, string, int)> fragIons = new List<(string, int, string, int, string, int)>();
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile
+            FragIons = new List<(string, int, string, int, string, int, double, string)>();
 
             /// <summary>
-            /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate)>
+            /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intensity Data)>
             /// </summary>
-            foreach ((string, string, string, int, int) dataFile in programParams.InputFileList)
+            foreach ((string, string, string, int, int, string) dataFile in programParams.InputFileList)
             {
                 Console.WriteLine(" Reading {0} ...", dataFile.Item1);
                 string ionType = "";
                 int aminoacidPos = 0;
+                double observedMass = 0;
 
                 string fragMethod = dataFile.Item2;
                 string activationLevel = dataFile.Item3;
@@ -177,68 +226,24 @@ namespace MergeFragIons
 
                 try
                 {
-                    using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(dataFile.Item1, false))
+                    DataTableCollection dataTableCollection;
+                    using (var stream = File.Open(dataFile.Item1, FileMode.Open, FileAccess.Read))
                     {
-                        WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-                        WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
-                        SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-                        string currentcellvalue = string.Empty;
-
-                        foreach (Row r in sheetData.Elements<Row>())
+                        using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
                         {
-                            int countCell = 0;
-                            foreach (Cell currentcell in r.Elements<Cell>())
+                            DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration()
                             {
-                                if (currentcell.CellValue == null) break;
-                                if (currentcell.DataType != null)
-                                {
-                                    if (currentcell.DataType == CellValues.SharedString)
-                                    {
-                                        int id = -1;
-
-                                        if (Int32.TryParse(currentcell.InnerText, out id))
-                                        {
-                                            SharedStringItem item = GetSharedStringItemById(workbookPart, id);
-
-                                            if (item.Text != null)
-                                            {
-                                                //code to take the string value  
-                                                currentcellvalue = item.Text.Text;
-                                            }
-                                            else if (item.InnerText != null)
-                                            {
-                                                currentcellvalue = item.InnerText;
-                                            }
-                                            else if (item.InnerXml != null)
-                                            {
-                                                currentcellvalue = item.InnerXml;
-                                            }
-                                        }
-                                    }
-                                    else
-                                        currentcellvalue = currentcell.CellValue.Text;
-                                }
-                                else
-                                    currentcellvalue = currentcell.CellValue.Text;
-                                if (currentcellvalue.StartsWith("Name")) break;
-
-                                if (countCell == 0)
-                                {
-                                    countCell++;
-                                    continue;
-                                }
-                                else if (countCell == 1)
-                                    ionType = currentcellvalue;
-                                else if (countCell == 2)
-                                {
-                                    aminoacidPos = Convert.ToInt32(currentcellvalue);
-                                    break;
-                                }
-
-                                countCell++;
+                                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() { UseHeaderRow = true }
+                            });
+                            dataTableCollection = result.Tables;
+                            foreach (DataRow dataRow in dataTableCollection[0].Rows)
+                            {
+                                var values = dataRow.ItemArray;
+                                ionType = values[1].ToString();
+                                aminoacidPos = Convert.ToInt32(values[2]);
+                                observedMass = Convert.ToDouble(values[4]);
+                                FragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, observedMass, dataFile.Item6));
                             }
-                            if (!String.IsNullOrEmpty(ionType))
-                                fragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate));
                         }
                     }
                 }
@@ -252,14 +257,99 @@ namespace MergeFragIons
                 }
             }
 
-            mainCore.FragmentIons = fragIons.Distinct().ToList();
+            //mainCore.FragmentIons = FragIons.Distinct().ToList();
 
-            Console.WriteLine(" Done!");
+            FragIons = FragIons.Distinct().ToList();
+
         }
 
-        private SharedStringItem GetSharedStringItemById(WorkbookPart workbookPart, int id)
+        private void ReadIntensities()
         {
-            return workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+            Console.WriteLine(" Reading intensity file(s)...");
+
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double)>();
+
+            /// <summary>
+            /// List of Intensities
+            /// </summary>
+            /// string,double,double -> Intensity file, monoisotopic mass, sum intensity
+            List<(string, double, double)> Intensities;
+
+            /// <summary>
+            /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intesity data)>
+            /// </summary>
+            foreach ((string, string, string, int, int, string) dataFile in programParams.InputFileList)
+            {
+                if (String.IsNullOrEmpty(dataFile.Item6))
+                {
+                    continue;
+                }
+                Console.WriteLine(" Reading {0} ...", dataFile.Item6);
+                double monoIsotopicMass = 0;
+                double intensity = 0;
+                Intensities = new List<(string, double, double)>();
+
+                try
+                {
+                    DataTableCollection dataTableCollection;
+                    using (var stream = File.Open(dataFile.Item6, FileMode.Open, FileAccess.Read))
+                    {
+                        using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
+                        {
+                            DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration()
+                            {
+                                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() { UseHeaderRow = true }
+                            });
+                            dataTableCollection = result.Tables;
+                            bool isSubRow = false;
+                            foreach (DataRow dataRow in dataTableCollection[0].Rows)
+                            {
+                                var values = dataRow.ItemArray;
+                                if (String.IsNullOrEmpty(values[1].ToString()))
+                                {
+                                    isSubRow = false;
+                                    continue;
+                                }
+                                if (values[1].ToString().StartsWith("Charge"))
+                                {
+                                    isSubRow = true;
+                                    continue;
+                                }
+                                if (isSubRow) continue;
+                                monoIsotopicMass = Convert.ToDouble(values[1]);
+                                intensity = Convert.ToDouble(values[2]);
+                                Intensities.Add((dataFile.Item6, monoIsotopicMass, intensity));
+                            }
+                        }
+
+                        FragIonsWithIntensities.AddRange(mainCore.MatchFragmentIonsAndIntensities(FragIons.Where(a=>a.Item8.Equals(dataFile.Item6)).ToList(), Intensities));
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(
+                                        "Error to read some files:\n" + e.Message,
+                                        "Error",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                }
+            }
+
+            mainCore.FragmentIons = FragIonsWithIntensities;
+        }
+
+        private void SetNullIntensitiesFragIons()
+        {
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double)>();
+
+            FragIons.ForEach(a =>
+            {
+                FragIonsWithIntensities.Add((a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, 0));
+            });
+            mainCore.FragmentIons = FragIonsWithIntensities;
+            FragIons = null;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MergeFragIons
     {
         private Core Core;
         private Dictionary<string, List<int>> DictFragMethodsWithPrecursorChargeStates { get; set; }
-        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)> initialDictionaryMaps { get; set; }
+        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> initialDictionaryMaps { get; set; }
         public Results()
         {
             InitializeComponent();
@@ -31,8 +31,8 @@ namespace MergeFragIons
         public void Setup(Core core)
         {
             Core = core;
-            initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int)>)>(core.DictMaps);
-            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation);
+            initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(core.DictMaps);
+            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, true, false);
             this.userControlFilterCondition1.Setup(Core, false);
         }
 

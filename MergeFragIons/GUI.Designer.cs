@@ -45,13 +45,10 @@
             this.groupBoxLog = new System.Windows.Forms.GroupBox();
             this.listBoxConsole = new System.Windows.Forms.ListBox();
             this.groupBoxInputFiles = new System.Windows.Forms.GroupBox();
+            this.textBoxSeqInfo = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.buttonAddInputFile = new System.Windows.Forms.Button();
             this.dataGridViewInputFiles = new System.Windows.Forms.DataGridView();
-            this.FragMethodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ActivationLevelCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PrecursorChargeStateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
@@ -61,8 +58,12 @@
             this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.textBoxSeqInfo = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.FragMethodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ActivationLevelCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrecursorChargeStateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -179,6 +180,18 @@
             this.groupBoxInputFiles.Name = "groupBoxInputFiles";
             this.groupBoxInputFiles.TabStop = false;
             // 
+            // textBoxSeqInfo
+            // 
+            resources.ApplyResources(this.textBoxSeqInfo, "textBoxSeqInfo");
+            this.textBoxSeqInfo.Name = "textBoxSeqInfo";
+            this.toolTips.SetToolTip(this.textBoxSeqInfo, resources.GetString("textBoxSeqInfo.ToolTip"));
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            this.toolTips.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
+            // 
             // buttonAddInputFile
             // 
             this.buttonAddInputFile.Image = global::MergeFragIons.Properties.Resources.addButton;
@@ -196,43 +209,14 @@
             this.ActivationLevelCol,
             this.PrecursorChargeStateCol,
             this.ReplicateCol,
-            this.MSMSData});
+            this.MSMSData,
+            this.DeconvSpectra});
             resources.ApplyResources(this.dataGridViewInputFiles, "dataGridViewInputFiles");
             this.dataGridViewInputFiles.Name = "dataGridViewInputFiles";
             this.dataGridViewInputFiles.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridViewInputFiles.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInputFiles_CellClick);
             this.dataGridViewInputFiles.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridViewInputFiles_EditingControlShowing);
             this.dataGridViewInputFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dataGridViewInputFiles_KeyPress);
-            // 
-            // FragMethodCol
-            // 
-            resources.ApplyResources(this.FragMethodCol, "FragMethodCol");
-            this.FragMethodCol.MaxInputLength = 10;
-            this.FragMethodCol.Name = "FragMethodCol";
-            // 
-            // ActivationLevelCol
-            // 
-            resources.ApplyResources(this.ActivationLevelCol, "ActivationLevelCol");
-            this.ActivationLevelCol.MaxInputLength = 4;
-            this.ActivationLevelCol.Name = "ActivationLevelCol";
-            // 
-            // PrecursorChargeStateCol
-            // 
-            resources.ApplyResources(this.PrecursorChargeStateCol, "PrecursorChargeStateCol");
-            this.PrecursorChargeStateCol.MaxInputLength = 4;
-            this.PrecursorChargeStateCol.Name = "PrecursorChargeStateCol";
-            // 
-            // ReplicateCol
-            // 
-            resources.ApplyResources(this.ReplicateCol, "ReplicateCol");
-            this.ReplicateCol.MaxInputLength = 4;
-            this.ReplicateCol.Name = "ReplicateCol";
-            // 
-            // MSMSData
-            // 
-            this.MSMSData.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(this.MSMSData, "MSMSData");
-            this.MSMSData.Name = "MSMSData";
             // 
             // buttonOK
             // 
@@ -281,17 +265,40 @@
             resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
             // 
-            // textBoxSeqInfo
+            // FragMethodCol
             // 
-            resources.ApplyResources(this.textBoxSeqInfo, "textBoxSeqInfo");
-            this.textBoxSeqInfo.Name = "textBoxSeqInfo";
-            this.toolTips.SetToolTip(this.textBoxSeqInfo, resources.GetString("textBoxSeqInfo.ToolTip"));
+            resources.ApplyResources(this.FragMethodCol, "FragMethodCol");
+            this.FragMethodCol.MaxInputLength = 10;
+            this.FragMethodCol.Name = "FragMethodCol";
             // 
-            // label2
+            // ActivationLevelCol
             // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
-            this.toolTips.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
+            resources.ApplyResources(this.ActivationLevelCol, "ActivationLevelCol");
+            this.ActivationLevelCol.MaxInputLength = 4;
+            this.ActivationLevelCol.Name = "ActivationLevelCol";
+            // 
+            // PrecursorChargeStateCol
+            // 
+            resources.ApplyResources(this.PrecursorChargeStateCol, "PrecursorChargeStateCol");
+            this.PrecursorChargeStateCol.MaxInputLength = 4;
+            this.PrecursorChargeStateCol.Name = "PrecursorChargeStateCol";
+            // 
+            // ReplicateCol
+            // 
+            resources.ApplyResources(this.ReplicateCol, "ReplicateCol");
+            this.ReplicateCol.MaxInputLength = 4;
+            this.ReplicateCol.Name = "ReplicateCol";
+            // 
+            // MSMSData
+            // 
+            resources.ApplyResources(this.MSMSData, "MSMSData");
+            this.MSMSData.Name = "MSMSData";
+            // 
+            // DeconvSpectra
+            // 
+            this.DeconvSpectra.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(this.DeconvSpectra, "DeconvSpectra");
+            this.DeconvSpectra.Name = "DeconvSpectra";
             // 
             // GUI
             // 
@@ -348,15 +355,16 @@
         private System.Windows.Forms.TabPage tabPage2;
         public System.Windows.Forms.DataGridView dataGridViewInputFiles;
         private System.Windows.Forms.Button buttonAddInputFile;
+        private UserControlFilterCondition userControlFilterCondition1;
+        private System.Windows.Forms.Button buttonDisplay;
+        private System.Windows.Forms.TextBox textBoxSeqInfo;
+        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridViewTextBoxColumn FragMethodCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn ActivationLevelCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecursorChargeStateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
-        private UserControlFilterCondition userControlFilterCondition1;
-        private System.Windows.Forms.Button buttonDisplay;
-        private System.Windows.Forms.TextBox textBoxSeqInfo;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
     }
 }
 
