@@ -49,6 +49,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.buttonAddInputFile = new System.Windows.Forms.Button();
             this.dataGridViewInputFiles = new System.Windows.Forms.DataGridView();
+            this.FragMethodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ActivationLevelCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrecursorChargeStateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
@@ -56,14 +62,12 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.buttonDisplay = new System.Windows.Forms.Button();
             this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
+            this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.FragMethodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ActivationLevelCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PrecursorChargeStateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -72,6 +76,8 @@
             this.groupBoxInputFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).BeginInit();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.groupBoxIntensityNorm.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -142,6 +148,7 @@
             resources.ApplyResources(this.tabControlMainWindow, "tabControlMainWindow");
             this.tabControlMainWindow.Controls.Add(this.tabPage1);
             this.tabControlMainWindow.Controls.Add(this.tabPage2);
+            this.tabControlMainWindow.Controls.Add(this.tabPage3);
             this.tabControlMainWindow.Name = "tabControlMainWindow";
             this.tabControlMainWindow.SelectedIndex = 0;
             // 
@@ -218,6 +225,41 @@
             this.dataGridViewInputFiles.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridViewInputFiles_EditingControlShowing);
             this.dataGridViewInputFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dataGridViewInputFiles_KeyPress);
             // 
+            // FragMethodCol
+            // 
+            resources.ApplyResources(this.FragMethodCol, "FragMethodCol");
+            this.FragMethodCol.MaxInputLength = 10;
+            this.FragMethodCol.Name = "FragMethodCol";
+            // 
+            // ActivationLevelCol
+            // 
+            resources.ApplyResources(this.ActivationLevelCol, "ActivationLevelCol");
+            this.ActivationLevelCol.MaxInputLength = 4;
+            this.ActivationLevelCol.Name = "ActivationLevelCol";
+            // 
+            // PrecursorChargeStateCol
+            // 
+            resources.ApplyResources(this.PrecursorChargeStateCol, "PrecursorChargeStateCol");
+            this.PrecursorChargeStateCol.MaxInputLength = 4;
+            this.PrecursorChargeStateCol.Name = "PrecursorChargeStateCol";
+            // 
+            // ReplicateCol
+            // 
+            resources.ApplyResources(this.ReplicateCol, "ReplicateCol");
+            this.ReplicateCol.MaxInputLength = 4;
+            this.ReplicateCol.Name = "ReplicateCol";
+            // 
+            // MSMSData
+            // 
+            resources.ApplyResources(this.MSMSData, "MSMSData");
+            this.MSMSData.Name = "MSMSData";
+            // 
+            // DeconvSpectra
+            // 
+            this.DeconvSpectra.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            resources.ApplyResources(this.DeconvSpectra, "DeconvSpectra");
+            this.DeconvSpectra.Name = "DeconvSpectra";
+            // 
             // buttonOK
             // 
             resources.ApplyResources(this.buttonOK, "buttonOK");
@@ -265,40 +307,34 @@
             resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
             // 
-            // FragMethodCol
+            // tabPage3
             // 
-            resources.ApplyResources(this.FragMethodCol, "FragMethodCol");
-            this.FragMethodCol.MaxInputLength = 10;
-            this.FragMethodCol.Name = "FragMethodCol";
+            this.tabPage3.Controls.Add(this.groupBoxIntensityNorm);
+            resources.ApplyResources(this.tabPage3, "tabPage3");
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // ActivationLevelCol
+            // groupBoxIntensityNorm
             // 
-            resources.ApplyResources(this.ActivationLevelCol, "ActivationLevelCol");
-            this.ActivationLevelCol.MaxInputLength = 4;
-            this.ActivationLevelCol.Name = "ActivationLevelCol";
+            resources.ApplyResources(this.groupBoxIntensityNorm, "groupBoxIntensityNorm");
+            this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
+            this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
+            this.groupBoxIntensityNorm.Name = "groupBoxIntensityNorm";
+            this.groupBoxIntensityNorm.TabStop = false;
             // 
-            // PrecursorChargeStateCol
+            // checkBoxIntensityGlobal
             // 
-            resources.ApplyResources(this.PrecursorChargeStateCol, "PrecursorChargeStateCol");
-            this.PrecursorChargeStateCol.MaxInputLength = 4;
-            this.PrecursorChargeStateCol.Name = "PrecursorChargeStateCol";
+            resources.ApplyResources(this.checkBoxIntensityGlobal, "checkBoxIntensityGlobal");
+            this.checkBoxIntensityGlobal.Name = "checkBoxIntensityGlobal";
+            this.checkBoxIntensityGlobal.UseVisualStyleBackColor = true;
+            this.checkBoxIntensityGlobal.CheckedChanged += new System.EventHandler(this.checkBoxIntensityGlobal_CheckedChanged);
             // 
-            // ReplicateCol
+            // checkBoxIntensityPerMap
             // 
-            resources.ApplyResources(this.ReplicateCol, "ReplicateCol");
-            this.ReplicateCol.MaxInputLength = 4;
-            this.ReplicateCol.Name = "ReplicateCol";
-            // 
-            // MSMSData
-            // 
-            resources.ApplyResources(this.MSMSData, "MSMSData");
-            this.MSMSData.Name = "MSMSData";
-            // 
-            // DeconvSpectra
-            // 
-            this.DeconvSpectra.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            resources.ApplyResources(this.DeconvSpectra, "DeconvSpectra");
-            this.DeconvSpectra.Name = "DeconvSpectra";
+            resources.ApplyResources(this.checkBoxIntensityPerMap, "checkBoxIntensityPerMap");
+            this.checkBoxIntensityPerMap.Name = "checkBoxIntensityPerMap";
+            this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
+            this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
             // GUI
             // 
@@ -325,6 +361,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.groupBoxIntensityNorm.ResumeLayout(false);
+            this.groupBoxIntensityNorm.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -365,6 +404,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.GroupBox groupBoxIntensityNorm;
+        private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
+        private System.Windows.Forms.CheckBox checkBoxIntensityPerMap;
     }
 }
 

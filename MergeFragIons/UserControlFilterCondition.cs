@@ -126,7 +126,6 @@ namespace MergeFragIons
             else
                 UpdateMaps();
         }
-
         private void UpdateMaps()
         {
             int countCondition = 0;

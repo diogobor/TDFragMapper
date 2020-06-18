@@ -45,11 +45,17 @@
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
             this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
+            this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBoxMain.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.groupBoxIntensityNorm.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -120,6 +126,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(12, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -204,6 +211,54 @@
             this.buttonFilter.UseVisualStyleBackColor = true;
             this.buttonFilter.Click += new System.EventHandler(this.buttonFilter_Click);
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.groupBoxIntensityNorm);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(1068, 593);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Intensity";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxIntensityNorm
+            // 
+            this.groupBoxIntensityNorm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
+            this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
+            this.groupBoxIntensityNorm.Location = new System.Drawing.Point(6, 6);
+            this.groupBoxIntensityNorm.Name = "groupBoxIntensityNorm";
+            this.groupBoxIntensityNorm.Size = new System.Drawing.Size(1056, 581);
+            this.groupBoxIntensityNorm.TabIndex = 3;
+            this.groupBoxIntensityNorm.TabStop = false;
+            this.groupBoxIntensityNorm.Text = "Intensity normalization";
+            // 
+            // checkBoxIntensityGlobal
+            // 
+            this.checkBoxIntensityGlobal.AutoSize = true;
+            this.checkBoxIntensityGlobal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.checkBoxIntensityGlobal.Location = new System.Drawing.Point(19, 62);
+            this.checkBoxIntensityGlobal.Name = "checkBoxIntensityGlobal";
+            this.checkBoxIntensityGlobal.Size = new System.Drawing.Size(127, 17);
+            this.checkBoxIntensityGlobal.TabIndex = 1;
+            this.checkBoxIntensityGlobal.Text = "Across all study maps";
+            this.checkBoxIntensityGlobal.UseVisualStyleBackColor = true;
+            this.checkBoxIntensityGlobal.CheckedChanged += new System.EventHandler(this.checkBoxIntensityGlobal_CheckedChanged);
+            // 
+            // checkBoxIntensityPerMap
+            // 
+            this.checkBoxIntensityPerMap.AutoSize = true;
+            this.checkBoxIntensityPerMap.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.checkBoxIntensityPerMap.Location = new System.Drawing.Point(19, 30);
+            this.checkBoxIntensityPerMap.Name = "checkBoxIntensityPerMap";
+            this.checkBoxIntensityPerMap.Size = new System.Drawing.Size(93, 17);
+            this.checkBoxIntensityPerMap.TabIndex = 0;
+            this.checkBoxIntensityPerMap.Text = "Per study map";
+            this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
+            this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
+            // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -224,6 +279,9 @@
             this.tabPage2.ResumeLayout(false);
             this.groupBoxMain.ResumeLayout(false);
             this.groupBoxMain.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.groupBoxIntensityNorm.ResumeLayout(false);
+            this.groupBoxIntensityNorm.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,5 +304,9 @@
         private ProteinMergeFragIons.ProteinFragIons proteinFragIons1;
         private System.Windows.Forms.Button buttonFilter;
         private UserControlFilterCondition userControlFilterCondition1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.GroupBox groupBoxIntensityNorm;
+        private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
+        private System.Windows.Forms.CheckBox checkBoxIntensityPerMap;
     }
 }

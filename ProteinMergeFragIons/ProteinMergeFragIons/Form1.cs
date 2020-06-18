@@ -220,18 +220,18 @@ namespace ProteinMergeFragIons
             //_key = "Precursor Charge State#Fragmentation Method#HCD";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 22)).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#EThcD";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 11 || a.Item2 == 22)).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#EThcD";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
             currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
             _key = "Precursor Charge State#Fragmentation Method#CID";
             DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#UVPD";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#UVPD";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 25 && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("27"))).ToList();
             // _key = "Activation Level#Fragmentation Method#CID#0";

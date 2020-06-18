@@ -32,23 +32,18 @@ namespace MergeFragIons
         {
             Core = core;
             initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(core.DictMaps);
-            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, true, false);
+            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.LocalNormalization, core.GlobalNormalization);
             this.userControlFilterCondition1.Setup(Core, false);
+            UpdateIntensities();
         }
 
-        private void LoadListBoxConditions(ListBox listBoxAllFragMethods = null, ListBox listBoxAllPrecursorChargeStates = null)
+        private void UpdateIntensities()
         {
-            if (Core == null ||
-                Core.AllFragmentationMethods == null ||
-                Core.AllFragmentationMethods.Count == 0 ||
-                Core.AllPrecursorChargeStates == null ||
-                Core.AllPrecursorChargeStates.Count == 0) return;
-
-            foreach (string fragMet in Core.AllFragmentationMethods)
-                listBoxAllFragMethods.Items.Add(fragMet);
-
-            foreach (int precursorChargeState in Core.AllPrecursorChargeStates)
-                listBoxAllPrecursorChargeStates.Items.Add(precursorChargeState);
+            if (Core != null)
+            {
+                checkBoxIntensityPerMap.Checked = Core.LocalNormalization;
+                checkBoxIntensityGlobal.Checked = Core.GlobalNormalization;
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -84,8 +79,20 @@ namespace MergeFragIons
             }
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation);
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.LocalNormalization, Core.GlobalNormalization);
             this.tabControl1.SelectedIndex = 0;
+        }
+
+        private void checkBoxIntensityPerMap_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Core != null)
+                Core.LocalNormalization = checkBoxIntensityPerMap.Checked;
+        }
+
+        private void checkBoxIntensityGlobal_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Core != null)
+                Core.GlobalNormalization = checkBoxIntensityGlobal.Checked;
         }
     }
 }

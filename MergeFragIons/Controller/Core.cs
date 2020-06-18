@@ -27,6 +27,8 @@ namespace MergeFragIons.Controller
 
         public List<string> AllActivationLevels { get; set; }
         public List<int> AllReplicates { get; set; }
+        public bool LocalNormalization { get; set; }
+        public bool GlobalNormalization { get; set; }
 
         /// <summary>
         /// Method responsible for updating inverse amino acids positions (x, y and z series)
