@@ -567,14 +567,29 @@ namespace MergeFragIons
 
         private void checkBoxIntensityPerMap_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkBoxIntensityGlobal.Checked && checkBoxIntensityPerMap.Checked)
+                checkBoxIntensityGlobal.Checked = false;
+
             if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
-                mainProgramGUI.mainCore.LocalNormalization = checkBoxIntensityPerMap.Checked;
+            {
+                mainProgramGUI.mainCore.Has_And_LocalNormalization = checkBoxIntensityPerMap.Checked;
+                mainProgramGUI.mainCore.GlobalNormalization = false;
+            }
         }
 
         private void checkBoxIntensityGlobal_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkBoxIntensityPerMap.Checked && checkBoxIntensityGlobal.Checked)
+                checkBoxIntensityPerMap.Checked = false;
+
             if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
+            {
                 mainProgramGUI.mainCore.GlobalNormalization = checkBoxIntensityGlobal.Checked;
+                if (checkBoxIntensityGlobal.Checked)
+                    mainProgramGUI.mainCore.Has_And_LocalNormalization = true;
+                else
+                    mainProgramGUI.mainCore.Has_And_LocalNormalization = false;
+            }
         }
     }
 

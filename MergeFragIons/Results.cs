@@ -32,7 +32,7 @@ namespace MergeFragIons
         {
             Core = core;
             initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(core.DictMaps);
-            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.LocalNormalization, core.GlobalNormalization);
+            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization);
             this.userControlFilterCondition1.Setup(Core, false);
             UpdateIntensities();
         }
@@ -41,7 +41,7 @@ namespace MergeFragIons
         {
             if (Core != null)
             {
-                checkBoxIntensityPerMap.Checked = Core.LocalNormalization;
+                checkBoxIntensityPerMap.Checked = Core.Has_And_LocalNormalization;
                 checkBoxIntensityGlobal.Checked = Core.GlobalNormalization;
             }
         }
@@ -79,20 +79,35 @@ namespace MergeFragIons
             }
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.LocalNormalization, Core.GlobalNormalization);
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization);
             this.tabControl1.SelectedIndex = 0;
         }
 
         private void checkBoxIntensityPerMap_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkBoxIntensityGlobal.Checked && checkBoxIntensityPerMap.Checked)
+                checkBoxIntensityGlobal.Checked = false;
+
             if (Core != null)
-                Core.LocalNormalization = checkBoxIntensityPerMap.Checked;
+            {
+                Core.Has_And_LocalNormalization = checkBoxIntensityPerMap.Checked;
+                Core.GlobalNormalization = false;
+            }
         }
 
         private void checkBoxIntensityGlobal_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkBoxIntensityPerMap.Checked && checkBoxIntensityGlobal.Checked)
+                checkBoxIntensityPerMap.Checked = false;
+
             if (Core != null)
+            {
                 Core.GlobalNormalization = checkBoxIntensityGlobal.Checked;
+                if (checkBoxIntensityGlobal.Checked)
+                    Core.Has_And_LocalNormalization = true;
+                else
+                    Core.Has_And_LocalNormalization = false;
+            }
         }
     }
 }

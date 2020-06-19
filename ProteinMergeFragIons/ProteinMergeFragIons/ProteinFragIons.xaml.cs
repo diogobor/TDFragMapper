@@ -58,6 +58,8 @@ namespace ProteinMergeFragIons
         private bool isActivationLevel { get; set; } = false;
         private bool isFragmentationMethod { get; set; } = false;
 
+        private bool IsGlobalIntensityMap { get; set; } = false;
+
         private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelDict { get; set; }
 
         private int SPACER_Y = 0;
@@ -130,11 +132,12 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool IsGlobalIntensityMap = false)
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool isGlobalIntensityMap = false)
         {
             isPrecursorChargeState = false;
             isActivationLevel = false;
             isFragmentationMethod = false;
+            IsGlobalIntensityMap = isGlobalIntensityMap;
             ProteinSequence = proteinSequence;
             ProteinSequenceInformation = proteinSequenceInformation;
 
@@ -233,14 +236,14 @@ namespace ProteinMergeFragIons
             Array.Sort<string>(PrecursorChargeStatesOrActivationLevelsColors, new Comparison<string>(
                   (i1, i2) => i2.Length.CompareTo(i1.Length)));
 
-            PreparePictureProteinFragmentIons(true, fragmentIons, hasIntensityperMap, IsGlobalIntensityMap);
+            PreparePictureProteinFragmentIons(true, fragmentIons, hasIntensityperMap);
 
         }
-        public void PreparePictureProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false, bool IsGlobalIntensityMap = false)
+        public void PreparePictureProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false)
         {
             SPACER_Y = 0;
 
-            this.DrawProteinFragmentIons(isSingleLine, fragmentIons, hasIntensityperMap, IsGlobalIntensityMap);
+            this.DrawProteinFragmentIons(isSingleLine, fragmentIons, hasIntensityperMap);
         }
 
         /// <summary>
@@ -251,7 +254,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Children.Clear();
         }
 
-        public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false, bool IsGlobalIntensityMap = false)
+        public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false)
         {
             if (FragMethodsWithPrecursorChargeOrActivationLevelDict == null)
                 return;
@@ -376,7 +379,7 @@ namespace ProteinMergeFragIons
             COLOR_SERIES_RECTANGLE.A = 35;
 
             double global_intensity_normalization_factor = 0;
-            if (IsGlobalIntensityMap)
+            if (this.IsGlobalIntensityMap)
                 global_intensity_normalization_factor = fragmentIons.Max(a => a.Item5);
 
             #endregion
@@ -432,14 +435,16 @@ namespace ProteinMergeFragIons
                 List<(string, string, string, int, double)> currentYFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Y")).ToList();
                 List<(string, string, string, int, double)> currentZFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Z")).ToList();
 
-                double local_intensity_normalization = 0;
+                double intensity_normalization = 0;
 
                 if (fragMethod.Equals("UVPD"))
                 {
                     #region UVPD -> fragmentation method
 
-                    if (hasIntensityperMap)
-                        local_intensity_normalization = currentFragmentIons.Max(a => a.Item5);
+                    if (IsGlobalIntensityMap)
+                        intensity_normalization = global_intensity_normalization_factor;
+                    else if (hasIntensityperMap)
+                        intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectA = 0;
                     HeightRectB = 0;
@@ -457,7 +462,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesA = 0;
                     if (currentAFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
@@ -472,7 +477,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -494,7 +499,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -520,7 +525,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesX = 0;
                     if (currentXFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
@@ -535,7 +540,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -550,7 +555,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
@@ -570,8 +575,10 @@ namespace ProteinMergeFragIons
                 {
                     #region EThcD -> fragmentation method
 
-                    if (hasIntensityperMap)
-                        local_intensity_normalization = currentFragmentIons.Max(a => a.Item5);
+                    if (IsGlobalIntensityMap)
+                        intensity_normalization = global_intensity_normalization_factor;
+                    else if (hasIntensityperMap)
+                        intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectB = 0;
                     HeightRectC = 0;
@@ -589,7 +596,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -605,7 +612,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -629,7 +636,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -644,7 +651,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
@@ -671,8 +678,10 @@ namespace ProteinMergeFragIons
                 {
                     #region CID or HCD or SID -> fragmentation method
 
-                    if (hasIntensityperMap)
-                        local_intensity_normalization = currentFragmentIons.Max(a => a.Item5);
+                    if (IsGlobalIntensityMap)
+                        intensity_normalization = global_intensity_normalization_factor;
+                    else if (hasIntensityperMap)
+                        intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectB = 0;
                     HeightRectY = 0;
@@ -688,7 +697,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -712,7 +721,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -737,8 +746,10 @@ namespace ProteinMergeFragIons
                 {
                     #region ECD or ETD -> fragmentation method
 
-                    if (hasIntensityperMap)
-                        local_intensity_normalization = currentFragmentIons.Max(a => a.Item5);
+                    if (IsGlobalIntensityMap)
+                        intensity_normalization = global_intensity_normalization_factor;
+                    else if (hasIntensityperMap)
+                        intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectC = 0;
                     HeightRectZ = 0;
@@ -754,7 +765,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -778,7 +789,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
@@ -802,8 +813,10 @@ namespace ProteinMergeFragIons
                 {
                     #region fragmentation method
 
-                    if (hasIntensityperMap)
-                        local_intensity_normalization = currentFragmentIons.Max(a => a.Item5);
+                    if (IsGlobalIntensityMap)
+                        intensity_normalization = global_intensity_normalization_factor;
+                    else if (hasIntensityperMap)
+                        intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectA = 0;
                     HeightRectB = 0;
@@ -823,7 +836,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesA = 0;
                     if (currentAFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
@@ -838,7 +851,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectB = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -860,7 +873,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -885,7 +898,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesX = 0;
                     if (currentXFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
@@ -900,7 +913,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -915,7 +928,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, local_intensity_normalization, global_intensity_normalization_factor);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
@@ -951,16 +964,29 @@ namespace ProteinMergeFragIons
                 Canvas.SetLeft(StudyConditionLabel, 100);
                 Canvas.SetTop(StudyConditionLabel, offSetY);
 
+                bool printIntensity = false;
+
+                if (hasIntensityperMap)
+                {
+                    if (IsGlobalIntensityMap && countCurrentFragMethod == FragMethodsWithPrecursorChargeOrActivationLevelDict.Count - 1)
+                        printIntensity = true;
+                    else if (!IsGlobalIntensityMap)
+                        printIntensity = true;
+                }
+
                 double ColorsTop = offSetY;
-                double GridWidth = 0;
+                double GridWidth = 540;
                 #region Plot Residue cleavages table
-                CreateResidueCleavagesTable(PrecursorChargesOrActivationLevels, currentFragmentIons, ref offSetY, out GridWidth);
+                if (!IsGlobalIntensityMap)
+                    CreateResidueCleavagesTable(PrecursorChargesOrActivationLevels, currentFragmentIons, ref offSetY, out GridWidth);
                 #endregion
+
 
                 if (isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod)
                 {
-                    if (hasIntensityperMap)
+                    if (printIntensity)
                     {
+                        #region Insity label
                         StudyConditionLabel.Content = "Intensity scale:";
 
                         #region Start Intensity Label
@@ -981,26 +1007,7 @@ namespace ProteinMergeFragIons
                         GridWidth /= 5;
                         double accumulativeGridWidth = 0;
                         for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
-                        {
-                            // Create a Rectangle
-                            Rectangle PrecursorChargeRetangle = new Rectangle();
-                            PrecursorChargeRetangle.Height = 20;
-                            PrecursorChargeRetangle.Width = GridWidth;
-                            PrecursorChargeRetangle.StrokeThickness = 2;
-                            PrecursorChargeRetangle.Stroke = new SolidColorBrush(Colors.LightGray);
-                            // Set Rectangle's width and color  
-                            SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[countCurrentFragMethod].Color);
-                            currentColor.Opacity = countGradient;
-                            PrecursorChargeRetangle.Fill = currentColor;
-
-                            if (countGradient > 0.1)
-                                accumulativeGridWidth += GridWidth;
-                            MyCanvas.Children.Add(PrecursorChargeRetangle);
-                            Canvas.SetLeft(PrecursorChargeRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length) + accumulativeGridWidth);
-                            //Canvas.SetLeft(PrecursorChargeRetangle, -15 + 27 * (StudyConditionLabel.Content.ToString().Length) + accumulativeGridWidth);
-                            Canvas.SetTop(PrecursorChargeRetangle, ColorsTop + 25);
-                            Canvas.SetZIndex(PrecursorChargeRetangle, -1);
-                        }
+                            accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
 
                         #region End Intensity Label
                         Label EndIntensityLabel = new Label();
@@ -1008,15 +1015,17 @@ namespace ProteinMergeFragIons
                         EndIntensityLabel.FontWeight = FontWeights.Bold;
                         EndIntensityLabel.FontSize = 20;
                         EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                        EndIntensityLabel.Content = local_intensity_normalization.ToString("0.0e+0"); ;
+                        EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0"); ;
                         EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
                         EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(EndIntensityLabel);
                         Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 5));
                         Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
                         #endregion
+
+                        #endregion
                     }
-                    else
+                    else if (!hasIntensityperMap)
                     {
                         #region Plot Legend Precursor Charge State
                         StudyConditionLabel.Content = "Precursor Charge State:";
@@ -1064,94 +1073,182 @@ namespace ProteinMergeFragIons
                 }
                 else if (isActivationLevel && !isPrecursorChargeState && !isFragmentationMethod)
                 {
-                    #region Plot Legend activation level
-                    StudyConditionLabel.Content = "Activation Level:";
-
-                    #region Plot Legend activation level -> boxes
-
-                    for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
+                    if (printIntensity)
                     {
-                        // Create a Rectangle  
-                        Rectangle ActivationLevelRetangle = new Rectangle();
-                        ActivationLevelRetangle.Height = 20;
-                        ActivationLevelRetangle.Width = 20;
-                        // Set Rectangle's width and color  
-                        ActivationLevelRetangle.StrokeThickness = 0.5;
+                        #region Insity label
+                        StudyConditionLabel.Content = "Intensity scale:";
 
-                        // Fill rectangle with color 
-                        int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
-                        ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
-                        // Add Rectangle to the Grid.  
-                        MyCanvas.Children.Add(ActivationLevelRetangle);
-                        int sumXoffset = 0;
-                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
-                        Canvas.SetLeft(ActivationLevelRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
-                        Canvas.SetTop(ActivationLevelRetangle, ColorsTop + 15);
-                        Canvas.SetZIndex(ActivationLevelRetangle, -1);
+                        #region Start Intensity Label
+                        SolidColorBrush labelBrush_IntensityLabel = new SolidColorBrush(Colors.Gray);
+                        Label StartIntensityLabel = new Label();
+                        StartIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        StartIntensityLabel.FontWeight = FontWeights.Bold;
+                        StartIntensityLabel.FontSize = 20;
+                        StartIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        StartIntensityLabel.Content = "0";
+                        StartIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        StartIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(StartIntensityLabel);
+                        Canvas.SetLeft(StartIntensityLabel, 90 + 27 * (StudyConditionLabel.Content.ToString().Length));
+                        Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
+                        #endregion
 
-                        Label precursorChargeStateLabelEachOne = new Label();
-                        precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
-                        precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
-                        precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                        precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                        precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
-                        precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
-                        precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                        MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
-                        sumXoffset = 0;
-                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
-                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
-                        Canvas.SetTop(precursorChargeStateLabelEachOne, ColorsTop);
+                        GridWidth /= 5;
+                        double accumulativeGridWidth = 0;
+                        for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                            accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
+
+                        #region End Intensity Label
+                        Label EndIntensityLabel = new Label();
+                        EndIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        EndIntensityLabel.FontWeight = FontWeights.Bold;
+                        EndIntensityLabel.FontSize = 20;
+                        EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0"); ;
+                        EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(EndIntensityLabel);
+                        Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 5));
+                        Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
+                        #endregion
+
+                        #endregion
                     }
-                    #endregion
+                    else if (!hasIntensityperMap)
+                    {
+                        #region Plot Legend activation level
+                        StudyConditionLabel.Content = "Activation Level:";
 
-                    #endregion
+                        #region Plot Legend activation level -> boxes
+
+                        for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
+                        {
+                            // Create a Rectangle  
+                            Rectangle ActivationLevelRetangle = new Rectangle();
+                            ActivationLevelRetangle.Height = 20;
+                            ActivationLevelRetangle.Width = 20;
+                            // Set Rectangle's width and color  
+                            ActivationLevelRetangle.StrokeThickness = 0.5;
+
+                            // Fill rectangle with color 
+                            int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
+                            ActivationLevelRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
+                            // Add Rectangle to the Grid.  
+                            MyCanvas.Children.Add(ActivationLevelRetangle);
+                            int sumXoffset = 0;
+                            for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                            Canvas.SetLeft(ActivationLevelRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
+                            Canvas.SetTop(ActivationLevelRetangle, ColorsTop + 15);
+                            Canvas.SetZIndex(ActivationLevelRetangle, -1);
+
+                            Label precursorChargeStateLabelEachOne = new Label();
+                            precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                            precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                            precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                            precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                            precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
+                            precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                            precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                            MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                            sumXoffset = 0;
+                            for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                            Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
+                            Canvas.SetTop(precursorChargeStateLabelEachOne, ColorsTop);
+                        }
+                        #endregion
+
+                        #endregion
+                    }
                 }
                 else if (isFragmentationMethod && !isPrecursorChargeState && !isActivationLevel)
                 {
-                    #region Plot Legend Fragmentation Method
-                    StudyConditionLabel.Content = "Fragmentation Method:";
-
-                    #region Plot Legend Fragmentation Method -> boxes
-
-                    for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
+                    if (printIntensity)
                     {
-                        // Create a Rectangle  
-                        Rectangle FragmentationMethodRetangle = new Rectangle();
-                        FragmentationMethodRetangle.Height = 20;
-                        FragmentationMethodRetangle.Width = 20;
-                        // Set Rectangle's width and color  
-                        FragmentationMethodRetangle.StrokeThickness = 0.5;
+                        #region Insity label
+                        StudyConditionLabel.Content = "Intensity scale:";
 
-                        // Fill rectangle with color 
-                        int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
-                        FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
-                        // Add Rectangle to the Grid.  
-                        MyCanvas.Children.Add(FragmentationMethodRetangle);
-                        int sumXoffset = 0;
-                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
-                        Canvas.SetLeft(FragmentationMethodRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
-                        Canvas.SetTop(FragmentationMethodRetangle, ColorsTop + 15);
-                        Canvas.SetZIndex(FragmentationMethodRetangle, -1);
+                        #region Start Intensity Label
+                        SolidColorBrush labelBrush_IntensityLabel = new SolidColorBrush(Colors.Gray);
+                        Label StartIntensityLabel = new Label();
+                        StartIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        StartIntensityLabel.FontWeight = FontWeights.Bold;
+                        StartIntensityLabel.FontSize = 20;
+                        StartIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        StartIntensityLabel.Content = "0";
+                        StartIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        StartIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(StartIntensityLabel);
+                        Canvas.SetLeft(StartIntensityLabel, 90 + 27 * (StudyConditionLabel.Content.ToString().Length));
+                        Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
+                        #endregion
 
-                        Label precursorChargeStateLabelEachOne = new Label();
-                        precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
-                        precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
-                        precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                        precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                        precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
-                        precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
-                        precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                        MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+                        GridWidth /= 5;
+                        double accumulativeGridWidth = 0;
+                        for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                            accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
 
-                        sumXoffset = 0;
-                        for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
-                        Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
-                        Canvas.SetTop(precursorChargeStateLabelEachOne, ColorsTop);
+                        #region End Intensity Label
+                        Label EndIntensityLabel = new Label();
+                        EndIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        EndIntensityLabel.FontWeight = FontWeights.Bold;
+                        EndIntensityLabel.FontSize = 20;
+                        EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0"); ;
+                        EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(EndIntensityLabel);
+                        Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 5));
+                        Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
+                        #endregion
+
+                        #endregion
                     }
-                    #endregion
+                    else if (!hasIntensityperMap)
+                    {
+                        #region Plot Legend Fragmentation Method
+                        StudyConditionLabel.Content = "Fragmentation Method:";
 
-                    #endregion
+                        #region Plot Legend Fragmentation Method -> boxes
+
+                        for (int i = 0; i < PrecursorChargesOrActivationLevels.Count; i++)
+                        {
+                            // Create a Rectangle  
+                            Rectangle FragmentationMethodRetangle = new Rectangle();
+                            FragmentationMethodRetangle.Height = 20;
+                            FragmentationMethodRetangle.Width = 20;
+                            // Set Rectangle's width and color  
+                            FragmentationMethodRetangle.StrokeThickness = 0.5;
+
+                            // Fill rectangle with color 
+                            int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsColors, a => a.Equals(PrecursorChargesOrActivationLevels[i]));
+                            FragmentationMethodRetangle.Fill = FRAGMENT_ION_LINE_COLORS[_index];
+                            // Add Rectangle to the Grid.  
+                            MyCanvas.Children.Add(FragmentationMethodRetangle);
+                            int sumXoffset = 0;
+                            for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                            Canvas.SetLeft(FragmentationMethodRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
+                            Canvas.SetTop(FragmentationMethodRetangle, ColorsTop + 15);
+                            Canvas.SetZIndex(FragmentationMethodRetangle, -1);
+
+                            Label precursorChargeStateLabelEachOne = new Label();
+                            precursorChargeStateLabelEachOne.FontFamily = new FontFamily("Courier New");
+                            precursorChargeStateLabelEachOne.FontWeight = FontWeights.Bold;
+                            precursorChargeStateLabelEachOne.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                            precursorChargeStateLabelEachOne.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                            precursorChargeStateLabelEachOne.Content = PrecursorChargesOrActivationLevels[i];
+                            precursorChargeStateLabelEachOne.Foreground = labelBrush_PrecursorChargeState;
+                            precursorChargeStateLabelEachOne.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                            MyCanvas.Children.Add(precursorChargeStateLabelEachOne);
+
+                            sumXoffset = 0;
+                            for (int countOffset = 0; countOffset < i; countOffset++) sumXoffset += PrecursorChargesOrActivationLevels[countOffset].Length + 2;
+                            Canvas.SetLeft(precursorChargeStateLabelEachOne, 120 + 27 * (StudyConditionLabel.Content.ToString().Length + sumXoffset));
+                            Canvas.SetTop(precursorChargeStateLabelEachOne, ColorsTop);
+                        }
+                        #endregion
+
+                        #endregion
+                    }
                 }
 
                 #endregion
@@ -1243,6 +1340,33 @@ namespace ProteinMergeFragIons
             #endregion
 
             #endregion
+        }
+
+        private double CreateIntensityBox(int countCurrentFragMethod, Label StudyConditionLabel, double ColorsTop, double GridWidth, double accumulativeGridWidth, double countGradient)
+        {
+            // Create a Rectangle
+            Rectangle PrecursorChargeRetangle = new Rectangle();
+            PrecursorChargeRetangle.Height = 20;
+            PrecursorChargeRetangle.Width = GridWidth;
+            PrecursorChargeRetangle.StrokeThickness = 2;
+            PrecursorChargeRetangle.Stroke = new SolidColorBrush(Colors.LightGray);
+            // Set Rectangle's width and color  
+            SolidColorBrush currentColor = null;
+            if(IsGlobalIntensityMap)
+                currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
+            else
+                currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[countCurrentFragMethod].Color);
+            currentColor.Opacity = countGradient;
+            PrecursorChargeRetangle.Fill = currentColor;
+
+            if (countGradient > 0.1)
+                accumulativeGridWidth += GridWidth;
+            MyCanvas.Children.Add(PrecursorChargeRetangle);
+            Canvas.SetLeft(PrecursorChargeRetangle, 100 + 27 * (StudyConditionLabel.Content.ToString().Length) + accumulativeGridWidth);
+            //Canvas.SetLeft(PrecursorChargeRetangle, -15 + 27 * (StudyConditionLabel.Content.ToString().Length) + accumulativeGridWidth);
+            Canvas.SetTop(PrecursorChargeRetangle, ColorsTop + 25);
+            Canvas.SetZIndex(PrecursorChargeRetangle, -1);
+            return accumulativeGridWidth;
         }
 
         private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double)> currentFragmentIons, ref int offsetY, out double GridWidth)
@@ -1488,7 +1612,7 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
-        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0, double global_intensity_normalization = 0)
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0)
         {
             foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevelOrFragMethods)
             {
@@ -1517,7 +1641,11 @@ namespace ProteinMergeFragIons
 
                     if (hasIntensityperMap)
                     {
-                        SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color);
+                        SolidColorBrush currentColor = null;
+                        if (IsGlobalIntensityMap)
+                            currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
+                        else
+                            currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color);
                         currentColor.Opacity = currentPrecursorCharge[count].Item5 / local_intensity_normalization;
                         l.Stroke = currentColor;
                     }

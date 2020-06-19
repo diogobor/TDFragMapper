@@ -27,7 +27,7 @@ namespace MergeFragIons.Controller
 
         public List<string> AllActivationLevels { get; set; }
         public List<int> AllReplicates { get; set; }
-        public bool LocalNormalization { get; set; }
+        public bool Has_And_LocalNormalization { get; set; }
         public bool GlobalNormalization { get; set; }
 
         /// <summary>
