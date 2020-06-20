@@ -941,6 +941,9 @@
   <data name="&gt;&gt;checkBoxIntensityPerMap.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="groupBoxIntensityNorm.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="groupBoxIntensityNorm.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 12</value>
   </data>

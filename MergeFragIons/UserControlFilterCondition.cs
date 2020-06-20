@@ -15,7 +15,6 @@ namespace MergeFragIons
     public partial class UserControlFilterCondition : UserControl
     {
         private Core Core { get; set; }
-        private bool isNewResults { get; set; }
         private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
 
         // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
@@ -23,14 +22,25 @@ namespace MergeFragIons
 
         private List<(Button, Button)> Add_Remove_MapBtnList { get; set; }
 
-        private Dictionary<string, List<int>> DictConditionsWithPrecursorChargeStates { get; set; }
-
         private int numberOfConditions = 1;
         private int SPACE_Y = 245;
 
         public UserControlFilterCondition()
         {
             InitializeComponent();
+        }
+
+        public void ResetMaps()
+        {
+            foreach (Control c in this.Controls)
+            {
+                if (c is GroupBox)
+                {
+                    if (!c.Name.Contains("groupBoxMap_0"))
+                        c.Visible = false;
+                }
+            }
+            numberOfConditions = 1;
         }
 
         private void SetTagsInitialCondition()
@@ -103,7 +113,6 @@ namespace MergeFragIons
         public void Setup(Core core, bool isInitialResults = true)
         {
             Core = core;
-            isNewResults = isInitialResults;
 
             ResetFields(listBoxAllFixedCondition1,
                 listBoxAllFixedCondition2,
@@ -126,7 +135,7 @@ namespace MergeFragIons
             else
                 UpdateMaps();
         }
-        private void UpdateMaps()
+        public void UpdateMaps()
         {
             int countCondition = 0;
             Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(Core.DictMaps);
@@ -195,6 +204,7 @@ namespace MergeFragIons
 
                     #region fill fixed condition1 selected items
                     listBoxAllFixedCondition1.Items.Clear();
+                    listBoxSelectedFixedCondition1.Items.Clear();
                     if (entry.Value.Item1.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition1 = (from item in entry.Value.Item4
@@ -257,6 +267,7 @@ namespace MergeFragIons
 
                     #region fill fixed condition2 selected items
                     listBoxAllFixedCondition2.Items.Clear();
+                    listBoxSelectedFixedCondition2.Items.Clear();
                     _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
@@ -324,6 +335,7 @@ namespace MergeFragIons
 
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
+                    listBoxSelectedFixedCondition3.Items.Clear();
                     _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
@@ -391,6 +403,8 @@ namespace MergeFragIons
                     #endregion
 
                     #region fill Study selected items
+                    listBoxAllStudyCondition.Items.Clear();
+                    listBoxSelectedStudyCondition0.Items.Clear();
                     if (entry.Key.ToString().StartsWith("Frag"))
                     {
                         selectedItemsStudyCondition = (from item in entry.Value.Item4
@@ -1080,7 +1094,8 @@ namespace MergeFragIons
             btn_remove_map.Tag = new object[] { groupBoxMainMap, numberOfConditions };
             btn_remove_map.Click += new System.EventHandler(this.buttonRemoveMap_Click);
 
-            Add_Remove_MapBtnList.Add((btn_add_map, btn_remove_map));
+            if (Add_Remove_MapBtnList != null)
+                Add_Remove_MapBtnList.Add((btn_add_map, btn_remove_map));
             #endregion
 
             #region set Tags - fields
@@ -2480,14 +2495,7 @@ namespace MergeFragIons
                     Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions));
                 }
             }
-
-            //if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
-            //{
-            //    if (listBoxSelectedStudyCondition.Items.Count == 0)
-            //        addNewMap.Enabled = false;
-            //    else
-            //        addNewMap.Enabled = true;
-            //}
+            addNewMap.Enabled = true;
         }
 
         private void buttonRemoveSelectedCondition_Click(object sender, EventArgs e)

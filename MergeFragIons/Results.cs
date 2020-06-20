@@ -14,9 +14,8 @@ namespace MergeFragIons
 {
     public partial class Results : Form
     {
+        private GUI MyGui { get; set; }
         private Core Core;
-        private Dictionary<string, List<int>> DictFragMethodsWithPrecursorChargeStates { get; set; }
-        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> initialDictionaryMaps { get; set; }
         public Results()
         {
             InitializeComponent();
@@ -25,13 +24,13 @@ namespace MergeFragIons
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Core.DictMaps = initialDictionaryMaps;
+            MyGui.UpdateMaps();
         }
 
-        public void Setup(Core core)
+        public void Setup(Core core, GUI _gui)
         {
+            MyGui = _gui;
             Core = core;
-            initialDictionaryMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(core.DictMaps);
             this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization);
             this.userControlFilterCondition1.Setup(Core, false);
             UpdateIntensities();
@@ -41,8 +40,10 @@ namespace MergeFragIons
         {
             if (Core != null)
             {
-                checkBoxIntensityPerMap.Checked = Core.Has_And_LocalNormalization;
-                checkBoxIntensityGlobal.Checked = Core.GlobalNormalization;
+                bool _tmp_Has_And_LocalNormalization = Core.Has_And_LocalNormalization;
+                bool _tmp_GlobalNormalization = Core.GlobalNormalization;
+                checkBoxIntensityPerMap.Checked = _tmp_Has_And_LocalNormalization;
+                checkBoxIntensityGlobal.Checked = _tmp_GlobalNormalization;
             }
         }
 

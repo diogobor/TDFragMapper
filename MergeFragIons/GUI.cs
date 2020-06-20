@@ -58,6 +58,17 @@ namespace MergeFragIons
             AddNewRowDatagridInputFiles();
         }
 
+        public void UpdateMaps()
+        {
+            this.userControlFilterCondition1.ResetMaps();
+            this.userControlFilterCondition1.UpdateMaps();
+            if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
+            {
+                this.checkBoxIntensityPerMap.Checked = mainProgramGUI.mainCore.Has_And_LocalNormalization;
+                this.checkBoxIntensityGlobal.Checked = mainProgramGUI.mainCore.GlobalNormalization;
+            }
+        }
+
         /// <summary>
         /// Method responsible for filling datagridViewInputFiles
         /// </summary>
@@ -116,6 +127,13 @@ namespace MergeFragIons
 
             if (mainThread == null)
             {
+                #region Reset fields
+                buttonDisplay.Enabled = false;
+                this.userControlFilterCondition1.ResetMaps();
+                this.userControlFilterCondition1.Enabled = false;
+                groupBoxIntensityNorm.Enabled = false;
+                #endregion
+
                 mainProgramGUI = new Program();
                 mainProgramGUI.programParams = myParams;
                 mainThread = new Thread(new ThreadStart(mainProgramGUI.ReadInputFiles));
@@ -132,6 +150,7 @@ namespace MergeFragIons
                 buttonAddInputFile.Enabled = false;
                 buttonDisplay.Enabled = false;
                 this.userControlFilterCondition1.Enabled = false;
+                groupBoxIntensityNorm.Enabled = false;
                 #endregion
 
                 buttonOK.Text = "Stop";
@@ -149,6 +168,7 @@ namespace MergeFragIons
                     buttonAddInputFile.Enabled = true;
                     buttonDisplay.Enabled = false;
                     this.userControlFilterCondition1.Enabled = false;
+                    groupBoxIntensityNorm.Enabled = false;
                     #endregion
 
                     buttonOK.Text = "OK";
@@ -298,6 +318,7 @@ namespace MergeFragIons
                 buttonAddInputFile.Enabled = true;
                 buttonDisplay.Enabled = true;
                 this.userControlFilterCondition1.Enabled = true;
+                groupBoxIntensityNorm.Enabled = true;
                 #endregion
 
                 buttonOK.Text = "OK";
@@ -561,7 +582,7 @@ namespace MergeFragIons
                 return;
             }
             Results results = new Results();
-            results.Setup(mainProgramGUI.mainCore);
+            results.Setup(mainProgramGUI.mainCore, this);
             results.ShowDialog();
         }
 
