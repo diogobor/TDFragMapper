@@ -132,6 +132,7 @@ namespace MergeFragIons
                 this.userControlFilterCondition1.ResetMaps();
                 this.userControlFilterCondition1.Enabled = false;
                 groupBoxIntensityNorm.Enabled = false;
+                buttonIntensity.Enabled = false;
                 #endregion
 
                 mainProgramGUI = new Program();
@@ -151,6 +152,7 @@ namespace MergeFragIons
                 buttonDisplay.Enabled = false;
                 this.userControlFilterCondition1.Enabled = false;
                 groupBoxIntensityNorm.Enabled = false;
+                buttonIntensity.Enabled = false;
                 #endregion
 
                 buttonOK.Text = "Stop";
@@ -169,6 +171,7 @@ namespace MergeFragIons
                     buttonDisplay.Enabled = false;
                     this.userControlFilterCondition1.Enabled = false;
                     groupBoxIntensityNorm.Enabled = false;
+                    buttonIntensity.Enabled = false;
                     #endregion
 
                     buttonOK.Text = "OK";
@@ -319,6 +322,7 @@ namespace MergeFragIons
                 buttonDisplay.Enabled = true;
                 this.userControlFilterCondition1.Enabled = true;
                 groupBoxIntensityNorm.Enabled = true;
+                buttonIntensity.Enabled = true;
                 #endregion
 
                 buttonOK.Text = "OK";
@@ -611,6 +615,11 @@ namespace MergeFragIons
                 else
                     mainProgramGUI.mainCore.Has_And_LocalNormalization = false;
             }
+        }
+
+        private void buttonIntensity_Click(object sender, EventArgs e)
+        {
+            buttonDisplay_Click(sender, e);
         }
     }
 

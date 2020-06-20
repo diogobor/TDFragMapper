@@ -68,6 +68,7 @@
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.buttonIntensity = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -317,6 +318,7 @@
             // groupBoxIntensityNorm
             // 
             resources.ApplyResources(this.groupBoxIntensityNorm, "groupBoxIntensityNorm");
+            this.groupBoxIntensityNorm.Controls.Add(this.buttonIntensity);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
             this.groupBoxIntensityNorm.Name = "groupBoxIntensityNorm";
@@ -335,6 +337,13 @@
             this.checkBoxIntensityPerMap.Name = "checkBoxIntensityPerMap";
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
+            // 
+            // buttonIntensity
+            // 
+            resources.ApplyResources(this.buttonIntensity, "buttonIntensity");
+            this.buttonIntensity.Name = "buttonIntensity";
+            this.buttonIntensity.UseVisualStyleBackColor = true;
+            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
             // 
             // GUI
             // 
@@ -408,6 +417,7 @@
         private System.Windows.Forms.GroupBox groupBoxIntensityNorm;
         private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
         private System.Windows.Forms.CheckBox checkBoxIntensityPerMap;
+        private System.Windows.Forms.Button buttonIntensity;
     }
 }
 

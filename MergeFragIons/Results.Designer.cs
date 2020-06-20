@@ -43,12 +43,22 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
-            this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.buttonIntensity = new System.Windows.Forms.Button();
             this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.buttonRemoveMergeCondition = new System.Windows.Forms.Button();
+            this.buttonAddMergeCondition = new System.Windows.Forms.Button();
+            this.listBoxSelectedMergeConditions = new System.Windows.Forms.ListBox();
+            this.listBoxAllMergeConditions = new System.Windows.Forms.ListBox();
+            this.buttonMerge = new System.Windows.Forms.Button();
+            this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -56,6 +66,8 @@
             this.groupBoxMain.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBoxIntensityNorm.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -127,6 +139,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -189,16 +202,6 @@
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
             // 
-            // userControlFilterCondition1
-            // 
-            this.userControlFilterCondition1.AutoScroll = true;
-            this.userControlFilterCondition1.AutoSize = true;
-            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
-            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.TabIndex = 7;
-            // 
             // buttonFilter
             // 
             this.buttonFilter.Image = global::MergeFragIons.Properties.Resources.iconFilter;
@@ -218,7 +221,7 @@
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1068, 593);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Intensity";
+            this.tabPage3.Text = "Option Intensity";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // groupBoxIntensityNorm
@@ -226,6 +229,7 @@
             this.groupBoxIntensityNorm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxIntensityNorm.Controls.Add(this.buttonIntensity);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
             this.groupBoxIntensityNorm.Location = new System.Drawing.Point(6, 6);
@@ -234,6 +238,21 @@
             this.groupBoxIntensityNorm.TabIndex = 3;
             this.groupBoxIntensityNorm.TabStop = false;
             this.groupBoxIntensityNorm.Text = "Intensity normalization";
+            // 
+            // buttonIntensity
+            // 
+            this.buttonIntensity.Image = ((System.Drawing.Image)(resources.GetObject("buttonIntensity.Image")));
+            this.buttonIntensity.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonIntensity.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonIntensity.Location = new System.Drawing.Point(19, 97);
+            this.buttonIntensity.Name = "buttonIntensity";
+            this.buttonIntensity.Size = new System.Drawing.Size(135, 23);
+            this.buttonIntensity.TabIndex = 3;
+            this.buttonIntensity.Text = "Display";
+            this.buttonIntensity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonIntensity.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonIntensity.UseVisualStyleBackColor = true;
+            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
             // 
             // checkBoxIntensityGlobal
             // 
@@ -259,6 +278,118 @@
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.groupBox1);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(1068, 593);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Option Merging";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.buttonRemoveMergeCondition);
+            this.groupBox1.Controls.Add(this.buttonAddMergeCondition);
+            this.groupBox1.Controls.Add(this.listBoxSelectedMergeConditions);
+            this.groupBox1.Controls.Add(this.listBoxAllMergeConditions);
+            this.groupBox1.Controls.Add(this.buttonMerge);
+            this.groupBox1.Location = new System.Drawing.Point(6, 6);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(1056, 581);
+            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(19, 23);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(104, 13);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "Available conditions:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(282, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(103, 13);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "Conditions to merge:";
+            // 
+            // buttonRemoveMergeCondition
+            // 
+            this.buttonRemoveMergeCondition.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveMergeCondition.Location = new System.Drawing.Point(247, 106);
+            this.buttonRemoveMergeCondition.Name = "buttonRemoveMergeCondition";
+            this.buttonRemoveMergeCondition.Size = new System.Drawing.Size(21, 23);
+            this.buttonRemoveMergeCondition.TabIndex = 28;
+            this.buttonRemoveMergeCondition.Tag = "1";
+            this.buttonRemoveMergeCondition.UseVisualStyleBackColor = true;
+            this.buttonRemoveMergeCondition.Click += new System.EventHandler(this.buttonRemoveMergeCondition_Click);
+            // 
+            // buttonAddMergeCondition
+            // 
+            this.buttonAddMergeCondition.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddMergeCondition.Location = new System.Drawing.Point(247, 68);
+            this.buttonAddMergeCondition.Name = "buttonAddMergeCondition";
+            this.buttonAddMergeCondition.Size = new System.Drawing.Size(21, 23);
+            this.buttonAddMergeCondition.TabIndex = 27;
+            this.buttonAddMergeCondition.Tag = "1";
+            this.buttonAddMergeCondition.UseVisualStyleBackColor = true;
+            this.buttonAddMergeCondition.Click += new System.EventHandler(this.buttonAddMergeCondition_Click);
+            // 
+            // listBoxSelectedMergeConditions
+            // 
+            this.listBoxSelectedMergeConditions.FormattingEnabled = true;
+            this.listBoxSelectedMergeConditions.HorizontalScrollbar = true;
+            this.listBoxSelectedMergeConditions.Location = new System.Drawing.Point(284, 44);
+            this.listBoxSelectedMergeConditions.Name = "listBoxSelectedMergeConditions";
+            this.listBoxSelectedMergeConditions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBoxSelectedMergeConditions.Size = new System.Drawing.Size(208, 108);
+            this.listBoxSelectedMergeConditions.TabIndex = 29;
+            // 
+            // listBoxAllMergeConditions
+            // 
+            this.listBoxAllMergeConditions.FormattingEnabled = true;
+            this.listBoxAllMergeConditions.HorizontalScrollbar = true;
+            this.listBoxAllMergeConditions.Location = new System.Drawing.Point(21, 44);
+            this.listBoxAllMergeConditions.Name = "listBoxAllMergeConditions";
+            this.listBoxAllMergeConditions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBoxAllMergeConditions.Size = new System.Drawing.Size(208, 108);
+            this.listBoxAllMergeConditions.TabIndex = 26;
+            // 
+            // buttonMerge
+            // 
+            this.buttonMerge.Image = ((System.Drawing.Image)(resources.GetObject("buttonMerge.Image")));
+            this.buttonMerge.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonMerge.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonMerge.Location = new System.Drawing.Point(21, 175);
+            this.buttonMerge.Name = "buttonMerge";
+            this.buttonMerge.Size = new System.Drawing.Size(135, 23);
+            this.buttonMerge.TabIndex = 3;
+            this.buttonMerge.Text = "Display";
+            this.buttonMerge.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonMerge.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonMerge.UseVisualStyleBackColor = true;
+            // 
+            // userControlFilterCondition1
+            // 
+            this.userControlFilterCondition1.AutoScroll = true;
+            this.userControlFilterCondition1.AutoSize = true;
+            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
+            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
+            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.TabIndex = 7;
+            // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -282,6 +413,9 @@
             this.tabPage3.ResumeLayout(false);
             this.groupBoxIntensityNorm.ResumeLayout(false);
             this.groupBoxIntensityNorm.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -308,5 +442,15 @@
         private System.Windows.Forms.GroupBox groupBoxIntensityNorm;
         private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
         private System.Windows.Forms.CheckBox checkBoxIntensityPerMap;
+        private System.Windows.Forms.Button buttonIntensity;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button buttonMerge;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonRemoveMergeCondition;
+        private System.Windows.Forms.Button buttonAddMergeCondition;
+        private System.Windows.Forms.ListBox listBoxSelectedMergeConditions;
+        private System.Windows.Forms.ListBox listBoxAllMergeConditions;
     }
 }
