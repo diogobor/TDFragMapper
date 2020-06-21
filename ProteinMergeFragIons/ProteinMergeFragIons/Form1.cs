@@ -211,7 +211,7 @@ namespace ProteinMergeFragIons
 
             //Example: CID, Act level: 10,15,20, Repl: 1, Prec Charge: 25,22,17,11
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate. intensity)>
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
             List<(string, int, string, int, string, int, double)> currentFragIons = new List<(string, int, string, int, string, int, double)>();
             string _key = string.Empty;
 
@@ -225,9 +225,9 @@ namespace ProteinMergeFragIons
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#CID";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#CID";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#UVPD";
@@ -245,7 +245,32 @@ namespace ProteinMergeFragIons
             //_key = "Fragmentation Method#Precursor Charge State#25#0";
             //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons));
 
-            this.proteinFragIons1.SetFragMethodDictionary(DictMaps, protein, "N-Term Pyro-Glu", true, true);
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
+
+            #region creating merged fragIons 
+
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
+            List<(string, int, string, int, string, int, double)> currentNtermFragIons = currentFragIons.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
+            List<(string, int, string, int, string, int, double)> currentCtermFragIons = currentFragIons.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+
+            var groupedNtermFragIons = currentNtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
+            currentNtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            foreach (var nTermFragIon in groupedNtermFragIons)
+                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count));
+
+            var groupedCtermFragIons = currentCtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
+            currentCtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            foreach (var cTermFragIon in groupedCtermFragIons)
+                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count));
+
+
+            currentFragIons = currentNtermFragIons.Concat(currentCtermFragIons).ToList();
+            #endregion
+
+            _key = "Merge#Merge#Merge#0";
+            DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons));
+
+            this.proteinFragIons1.SetFragMethodDictionary(DictMaps, protein, "N-Term Pyro-Glu", true, true, true);
 
             return;
 

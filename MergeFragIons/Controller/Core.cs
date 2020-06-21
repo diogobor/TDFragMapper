@@ -21,7 +21,6 @@ namespace MergeFragIons.Controller
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
         /// </summary>
         public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps { get; set; }
-
         public List<string> AllFragmentationMethods { get; set; }
         public List<int> AllPrecursorChargeStates { get; set; }
 
@@ -29,6 +28,7 @@ namespace MergeFragIons.Controller
         public List<int> AllReplicates { get; set; }
         public bool Has_And_LocalNormalization { get; set; }
         public bool GlobalNormalization { get; set; }
+        public bool HasMergeMaps { get; set; }
 
         /// <summary>
         /// Method responsible for updating inverse amino acids positions (x, y and z series)

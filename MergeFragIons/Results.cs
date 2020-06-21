@@ -11,12 +11,19 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MergeFragIons
+namespace TDFragMapper
 {
     public partial class Results : Form
     {
         private GUI MyGui { get; set; }
         private Core Core;
+        private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
+        /// </summary>
+        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMapsWithoutMergeConditions { get; set; }
+
         public Results()
         {
             InitializeComponent();
@@ -66,7 +73,7 @@ namespace MergeFragIons
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Coming soon!\n\nDeveloped by:\nDiogo Borges Lima (CeMM) - diogobor@gmail.com,\nJonathan Dhenin (Institut Pasteur) - jonathan.dhenin@pasteur.fr, & \nMathieu Dupré (Institut Pasteur) - mathieu.dupre@pasteur.fr", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Coming soon!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void buttonFilter_Click(object sender, EventArgs e)
@@ -81,24 +88,51 @@ namespace MergeFragIons
                 return;
             }
 
+            #region set intensitiesCheckboxes
+
+            if (Core != null)
+            {
+                Core.Has_And_LocalNormalization = checkBoxIntensityPerMap.Checked;
+                Core.GlobalNormalization = checkBoxIntensityGlobal.Checked;
+                if (checkBoxIntensityGlobal.Checked)
+                    Core.Has_And_LocalNormalization = true;
+            }
+
+            #endregion
+
+            Core.HasMergeMaps = false;
             this.FillListBoxMergeConditions();
+
+            string _key = "Merge#Merge#Merge#0";
+            if (Core.DictMaps.ContainsKey(_key))
+            {
+                Core.DictMaps.Remove(_key);
+                Core.HasMergeMaps = false;
+            }
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization);
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
             this.tabControl1.SelectedIndex = 0;
         }
 
         private void FillListBoxMergeConditions()
         {
+            listBoxAllMergeConditions.Items.Clear();
+            listBoxSelectedMergeConditions.Items.Clear();
+
             /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
             /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
             foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> entry in Core.DictMaps)
             {
+                if (entry.Key.StartsWith("Merge")) continue;
+
                 string[] cols = Regex.Split(entry.Key, "#");
                 string studyCondition = cols[0];
                 List<string> studyConditions = null;
                 string FirstCondition = string.Empty;
                 string SecondCondition = string.Empty;
                 string ThirdCondition = string.Empty;
+                int Map = Convert.ToInt32(cols[3]);
+                Map++;
 
                 #region Study Condition
                 if (studyCondition.StartsWith("Frag"))//First condition is 'Fragmentation Method'
@@ -204,11 +238,13 @@ namespace MergeFragIons
                 }
                 #endregion
 
-                listBoxAllMergeConditions.Items.Clear();
-                
                 foreach (string study_condition in studyConditions)
                 {
                     StringBuilder sbStudyCondition = new StringBuilder();
+                    sbStudyCondition.Append("Map ");
+                    sbStudyCondition.Append(Map);
+                    sbStudyCondition.Append(":");
+                    sbStudyCondition.Append(" ");
                     sbStudyCondition.Append(FirstCondition);
                     sbStudyCondition.Append("; ");
                     sbStudyCondition.Append(SecondCondition);
@@ -284,6 +320,220 @@ namespace MergeFragIons
             {
                 listBoxSelectedMergeConditions.Items.Remove(item);
             });
+        }
+
+        private void buttonMerge_Click(object sender, EventArgs e)
+        {
+            DictMapsWithoutMergeConditions = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>(Core.DictMaps);
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = new List<(string, int, string, int, string, int, double)>();
+
+            foreach (StringBuilder item in listBoxSelectedMergeConditions.Items)
+            {
+                string[] colsMap = Regex.Split(item.ToString(), ":");
+                int map = Convert.ToInt32(numberCaptured.Matches(colsMap[0])[0].Value);
+                map--;
+
+                string[] colsCondition = Regex.Split(colsMap[1], ";");
+                string first_condition_value = colsCondition[0].Trim();
+                string second_condition_value = colsCondition[1].Trim();
+                string third_condition_value = colsCondition[2].Trim();
+                string study_condition_value = colsCondition[3].Trim();
+
+                /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
+                /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+                foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> entry in Core.DictMaps)
+                {
+                    List<(string, int, string, int, string, int, double)> FragmentIons = null;
+                    if (!entry.Key.StartsWith("Merge") && entry.Key.EndsWith("#" + map.ToString()))
+                        FragmentIons = entry.Value.Item4;
+                    else
+                        continue;
+
+                    #region First condition
+                    if (entry.Value.Item1.StartsWith("Frag"))//First condition is 'Fragmentation Method'
+                    {
+                        string[] colsSubCondition = Regex.Split(first_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item1.StartsWith("Act"))//First condition is 'Activation Level'
+                    {
+                        string[] colsSubCondition = Regex.Split(first_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item1.StartsWith("Prec"))//First condition is 'Precursor Charge State'
+                    {
+                        string[] colsSubCondition = Regex.Split(first_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item1.StartsWith("Repl"))//First condition is 'Replicates'
+                    {
+                        string[] colsSubCondition = Regex.Split(first_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    #endregion
+
+                    #region Second condition
+                    if (entry.Value.Item2.StartsWith("Frag"))//Second condition is 'Fragmentation Method'
+                    {
+                        string[] colsSubCondition = Regex.Split(second_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item2.StartsWith("Act"))//Second condition is 'Activation Level'
+                    {
+                        string[] colsSubCondition = Regex.Split(second_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item2.StartsWith("Prec"))//Second condition is 'Precursor Charge State'
+                    {
+                        string[] colsSubCondition = Regex.Split(second_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item2.StartsWith("Repl"))//Second condition is 'Replicates'
+                    {
+                        string[] colsSubCondition = Regex.Split(second_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    #endregion
+
+                    #region Third condition
+                    if (entry.Value.Item3.StartsWith("Frag"))//Third condition is 'Fragmentation Method'
+                    {
+                        string[] colsSubCondition = Regex.Split(third_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item3.StartsWith("Act"))//Third condition is 'Activation Level'
+                    {
+                        string[] colsSubCondition = Regex.Split(third_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item3.StartsWith("Prec"))//Third condition is 'Precursor Charge State'
+                    {
+                        string[] colsSubCondition = Regex.Split(third_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    else if (entry.Value.Item3.StartsWith("Repl"))//Third condition is 'Replicates'
+                    {
+                        string[] colsSubCondition = Regex.Split(third_condition_value, "&");
+                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        foreach (string sbCondition in colsSubCondition)
+                            _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
+
+                        FragmentIons = _tmpFragmentIons;
+                    }
+                    #endregion
+
+                    #region Study condition
+                    string[] cols = Regex.Split(entry.Key, "#");
+                    string studyCondition = cols[0];
+
+                    if (studyCondition.StartsWith("Frag"))//Study condition is 'Fragmentation Method'
+                    {
+                        FragmentIons = FragmentIons.Where(a => a.Item1.Equals(study_condition_value)).ToList();
+                    }
+                    else if (studyCondition.StartsWith("Act"))//Study condition is 'Activation Level'
+                    {
+                        FragmentIons = FragmentIons.Where(a => a.Item5.Equals(study_condition_value)).ToList();
+                    }
+                    else if (studyCondition.StartsWith("Prec"))//Study condition is 'Precursor Charge State'
+                    {
+                        FragmentIons = FragmentIons.Where(a => a.Item2.ToString().Equals(study_condition_value)).ToList();
+                    }
+                    else if (studyCondition.StartsWith("Repl"))//Study condition is 'Replicates'
+                    {
+                        FragmentIons = FragmentIons.Where(a => a.Item6.ToString().Equals(study_condition_value.Replace("R", ""))).ToList();
+                    }
+                    #endregion
+
+                    allFragmentIonsAllConditions.AddRange(FragmentIons);
+                }
+            }
+
+            #region creating merged fragIons 
+
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
+            List<(string, int, string, int, string, int, double)> currentNtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
+            List<(string, int, string, int, string, int, double)> currentCtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+
+            var groupedNtermFragIons = currentNtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
+            currentNtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            foreach (var nTermFragIon in groupedNtermFragIons)
+                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count));
+
+            var groupedCtermFragIons = currentCtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
+            currentCtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            foreach (var cTermFragIon in groupedCtermFragIons)
+                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count));
+
+
+            allFragmentIonsAllConditions = currentNtermFragIons.Concat(currentCtermFragIons).ToList();
+            if (allFragmentIonsAllConditions.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show("There is no condition to merge!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            #endregion
+
+            string _key = "Merge#Merge#Merge#0";
+            Core.DictMaps.Add(_key, ("Merge", "Merge", "Merge", allFragmentIonsAllConditions));
+            Core.HasMergeMaps = true;
+            Core.Has_And_LocalNormalization = true;
+            Core.GlobalNormalization = true;
+
+            this.proteinFragIons1.Clear();
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
+            this.tabControl1.SelectedIndex = 0;
+
+            Core.DictMaps = DictMapsWithoutMergeConditions;
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About aboutScreen = new About();
+            aboutScreen.ShowDialog();
         }
     }
 }

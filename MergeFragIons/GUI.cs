@@ -23,7 +23,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace MergeFragIons
+namespace TDFragMapper
 {
     public partial class GUI : Form
     {
@@ -157,7 +157,7 @@ namespace MergeFragIons
 
                 buttonOK.Text = "Stop";
                 //change button icon
-                buttonOK.Image = MergeFragIons.Properties.Resources.button_cancel_little;
+                buttonOK.Image = TDFragMapper.Properties.Resources.button_cancel_little;
             }
             else if (mainProgramGUI != null)
             {
@@ -176,7 +176,7 @@ namespace MergeFragIons
 
                     buttonOK.Text = "OK";
                     //change button icon
-                    buttonOK.Image = MergeFragIons.Properties.Resources.goBtn;
+                    buttonOK.Image = TDFragMapper.Properties.Resources.goBtn;
 
                     if (mainThread != null)//When xlThread is null in this point is because the user stops the process, but before clicking on Yes button, the search is finished.
                     {
@@ -327,7 +327,7 @@ namespace MergeFragIons
 
                 buttonOK.Text = "OK";
                 //change button icon
-                buttonOK.Image = MergeFragIons.Properties.Resources.goBtn;
+                buttonOK.Image = TDFragMapper.Properties.Resources.goBtn;
 
                 this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore);
                 tabControlMainWindow.SelectedIndex = 1;
@@ -344,7 +344,7 @@ namespace MergeFragIons
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("Coming soon!\n\nDeveloped by:\nDiogo Borges Lima (CeMM) - diogobor@gmail.com,\nJonathan Dhenin (Institut Pasteur) - jonathan.dhenin@pasteur.fr, & \nMathieu Dupré (Institut Pasteur) - mathieu.dupre@pasteur.fr", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            System.Windows.Forms.MessageBox.Show("Coming soon!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //HelpForm help = new HelpForm();
             //help.ShowDialog();
         }
@@ -621,6 +621,12 @@ namespace MergeFragIons
         {
             buttonDisplay_Click(sender, e);
         }
+
+        private void aboutToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            About aboutScreen = new About();
+            aboutScreen.ShowDialog();
+        }
     }
 
 
@@ -785,14 +791,14 @@ namespace MergeFragIons
             // Load them from a resource file, local file, hex string, etc.
 
             BitmapSource bmpSource = Imaging.CreateBitmapSourceFromHBitmap(
-                                   MergeFragIons.Properties.Resources.load.GetHbitmap(),
+                                   TDFragMapper.Properties.Resources.load.GetHbitmap(),
                                    IntPtr.Zero,
                                    Int32Rect.Empty,
                                    BitmapSizeOptions.FromEmptyOptions());
 
-            _buttonImageHot = (Image)MergeFragIons.Properties.Resources.load;
-            _buttonImageNormal = (Image)MergeFragIons.Properties.Resources.load;
-            _buttonImageDisabled = (Image)MergeFragIons.Properties.Resources.load;
+            _buttonImageHot = (Image)TDFragMapper.Properties.Resources.load;
+            _buttonImageNormal = (Image)TDFragMapper.Properties.Resources.load;
+            _buttonImageDisabled = (Image)TDFragMapper.Properties.Resources.load;
         }
     }
 }

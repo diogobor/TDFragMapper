@@ -1,4 +1,4 @@
-﻿namespace MergeFragIons
+﻿namespace TDFragMapper
 {
     partial class UserControlFilterCondition
     {
@@ -116,7 +116,7 @@
             // 
             // buttonRemoveStudyCondition
             // 
-            this.buttonRemoveStudyCondition.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveStudyCondition.Image = global::TDFragMapper.Properties.Resources.arrow_left;
             this.buttonRemoveStudyCondition.Location = new System.Drawing.Point(152, 112);
             this.buttonRemoveStudyCondition.Name = "buttonRemoveStudyCondition";
             this.buttonRemoveStudyCondition.Size = new System.Drawing.Size(21, 23);
@@ -127,7 +127,7 @@
             // 
             // buttonAddStudyCondition
             // 
-            this.buttonAddStudyCondition.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddStudyCondition.Image = global::TDFragMapper.Properties.Resources.arrow_right;
             this.buttonAddStudyCondition.Location = new System.Drawing.Point(152, 74);
             this.buttonAddStudyCondition.Name = "buttonAddStudyCondition";
             this.buttonAddStudyCondition.Size = new System.Drawing.Size(21, 23);
@@ -225,7 +225,7 @@
             // 
             // buttonRemoveFixedCondition3
             // 
-            this.buttonRemoveFixedCondition3.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveFixedCondition3.Image = global::TDFragMapper.Properties.Resources.arrow_left;
             this.buttonRemoveFixedCondition3.Location = new System.Drawing.Point(712, 112);
             this.buttonRemoveFixedCondition3.Name = "buttonRemoveFixedCondition3";
             this.buttonRemoveFixedCondition3.Size = new System.Drawing.Size(21, 23);
@@ -236,7 +236,7 @@
             // 
             // buttonAddFixedCondition3
             // 
-            this.buttonAddFixedCondition3.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddFixedCondition3.Image = global::TDFragMapper.Properties.Resources.arrow_right;
             this.buttonAddFixedCondition3.Location = new System.Drawing.Point(712, 74);
             this.buttonAddFixedCondition3.Name = "buttonAddFixedCondition3";
             this.buttonAddFixedCondition3.Size = new System.Drawing.Size(21, 23);
@@ -300,7 +300,7 @@
             // 
             // buttonRemoveFixedCondition2
             // 
-            this.buttonRemoveFixedCondition2.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveFixedCondition2.Image = global::TDFragMapper.Properties.Resources.arrow_left;
             this.buttonRemoveFixedCondition2.Location = new System.Drawing.Point(431, 112);
             this.buttonRemoveFixedCondition2.Name = "buttonRemoveFixedCondition2";
             this.buttonRemoveFixedCondition2.Size = new System.Drawing.Size(21, 23);
@@ -311,7 +311,7 @@
             // 
             // buttonRemoveFixedCondition1
             // 
-            this.buttonRemoveFixedCondition1.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveFixedCondition1.Image = global::TDFragMapper.Properties.Resources.arrow_left;
             this.buttonRemoveFixedCondition1.Location = new System.Drawing.Point(152, 112);
             this.buttonRemoveFixedCondition1.Name = "buttonRemoveFixedCondition1";
             this.buttonRemoveFixedCondition1.Size = new System.Drawing.Size(21, 23);
@@ -322,7 +322,7 @@
             // 
             // buttonAddFixedCondition2
             // 
-            this.buttonAddFixedCondition2.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddFixedCondition2.Image = global::TDFragMapper.Properties.Resources.arrow_right;
             this.buttonAddFixedCondition2.Location = new System.Drawing.Point(431, 74);
             this.buttonAddFixedCondition2.Name = "buttonAddFixedCondition2";
             this.buttonAddFixedCondition2.Size = new System.Drawing.Size(21, 23);
@@ -333,7 +333,7 @@
             // 
             // buttonAddFixedCondition1
             // 
-            this.buttonAddFixedCondition1.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddFixedCondition1.Image = global::TDFragMapper.Properties.Resources.arrow_right;
             this.buttonAddFixedCondition1.Location = new System.Drawing.Point(152, 74);
             this.buttonAddFixedCondition1.Name = "buttonAddFixedCondition1";
             this.buttonAddFixedCondition1.Size = new System.Drawing.Size(21, 23);
@@ -380,7 +380,7 @@
             // 
             // buttonAddMap_0
             // 
-            this.buttonAddMap_0.Image = global::MergeFragIons.Properties.Resources.addButton;
+            this.buttonAddMap_0.Image = global::TDFragMapper.Properties.Resources.addButton;
             this.buttonAddMap_0.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonAddMap_0.Location = new System.Drawing.Point(9, 196);
             this.buttonAddMap_0.Name = "buttonAddMap_0";

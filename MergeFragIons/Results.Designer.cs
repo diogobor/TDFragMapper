@@ -1,4 +1,4 @@
-﻿namespace MergeFragIons
+﻿namespace TDFragMapper
 {
     partial class Results
     {
@@ -43,6 +43,7 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
@@ -58,7 +59,8 @@
             this.listBoxSelectedMergeConditions = new System.Windows.Forms.ListBox();
             this.listBoxAllMergeConditions = new System.Windows.Forms.ListBox();
             this.buttonMerge = new System.Windows.Forms.Button();
-            this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -117,7 +119,9 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.readMeToolStripMenuItem});
+            this.readMeToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -202,9 +206,19 @@
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
             // 
+            // userControlFilterCondition1
+            // 
+            this.userControlFilterCondition1.AutoScroll = true;
+            this.userControlFilterCondition1.AutoSize = true;
+            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
+            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
+            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.TabIndex = 7;
+            // 
             // buttonFilter
             // 
-            this.buttonFilter.Image = global::MergeFragIons.Properties.Resources.iconFilter;
+            this.buttonFilter.Image = global::TDFragMapper.Properties.Resources.iconFilter;
             this.buttonFilter.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonFilter.Location = new System.Drawing.Point(11, 19);
             this.buttonFilter.Name = "buttonFilter";
@@ -326,7 +340,7 @@
             // 
             // buttonRemoveMergeCondition
             // 
-            this.buttonRemoveMergeCondition.Image = global::MergeFragIons.Properties.Resources.arrow_left;
+            this.buttonRemoveMergeCondition.Image = global::TDFragMapper.Properties.Resources.arrow_left;
             this.buttonRemoveMergeCondition.Location = new System.Drawing.Point(247, 106);
             this.buttonRemoveMergeCondition.Name = "buttonRemoveMergeCondition";
             this.buttonRemoveMergeCondition.Size = new System.Drawing.Size(21, 23);
@@ -337,7 +351,7 @@
             // 
             // buttonAddMergeCondition
             // 
-            this.buttonAddMergeCondition.Image = global::MergeFragIons.Properties.Resources.arrow_right;
+            this.buttonAddMergeCondition.Image = global::TDFragMapper.Properties.Resources.arrow_right;
             this.buttonAddMergeCondition.Location = new System.Drawing.Point(247, 68);
             this.buttonAddMergeCondition.Name = "buttonAddMergeCondition";
             this.buttonAddMergeCondition.Size = new System.Drawing.Size(21, 23);
@@ -379,16 +393,20 @@
             this.buttonMerge.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonMerge.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.buttonMerge.UseVisualStyleBackColor = true;
+            this.buttonMerge.Click += new System.EventHandler(this.buttonMerge_Click);
             // 
-            // userControlFilterCondition1
+            // aboutToolStripMenuItem
             // 
-            this.userControlFilterCondition1.AutoScroll = true;
-            this.userControlFilterCondition1.AutoSize = true;
-            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
-            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.TabIndex = 7;
+            this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // Results
             // 
@@ -398,10 +416,10 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Results";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Merge Fragment Ions :: Results";
+            this.Text = "TDFragMapper :: Results";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -452,5 +470,7 @@
         private System.Windows.Forms.Button buttonAddMergeCondition;
         private System.Windows.Forms.ListBox listBoxSelectedMergeConditions;
         private System.Windows.Forms.ListBox listBoxAllMergeConditions;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }

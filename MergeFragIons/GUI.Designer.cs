@@ -1,4 +1,4 @@
-﻿namespace MergeFragIons
+﻿namespace TDFragMapper
 {
     partial class GUI
     {
@@ -61,14 +61,16 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.buttonDisplay = new System.Windows.Forms.Button();
-            this.userControlFilterCondition1 = new MergeFragIons.UserControlFilterCondition();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.buttonIntensity = new System.Windows.Forms.Button();
             this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.buttonIntensity = new System.Windows.Forms.Button();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -118,7 +120,9 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.readMeToolStripMenuItem});
+            this.readMeToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
             // 
@@ -202,7 +206,7 @@
             // 
             // buttonAddInputFile
             // 
-            this.buttonAddInputFile.Image = global::MergeFragIons.Properties.Resources.addButton;
+            this.buttonAddInputFile.Image = global::TDFragMapper.Properties.Resources.addButton;
             resources.ApplyResources(this.buttonAddInputFile, "buttonAddInputFile");
             this.buttonAddInputFile.Name = "buttonAddInputFile";
             this.buttonAddInputFile.UseVisualStyleBackColor = true;
@@ -324,6 +328,13 @@
             this.groupBoxIntensityNorm.Name = "groupBoxIntensityNorm";
             this.groupBoxIntensityNorm.TabStop = false;
             // 
+            // buttonIntensity
+            // 
+            resources.ApplyResources(this.buttonIntensity, "buttonIntensity");
+            this.buttonIntensity.Name = "buttonIntensity";
+            this.buttonIntensity.UseVisualStyleBackColor = true;
+            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
+            // 
             // checkBoxIntensityGlobal
             // 
             resources.ApplyResources(this.checkBoxIntensityGlobal, "checkBoxIntensityGlobal");
@@ -338,12 +349,16 @@
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
-            // buttonIntensity
+            // aboutToolStripMenuItem
             // 
-            resources.ApplyResources(this.buttonIntensity, "buttonIntensity");
-            this.buttonIntensity.Name = "buttonIntensity";
-            this.buttonIntensity.UseVisualStyleBackColor = true;
-            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // GUI
             // 
@@ -356,7 +371,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "GUI";
-            this.ShowIcon = false;
             this.Load += new System.EventHandler(this.GUI_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -418,6 +432,8 @@
         private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
         private System.Windows.Forms.CheckBox checkBoxIntensityPerMap;
         private System.Windows.Forms.Button buttonIntensity;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using MergeFragIons.Controller;
 using System.Text.RegularExpressions;
 
-namespace MergeFragIons
+namespace TDFragMapper
 {
     public partial class UserControlFilterCondition : UserControl
     {
@@ -714,10 +714,14 @@ namespace MergeFragIons
 
                     #endregion
 
-                    (Button, Button) previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
-                    previousAddRemoveMap.Item1.Enabled = false;
-                    if (previousAddRemoveMap.Item2 != null)
-                        previousAddRemoveMap.Item2.Enabled = false;
+                    try
+                    {
+                        (Button, Button) previousAddRemoveMap = Add_Remove_MapBtnList[numberOfConditions - 1];
+                        previousAddRemoveMap.Item1.Enabled = false;
+                        if (previousAddRemoveMap.Item2 != null)
+                            previousAddRemoveMap.Item2.Enabled = false;
+                    }
+                    catch (Exception) { }
 
                     CreateNewMap(false,
                         _indexcb1,

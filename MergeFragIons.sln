@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeFragIons", "MergeFragIons\MergeFragIons.csproj", "{1ACDF383-6D2A-40B9-9EA1-E0DC61111741}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDFragMapper", "MergeFragIons\TDFragMapper.csproj", "{1ACDF383-6D2A-40B9-9EA1-E0DC61111741}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProteinMergeFragIons", "ProteinMergeFragIons\ProteinMergeFragIons\ProteinMergeFragIons.csproj", "{9D62272A-554B-4230-B24F-F0027F89CAE5}"
 EndProject
