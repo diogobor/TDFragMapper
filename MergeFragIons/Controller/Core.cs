@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MergeFragIons.Controller
+namespace TDFragMapper.Controller
 {
     public class Core
     {

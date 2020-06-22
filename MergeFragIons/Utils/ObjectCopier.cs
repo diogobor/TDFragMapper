@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace MergeFragIons.Utils
+namespace TDFragMapper.Utils
 {
     public static class ObjectCopier
     {

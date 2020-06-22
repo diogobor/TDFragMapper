@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ProteinMergeFragIons.Properties
+namespace ProteinTDFragMapper.Properties
 {
 
 

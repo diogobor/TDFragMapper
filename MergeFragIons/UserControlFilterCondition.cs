@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MergeFragIons.Controller;
+using TDFragMapper.Controller;
 using System.Text.RegularExpressions;
 
 namespace TDFragMapper

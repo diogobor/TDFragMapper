@@ -5,7 +5,7 @@
  * Update by:   Diogo Borges Lima
  * Description: About class
  */
-using MergeFragIons.Utils;
+using TDFragMapper.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

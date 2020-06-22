@@ -2568,7 +2568,7 @@
     <value>userControlFilterCondition1</value>
   </data>
   <data name="&gt;&gt;userControlFilterCondition1.Type" xml:space="preserve">
-    <value>MergeFragIons.UserControlFilterCondition, MergeFragIons, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TDFragMapper.UserControlFilterCondition, MergeFragIons, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;userControlFilterCondition1.Parent" xml:space="preserve">
     <value>tabPage2</value>
@@ -2683,7 +2683,7 @@
     <value>userControlFilterCondition1</value>
   </data>
   <data name="&gt;&gt;userControlFilterCondition1.Type" xml:space="preserve">
-    <value>MergeFragIons.UserControlFilterCondition, MergeFragIons, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TDFragMapper.UserControlFilterCondition, MergeFragIons, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;userControlFilterCondition1.Parent" xml:space="preserve">
     <value>tabPage2</value>

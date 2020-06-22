@@ -1,8 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ExcelDataReader;
-using MergeFragIons.Controller;
-using MergeFragIons.Utils;
+using TDFragMapper.Controller;
+using TDFragMapper.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -159,8 +159,8 @@ namespace TDFragMapper
             }
 
             Console.WriteLine("#################################################################################################################################################################");
-            Console.WriteLine("                                                                                                                                                                                Merge Fragment Ions - v. " + version + "\n");
-            Console.WriteLine("                                                                                                                                              Engineered by Diogo Borges Lima (CeMM) and MSBio - Institut Pasteur             \n");
+            Console.WriteLine("                                                                                                                                                                                TDFragMapper - v. " + version + "\n");
+            Console.WriteLine("                                                                                                                                              Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
             Console.WriteLine("#################################################################################################################################################################");
 
             ReadProteinSequence();

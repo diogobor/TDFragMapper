@@ -16,7 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace MergeFragIons.Utils
+namespace TDFragMapper.Utils
 {
     public static class Util
     {

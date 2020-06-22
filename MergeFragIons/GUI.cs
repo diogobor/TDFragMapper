@@ -1,11 +1,11 @@
 ﻿/**
- * Program:     Merge Fragment Ions
+ * Program:     TDFragMapper
  * Author:      Diogo Borges Lima
  * Update:      4/12/2020
  * Update by:   Diogo Borges Lima
  * Description: GUI class
  */
-using MergeFragIons.Utils;
+using TDFragMapper.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

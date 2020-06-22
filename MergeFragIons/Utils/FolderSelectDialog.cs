@@ -6,7 +6,7 @@ using System.Windows.Forms;
 // a vista-style dialog.
 // ------------------------------------------------------------------
 
-namespace MergeFragIons.Utils
+namespace TDFragMapper.Utils
 {
     /// <summary>
     /// Wraps System.Windows.Forms.OpenFileDialog to make it present

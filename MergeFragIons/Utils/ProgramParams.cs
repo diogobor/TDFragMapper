@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MergeFragIons.Utils
+namespace TDFragMapper.Utils
 {
     [Serializable]
     [ProtoContract]

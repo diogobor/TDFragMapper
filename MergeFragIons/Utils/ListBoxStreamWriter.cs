@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Threading;
 
-namespace MergeFragIons.Utils
+namespace TDFragMapper.Utils
 {
     public class ListBoxStreamWriter : TextWriter
     {
