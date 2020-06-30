@@ -128,12 +128,15 @@ namespace TDFragMapper
                 comboBoxStudyCondition_0);
 
 
-            allFragmentIonsAllConditions = Core.FragmentIons;
-            SetTagsInitialCondition();
-            if (isInitialResults)
-                Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>();
-            else
-                UpdateMaps();
+            if (Core != null)
+            {
+                allFragmentIonsAllConditions = Core.FragmentIons;
+                SetTagsInitialCondition();
+                if (isInitialResults)
+                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>();
+                else
+                    UpdateMaps();
+            }
         }
         public void UpdateMaps()
         {

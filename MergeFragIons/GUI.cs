@@ -61,6 +61,11 @@ namespace TDFragMapper
         public void UpdateMaps()
         {
             this.userControlFilterCondition1.ResetMaps();
+            if (buttonDisplay.Enabled == false)
+            {
+                this.userControlFilterCondition1.Setup(null);
+                return;
+            }
             this.userControlFilterCondition1.UpdateMaps();
             if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
             {
@@ -112,7 +117,7 @@ namespace TDFragMapper
 
         private void buttonBottomUpResults_Click(object sender, EventArgs e)
         {
-            openFileDialog.Filter = "Protein file (*.txt)|*.txt";
+            openFileDialog.Filter = "Protein file (*.txt)|*.txt|Fasta file (*.fasta)|*.fasta";
             openFileDialog.FileName = "";
             if (openFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.Cancel)
             {
@@ -192,7 +197,7 @@ namespace TDFragMapper
             if (String.IsNullOrEmpty(myParams.ProteinSequenceFile))
             {
                 System.Windows.Forms.MessageBox.Show(
-                        "'Protein Sequence' field is empty. Please, select one directory.",
+                        "'Protein Sequence' field is empty. Please, select one file.",
                         "Warning",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
@@ -336,10 +341,29 @@ namespace TDFragMapper
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("Coming soon!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //ResultsForm window = new ResultsForm();
-            //if (window.LoadResults())
-            //    window.ShowDialog();
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = ""; // Default file name
+            dlg.Filter = "TDFragMapper results (*.tdfm)|*.tdfm"; // Filter files by extension
+            dlg.Title = "Load results";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            {
+                try
+                {
+                    mainProgramGUI = new Program();
+                    mainProgramGUI.mainCore = new Controller.Core();
+                    mainProgramGUI.mainCore = mainProgramGUI.mainCore.DeserializeResults(dlg.FileName);
+                    this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore, false);
+                    buttonDisplay_Click(null, null);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    mainProgramGUI = null;
+                }
+            }
         }
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)

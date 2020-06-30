@@ -1,34 +1,45 @@
-﻿using System;
+﻿using Ionic.Zip;
+using ProtoBuf;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TDFragMapper.Controller
 {
+    [ProtoContract]
     public class Core
     {
         /// <summary>
         /// List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
         /// </summary>
+        [ProtoMember(1)]
         public List<(string, int, string, int, string, int, double)> FragmentIons { get; set; }
+        [ProtoMember(2)]
         public string ProteinSequence { get; set; }
         /// <summary>
         /// Contains information about PTM
         /// </summary>
+        [ProtoMember(3)]
         public string SequenceInformation { get; set; }
         /// <summary>
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
         /// </summary>
+        [ProtoMember(4)]
         public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps { get; set; }
-        public List<string> AllFragmentationMethods { get; set; }
-        public List<int> AllPrecursorChargeStates { get; set; }
-
-        public List<string> AllActivationLevels { get; set; }
-        public List<int> AllReplicates { get; set; }
+        [ProtoMember(5)]
         public bool Has_And_LocalNormalization { get; set; }
+        [ProtoMember(6)]
         public bool GlobalNormalization { get; set; }
+        [ProtoMember(7)]
         public bool HasMergeMaps { get; set; }
+
+        /// <summary>
+        /// Empty constructor
+        /// </summary>
+        public Core() { }
 
         /// <summary>
         /// Method responsible for updating inverse amino acids positions (x, y and z series)
@@ -67,6 +78,38 @@ namespace TDFragMapper.Controller
             }
 
             return FragIonsWithIntensities;
+        }
+
+        public void SerializeResults(string fileName)
+        {
+            MemoryStream fileToCompress = new MemoryStream();
+            Serializer.SerializeWithLengthPrefix(fileToCompress, this, PrefixStyle.Base128, 1);
+
+            fileToCompress.Seek(0, SeekOrigin.Begin);   // <-- must do this after writing the stream!
+
+            using (ZipFile zipFile = new ZipFile())
+            {
+                zipFile.Password = "TDFr@gM@pp3r!";
+                zipFile.AddEntry("FileCompressed", fileToCompress);
+                zipFile.Save(fileName);
+            }
+        }
+
+        public Core DeserializeResults(string fileName)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (ZipFile zip = ZipFile.Read(fileName))
+                {
+                    ZipEntry entry = zip["FileCompressed"];
+                    entry.ExtractWithPassword(ms, "TDFr@gM@pp3r!");// extract uncompressed content into a memorystream 
+
+                    ms.Seek(0, SeekOrigin.Begin); // <-- must do this after writing the stream!
+
+                    List<Core> toDeserialize = Serializer.DeserializeItems<Core>(ms, PrefixStyle.Base128, 1).ToList();
+                    return toDeserialize[0];
+                }
+            }
         }
     }
 }

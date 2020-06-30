@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text;
 
 namespace TDFragMapper
 {
@@ -184,16 +185,17 @@ namespace TDFragMapper
             {
                 StreamReader sr = new StreamReader(programParams.ProteinSequenceFile);
 
+                StringBuilder sbSeq = new StringBuilder();
                 string line = "";
                 while ((line = sr.ReadLine()) != null)
                 {
-                    if (line.Length > 0)
+                    if (line.Length > 0 && !line.StartsWith(">"))
                     {
-                        mainCore.ProteinSequence = line;
-                        break;
+                        sbSeq.Append(line);
                     }
                 }
                 sr.Close();
+                mainCore.ProteinSequence = sbSeq.ToString();
             }
             catch (Exception) { }
 

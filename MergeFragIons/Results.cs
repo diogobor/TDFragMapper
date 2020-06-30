@@ -63,12 +63,7 @@ namespace TDFragMapper
 
         private void saveImageStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.proteinFragIons1.SetInitialXY();
-            byte returnAnswer = this.proteinFragIons1.SaveFragmentIonsImage();
-            if (returnAnswer == 0)
-                System.Windows.Forms.MessageBox.Show("Image saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else if (returnAnswer == 1)
-                System.Windows.Forms.MessageBox.Show("Failed!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            
         }
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -534,6 +529,41 @@ namespace TDFragMapper
         {
             About aboutScreen = new About();
             aboutScreen.ShowDialog();
+        }
+
+        private void imageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.proteinFragIons1.SetInitialXY();
+            byte returnAnswer = this.proteinFragIons1.SaveFragmentIonsImage();
+            if (returnAnswer == 0)
+                System.Windows.Forms.MessageBox.Show("Image saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else if (returnAnswer == 1)
+                System.Windows.Forms.MessageBox.Show("Failed!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void resultsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = ""; // Default file name
+            dlg.Filter = "TDFragMapper results (*.tdfm)|*.tdfm"; // Filter files by extension
+            dlg.Title = "Save results";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                string fileName = dlg.FileName;
+                try
+                {
+                    Core.SerializeResults(fileName);
+                    MessageBox.Show("Results have been stored successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to save file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }
