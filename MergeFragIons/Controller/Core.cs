@@ -35,6 +35,9 @@ namespace TDFragMapper.Controller
         public bool GlobalNormalization { get; set; }
         [ProtoMember(7)]
         public bool HasMergeMaps { get; set; }
+        [ProtoMember(8)]
+        public bool HasIntensities { get; set; }
+
 
         /// <summary>
         /// Empty constructor

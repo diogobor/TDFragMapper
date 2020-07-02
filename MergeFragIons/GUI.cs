@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Reflection;
 
 namespace TDFragMapper
 {
@@ -145,7 +146,7 @@ namespace TDFragMapper
                 mainThread = new Thread(new ThreadStart(mainProgramGUI.ReadInputFiles));
             }
 
-            if (buttonOK.Text.Equals("OK") && mainProgramGUI != null)
+            if (buttonOK.Text.Equals("Next step") && mainProgramGUI != null)
             {
                 mainThread.Start();
                 timerStatus.Enabled = true;
@@ -160,6 +161,7 @@ namespace TDFragMapper
                 buttonIntensity.Enabled = false;
                 #endregion
 
+                buttonOK.Enabled = true;
                 buttonOK.Text = "Stop";
                 //change button icon
                 buttonOK.Image = TDFragMapper.Properties.Resources.button_cancel_little;
@@ -179,7 +181,7 @@ namespace TDFragMapper
                     buttonIntensity.Enabled = false;
                     #endregion
 
-                    buttonOK.Text = "OK";
+                    buttonOK.Text = "Next step";
                     //change button icon
                     buttonOK.Image = TDFragMapper.Properties.Resources.goBtn;
 
@@ -300,23 +302,10 @@ namespace TDFragMapper
             return myParams;
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //About aboutScreen = new About();
-            //aboutScreen.ShowDialog();
-        }
-
-        private void resultsBrowserToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //ResultsForm window = new ResultsForm();
-            //window.ShowDialog();
-        }
-
         private void timerStatus_Tick(object sender, EventArgs e)
         {
             if (mainProgramGUI != null && mainProgramGUI.FinishProcessing)
             {
-
                 mainThread = null;
                 timerStatus.Enabled = false;
 
@@ -326,11 +315,15 @@ namespace TDFragMapper
                 buttonAddInputFile.Enabled = true;
                 buttonDisplay.Enabled = true;
                 this.userControlFilterCondition1.Enabled = true;
-                groupBoxIntensityNorm.Enabled = true;
-                buttonIntensity.Enabled = true;
+                if (mainProgramGUI.programParams.HasIntensities)
+                {
+                    groupBoxIntensityNorm.Enabled = true;
+                    buttonIntensity.Enabled = true;
+                }
                 #endregion
 
-                buttonOK.Text = "OK";
+                buttonOK.Enabled = true;
+                buttonOK.Text = "Next step";
                 //change button icon
                 buttonOK.Image = TDFragMapper.Properties.Resources.goBtn;
 
@@ -375,7 +368,7 @@ namespace TDFragMapper
 
         private void GUI_Load(object sender, EventArgs e)
         {
-            #region open automatically a pcmb file
+            #region open automatically a tdfm file
             try
             {
                 string[] myAppData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
@@ -402,6 +395,18 @@ namespace TDFragMapper
                 //    window.ShowDialog();
                 //else
                 //    MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            #endregion
+
+            #region Load software version
+            try
+            {
+                versionNumberLabel.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+            catch (Exception exception)
+            {
+                //Unable to retrieve version number
+                Console.WriteLine("", exception.Message);
             }
             #endregion
         }

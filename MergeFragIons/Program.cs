@@ -159,10 +159,10 @@ namespace TDFragMapper
                 version = "";
             }
 
-            Console.WriteLine("#################################################################################################################################################################");
-            Console.WriteLine("                                                                                                                                                                                TDFragMapper - v. " + version + "\n");
-            Console.WriteLine("                                                                                                                                              Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
-            Console.WriteLine("#################################################################################################################################################################");
+            Console.WriteLine("##################################################################################################################");
+            Console.WriteLine("                                                                                                                              TDFragMapper - v. " + version + "\n");
+            Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
+            Console.WriteLine("##################################################################################################################");
 
             ReadProteinSequence();
             ReadFragmentIons();
@@ -171,7 +171,9 @@ namespace TDFragMapper
             else
                 SetNullIntensitiesFragIons();
 
+            //Inverse positions c-term series
             mainCore.ProcessFragIons();
+            mainCore.HasIntensities = programParams.HasIntensities;
 
             Console.WriteLine(" Files have been loaded successfully!");
 

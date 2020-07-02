@@ -37,14 +37,24 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.tabControlMainWindow = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBoxLogo = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.versionNumberLabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBoxLog = new System.Windows.Forms.GroupBox();
             this.listBoxConsole = new System.Windows.Forms.ListBox();
             this.groupBoxInputFiles = new System.Windows.Forms.GroupBox();
+            this.buttonOK = new System.Windows.Forms.Button();
             this.textBoxSeqInfo = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonAddInputFile = new System.Windows.Forms.Button();
@@ -55,13 +65,11 @@
             this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.buttonOK = new System.Windows.Forms.Button();
             this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.buttonDisplay = new System.Windows.Forms.Button();
-            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
             this.buttonIntensity = new System.Windows.Forms.Button();
@@ -69,12 +77,13 @@
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBoxLogo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBoxLog.SuspendLayout();
             this.groupBoxInputFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).BeginInit();
@@ -132,6 +141,17 @@
             this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
             this.readMeToolStripMenuItem.Click += new System.EventHandler(this.readMeToolStripMenuItem_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            // 
+            // aboutToolStripMenuItem
+            // 
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -160,10 +180,54 @@
             // tabPage1
             // 
             resources.ApplyResources(this.tabPage1, "tabPage1");
+            this.tabPage1.Controls.Add(this.groupBoxLogo);
             this.tabPage1.Controls.Add(this.groupBoxLog);
             this.tabPage1.Controls.Add(this.groupBoxInputFiles);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxLogo
+            // 
+            resources.ApplyResources(this.groupBoxLogo, "groupBoxLogo");
+            this.groupBoxLogo.Controls.Add(this.label6);
+            this.groupBoxLogo.Controls.Add(this.label3);
+            this.groupBoxLogo.Controls.Add(this.label5);
+            this.groupBoxLogo.Controls.Add(this.pictureBox1);
+            this.groupBoxLogo.Controls.Add(this.versionNumberLabel);
+            this.groupBoxLogo.Controls.Add(this.label4);
+            this.groupBoxLogo.Name = "groupBoxLogo";
+            this.groupBoxLogo.TabStop = false;
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
+            // 
+            // pictureBox1
+            // 
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.TabStop = false;
+            // 
+            // versionNumberLabel
+            // 
+            resources.ApplyResources(this.versionNumberLabel, "versionNumberLabel");
+            this.versionNumberLabel.Name = "versionNumberLabel";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
             // 
             // groupBoxLog
             // 
@@ -181,16 +245,23 @@
             // groupBoxInputFiles
             // 
             resources.ApplyResources(this.groupBoxInputFiles, "groupBoxInputFiles");
+            this.groupBoxInputFiles.Controls.Add(this.buttonOK);
             this.groupBoxInputFiles.Controls.Add(this.textBoxSeqInfo);
             this.groupBoxInputFiles.Controls.Add(this.label2);
             this.groupBoxInputFiles.Controls.Add(this.buttonAddInputFile);
             this.groupBoxInputFiles.Controls.Add(this.dataGridViewInputFiles);
-            this.groupBoxInputFiles.Controls.Add(this.buttonOK);
             this.groupBoxInputFiles.Controls.Add(this.buttonBrowseProteinSequence);
             this.groupBoxInputFiles.Controls.Add(this.textBoxProteinSeq);
             this.groupBoxInputFiles.Controls.Add(this.label1);
             this.groupBoxInputFiles.Name = "groupBoxInputFiles";
             this.groupBoxInputFiles.TabStop = false;
+            // 
+            // buttonOK
+            // 
+            resources.ApplyResources(this.buttonOK, "buttonOK");
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // textBoxSeqInfo
             // 
@@ -206,8 +277,8 @@
             // 
             // buttonAddInputFile
             // 
-            this.buttonAddInputFile.Image = global::TDFragMapper.Properties.Resources.addButton;
             resources.ApplyResources(this.buttonAddInputFile, "buttonAddInputFile");
+            this.buttonAddInputFile.Image = global::TDFragMapper.Properties.Resources.addButton;
             this.buttonAddInputFile.Name = "buttonAddInputFile";
             this.buttonAddInputFile.UseVisualStyleBackColor = true;
             this.buttonAddInputFile.Click += new System.EventHandler(this.buttonAddInputFile_Click);
@@ -215,6 +286,7 @@
             // dataGridViewInputFiles
             // 
             this.dataGridViewInputFiles.AllowUserToAddRows = false;
+            resources.ApplyResources(this.dataGridViewInputFiles, "dataGridViewInputFiles");
             this.dataGridViewInputFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewInputFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.FragMethodCol,
@@ -223,7 +295,6 @@
             this.ReplicateCol,
             this.MSMSData,
             this.DeconvSpectra});
-            resources.ApplyResources(this.dataGridViewInputFiles, "dataGridViewInputFiles");
             this.dataGridViewInputFiles.Name = "dataGridViewInputFiles";
             this.dataGridViewInputFiles.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridViewInputFiles.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInputFiles_CellClick);
@@ -265,13 +336,6 @@
             resources.ApplyResources(this.DeconvSpectra, "DeconvSpectra");
             this.DeconvSpectra.Name = "DeconvSpectra";
             // 
-            // buttonOK
-            // 
-            resources.ApplyResources(this.buttonOK, "buttonOK");
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
-            // 
             // buttonBrowseProteinSequence
             // 
             resources.ApplyResources(this.buttonBrowseProteinSequence, "buttonBrowseProteinSequence");
@@ -295,8 +359,8 @@
             // tabPage2
             // 
             resources.ApplyResources(this.tabPage2, "tabPage2");
-            this.tabPage2.Controls.Add(this.buttonDisplay);
             this.tabPage2.Controls.Add(this.userControlFilterCondition1);
+            this.tabPage2.Controls.Add(this.buttonDisplay);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -306,11 +370,6 @@
             this.buttonDisplay.Name = "buttonDisplay";
             this.buttonDisplay.UseVisualStyleBackColor = true;
             this.buttonDisplay.Click += new System.EventHandler(this.buttonDisplay_Click);
-            // 
-            // userControlFilterCondition1
-            // 
-            resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
-            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
             // 
             // tabPage3
             // 
@@ -349,16 +408,10 @@
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
-            // aboutToolStripMenuItem
+            // userControlFilterCondition2
             // 
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition2");
+            this.userControlFilterCondition1.Name = "userControlFilterCondition2";
             // 
             // GUI
             // 
@@ -367,7 +420,6 @@
             this.Controls.Add(this.tabControlMainWindow);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "GUI";
@@ -378,6 +430,9 @@
             this.statusStrip1.PerformLayout();
             this.tabControlMainWindow.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.groupBoxLogo.ResumeLayout(false);
+            this.groupBoxLogo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBoxLog.ResumeLayout(false);
             this.groupBoxInputFiles.ResumeLayout(false);
             this.groupBoxInputFiles.PerformLayout();
@@ -407,7 +462,6 @@
         private System.Windows.Forms.GroupBox groupBoxLog;
         private System.Windows.Forms.ListBox listBoxConsole;
         private System.Windows.Forms.GroupBox groupBoxInputFiles;
-        private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonBrowseProteinSequence;
         private System.Windows.Forms.TextBox textBoxProteinSeq;
         private System.Windows.Forms.Label label1;
@@ -417,16 +471,9 @@
         private System.Windows.Forms.TabPage tabPage2;
         public System.Windows.Forms.DataGridView dataGridViewInputFiles;
         private System.Windows.Forms.Button buttonAddInputFile;
-        private UserControlFilterCondition userControlFilterCondition1;
         private System.Windows.Forms.Button buttonDisplay;
         private System.Windows.Forms.TextBox textBoxSeqInfo;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FragMethodCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ActivationLevelCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn PrecursorChargeStateCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBoxIntensityNorm;
         private System.Windows.Forms.CheckBox checkBoxIntensityGlobal;
@@ -434,6 +481,21 @@
         private System.Windows.Forms.Button buttonIntensity;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBoxLogo;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label versionNumberLabel;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FragMethodCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ActivationLevelCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PrecursorChargeStateCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
+        private System.Windows.Forms.Button buttonOK;
+        private UserControlFilterCondition userControlFilterCondition1;
     }
 }
 

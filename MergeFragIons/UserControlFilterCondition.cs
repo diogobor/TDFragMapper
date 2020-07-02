@@ -127,7 +127,6 @@ namespace TDFragMapper
                 comboBoxCondition3_0,
                 comboBoxStudyCondition_0);
 
-
             if (Core != null)
             {
                 allFragmentIonsAllConditions = Core.FragmentIons;

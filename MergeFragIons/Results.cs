@@ -49,11 +49,18 @@ namespace TDFragMapper
         {
             if (Core != null)
             {
+                if (Core.HasIntensities)
+                    groupBoxIntensityNorm.Enabled = true;
+                else
+                    groupBoxIntensityNorm.Enabled = false;
+
                 bool _tmp_Has_And_LocalNormalization = Core.Has_And_LocalNormalization;
                 bool _tmp_GlobalNormalization = Core.GlobalNormalization;
                 checkBoxIntensityPerMap.Checked = _tmp_Has_And_LocalNormalization;
                 checkBoxIntensityGlobal.Checked = _tmp_GlobalNormalization;
             }
+            else
+                groupBoxIntensityNorm.Enabled = false;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -63,7 +70,7 @@ namespace TDFragMapper
 
         private void saveImageStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
