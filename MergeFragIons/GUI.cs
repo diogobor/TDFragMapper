@@ -152,7 +152,9 @@ namespace TDFragMapper
                 timerStatus.Enabled = true;
 
                 #region Disabling some fields
-                groupBoxInputFiles.Enabled = false;
+                textBoxProteinSeq.Enabled = false;
+                textBoxSeqInfo.Enabled = false;
+                dataGridViewInputFiles.Enabled = false;
                 buttonBrowseProteinSequence.Enabled = false;
                 buttonAddInputFile.Enabled = false;
                 buttonDisplay.Enabled = false;
@@ -172,7 +174,9 @@ namespace TDFragMapper
                 if (answer == DialogResult.Yes)
                 {
                     #region Enabling some fields
-                    groupBoxInputFiles.Enabled = true;
+                    textBoxProteinSeq.Enabled = true;
+                    textBoxSeqInfo.Enabled = true;
+                    dataGridViewInputFiles.Enabled = true;
                     buttonBrowseProteinSequence.Enabled = true;
                     buttonAddInputFile.Enabled = true;
                     buttonDisplay.Enabled = false;
@@ -310,7 +314,9 @@ namespace TDFragMapper
                 timerStatus.Enabled = false;
 
                 #region Enabling some fields
-                groupBoxInputFiles.Enabled = true;
+                textBoxProteinSeq.Enabled = true;
+                textBoxSeqInfo.Enabled = true;
+                dataGridViewInputFiles.Enabled = true;
                 buttonBrowseProteinSequence.Enabled = true;
                 buttonAddInputFile.Enabled = true;
                 buttonDisplay.Enabled = true;
@@ -441,8 +447,9 @@ namespace TDFragMapper
             e.Control.KeyPress -= new KeyPressEventHandler(ColumnOnlyNumbers_KeyPress);
             e.Control.KeyPress -= new KeyPressEventHandler(ColumnActivationLevel_KeyPress);
             e.Control.KeyPress -= new KeyPressEventHandler(ColumnFragMeth_KeyPress);
+            e.Control.KeyPress -= new KeyPressEventHandler(ColumnReplicate_KeyPress);
 
-            if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 2 || dataGridViewInputFiles.CurrentCell.ColumnIndex == 3) //Precursor Charge State & Replicate cols
+            if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 2) //Precursor Charge State
             {
                 TextBox tb = e.Control as TextBox;
                 tb.CharacterCasing = CharacterCasing.Upper;
@@ -453,11 +460,21 @@ namespace TDFragMapper
                 }
             }
 
-            if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 1) //Activation Level col
+            if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 3) //Replicate cols
             {
                 TextBox tb = e.Control as TextBox;
                 tb.CharacterCasing = CharacterCasing.Upper;
 
+                if (tb != null)
+                {
+                    tb.KeyPress += new KeyPressEventHandler(ColumnReplicate_KeyPress);
+                }
+            }
+
+            if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 1) //Activation Level col
+            {
+                TextBox tb = e.Control as TextBox;
+                tb.CharacterCasing = CharacterCasing.Lower;
                 if (tb != null)
                 {
                     tb.KeyPress += new KeyPressEventHandler(ColumnActivationLevel_KeyPress);
@@ -508,11 +525,35 @@ namespace TDFragMapper
                 PasteDataToDataGridView();
         }
 
+        private void ColumnReplicate_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (Char.IsNumber(e.KeyChar)
+                || e.KeyChar == 82 /* 'R' */
+                || e.KeyChar == 114 /* 'r' */
+                || e.KeyChar == 8 /* 'backspace' */
+                || e.KeyChar == 3 /* CTRL + C */)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+            if (e.KeyChar == 22)/* CTRL + V */
+                PasteDataToDataGridView();
+        }
+
         private void ColumnActivationLevel_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (Char.IsNumber(e.KeyChar)
-                || e.KeyChar == 47
+                || e.KeyChar == 47 /* '/' */
+                || e.KeyChar == 37 /* '%' */
+                || e.KeyChar == 109 /* 'm' */
+                || e.KeyChar == 115 /* 's' */
+                || e.KeyChar == 77 /* 'M' */
+                || e.KeyChar == 83 /* 'S' */
                 || e.KeyChar == 8 /* 'backspace' */
+                || e.KeyChar == 32 /* 'space' */
                 || e.KeyChar == 3 /* CTRL + C */)
             {
                 e.Handled = false;

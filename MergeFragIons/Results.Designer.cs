@@ -32,8 +32,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +43,7 @@
             this.elementHost2 = new System.Windows.Forms.Integration.ElementHost();
             this.proteinFragIons1 = new ProteinMergeFragIons.ProteinFragIons();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPageFilter = new System.Windows.Forms.TabPage();
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
             this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
@@ -56,6 +54,7 @@
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxAddCleavageFrequency = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.buttonRemoveMergeCondition = new System.Windows.Forms.Button();
@@ -65,10 +64,13 @@
             this.buttonMerge = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.summaryReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabPageFilter.SuspendLayout();
             this.groupBoxMain.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBoxIntensityNorm.SuspendLayout();
@@ -92,6 +94,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem,
+            this.exportToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -100,45 +103,25 @@
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imageToolStripMenuItem,
-            this.resultsToolStripMenuItem});
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            // 
-            // imageToolStripMenuItem
-            // 
-            this.imageToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("imageToolStripMenuItem.Image")));
-            this.imageToolStripMenuItem.Name = "imageToolStripMenuItem";
-            this.imageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.imageToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.imageToolStripMenuItem.Text = "Image";
-            this.imageToolStripMenuItem.Click += new System.EventHandler(this.imageToolStripMenuItem_Click);
-            // 
-            // resultsToolStripMenuItem
-            // 
-            this.resultsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("resultsToolStripMenuItem.Image")));
-            this.resultsToolStripMenuItem.Name = "resultsToolStripMenuItem";
-            this.resultsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
-            | System.Windows.Forms.Keys.S)));
-            this.resultsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.resultsToolStripMenuItem.Text = "Results";
-            this.resultsToolStripMenuItem.Click += new System.EventHandler(this.resultsToolStripMenuItem_Click);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save Results";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(132, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Text = "Close";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
@@ -179,7 +162,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPageFilter);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 27);
@@ -220,16 +203,18 @@
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = null;
             // 
-            // tabPage2
+            // tabPageFilter
             // 
-            this.tabPage2.Controls.Add(this.groupBoxMain);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1068, 580);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Filter";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPageFilter.AutoScroll = true;
+            this.tabPageFilter.AutoScrollMinSize = new System.Drawing.Size(1180, 500);
+            this.tabPageFilter.Controls.Add(this.groupBoxMain);
+            this.tabPageFilter.Location = new System.Drawing.Point(4, 22);
+            this.tabPageFilter.Name = "tabPageFilter";
+            this.tabPageFilter.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageFilter.Size = new System.Drawing.Size(1068, 580);
+            this.tabPageFilter.TabIndex = 1;
+            this.tabPageFilter.Text = "Filter";
+            this.tabPageFilter.UseVisualStyleBackColor = true;
             // 
             // groupBoxMain
             // 
@@ -240,7 +225,7 @@
             this.groupBoxMain.Controls.Add(this.buttonFilter);
             this.groupBoxMain.Location = new System.Drawing.Point(3, 6);
             this.groupBoxMain.Name = "groupBoxMain";
-            this.groupBoxMain.Size = new System.Drawing.Size(1059, 581);
+            this.groupBoxMain.Size = new System.Drawing.Size(1177, 564);
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
             // 
@@ -253,6 +238,7 @@
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
             this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
             this.userControlFilterCondition1.TabIndex = 7;
+            this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
             // 
             // buttonFilter
             // 
@@ -346,6 +332,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.checkBoxAddCleavageFrequency);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.buttonRemoveMergeCondition);
@@ -358,6 +345,18 @@
             this.groupBox1.Size = new System.Drawing.Size(1056, 581);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
+            // 
+            // checkBoxAddCleavageFrequency
+            // 
+            this.checkBoxAddCleavageFrequency.AutoSize = true;
+            this.checkBoxAddCleavageFrequency.Checked = true;
+            this.checkBoxAddCleavageFrequency.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAddCleavageFrequency.Location = new System.Drawing.Point(22, 165);
+            this.checkBoxAddCleavageFrequency.Name = "checkBoxAddCleavageFrequency";
+            this.checkBoxAddCleavageFrequency.Size = new System.Drawing.Size(142, 17);
+            this.checkBoxAddCleavageFrequency.TabIndex = 32;
+            this.checkBoxAddCleavageFrequency.Text = "Add cleavage frequency";
+            this.checkBoxAddCleavageFrequency.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -424,7 +423,7 @@
             this.buttonMerge.Image = ((System.Drawing.Image)(resources.GetObject("buttonMerge.Image")));
             this.buttonMerge.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonMerge.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.buttonMerge.Location = new System.Drawing.Point(21, 175);
+            this.buttonMerge.Location = new System.Drawing.Point(22, 207);
             this.buttonMerge.Name = "buttonMerge";
             this.buttonMerge.Size = new System.Drawing.Size(135, 23);
             this.buttonMerge.TabIndex = 3;
@@ -450,25 +449,56 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 17);
             this.toolStripStatusLabel1.Text = "@2020 - All rights reserved®";
             // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imageToolStripMenuItem1,
+            this.summaryReportToolStripMenuItem});
+            this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // imageToolStripMenuItem1
+            // 
+            this.imageToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("imageToolStripMenuItem1.Image")));
+            this.imageToolStripMenuItem1.Name = "imageToolStripMenuItem1";
+            this.imageToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.imageToolStripMenuItem1.Size = new System.Drawing.Size(201, 22);
+            this.imageToolStripMenuItem1.Text = "Image";
+            this.imageToolStripMenuItem1.Click += new System.EventHandler(this.imageToolStripMenuItem1_Click);
+            // 
+            // summaryReportToolStripMenuItem
+            // 
+            this.summaryReportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("summaryReportToolStripMenuItem.Image")));
+            this.summaryReportToolStripMenuItem.Name = "summaryReportToolStripMenuItem";
+            this.summaryReportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.summaryReportToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.summaryReportToolStripMenuItem.Text = "Summary report";
+            this.summaryReportToolStripMenuItem.Click += new System.EventHandler(this.summaryReportToolStripMenuItem_Click);
+            // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1100, 658);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(1100, 640);
             this.Name = "Results";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TDFragMapper :: Results";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.ResizeEnd += new System.EventHandler(this.Results_ResizeEnd);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.tabPageFilter.ResumeLayout(false);
             this.groupBoxMain.ResumeLayout(false);
             this.groupBoxMain.PerformLayout();
             this.tabPage3.ResumeLayout(false);
@@ -493,7 +523,7 @@
         private System.Windows.Forms.ToolStripMenuItem readMeToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPageFilter;
         private System.Windows.Forms.Integration.ElementHost elementHost1;
         private System.Windows.Forms.GroupBox groupBoxMain;
         private System.Windows.Forms.Integration.ElementHost elementHost2;
@@ -517,9 +547,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resultsToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.CheckBox checkBoxAddCleavageFrequency;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem summaryReportToolStripMenuItem;
     }
 }

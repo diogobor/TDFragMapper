@@ -47,6 +47,10 @@ namespace ProteinMergeFragIons
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 2));
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor11_Replicate01.xlsx", "CID", "25", 11, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor17_Replicate01.xlsx", "CID", "25", 17, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor22_Replicate01.xlsx", "CID", "25", 22, 1));
@@ -216,38 +220,54 @@ namespace ProteinMergeFragIons
             string _key = string.Empty;
 
             ////currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && a.Item6 == 1 && (a.Item5.Equals("8") || a.Item5.Equals("10") || a.Item5.Equals("12"))).ToList();
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && (a.Item2 == 25 || a.Item2 == 22)).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#HCD";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && (a.Item2 == 25 || a.Item2 == 22)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#HCD#0";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 11 || a.Item2 == 22)).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#EThcD";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && (a.Item2 == 17)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#HCD#1";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 11 || a.Item2 == 22)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#EThcD#0";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             ////currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#CID";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#CID#0";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
-            //_key = "Replicates#Fragmentation Method#CID#0";
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17) /*&& a.Item6 == 1*/).ToList();
+            _key = "Replicates#Fragmentation Method#CID#0";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Precursor Charge State", currentFragIons));
+
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17) && a.Item6 == 2).ToList();
+            //_key = "Replicates#Fragmentation Method#CID#1";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Precursor Charge State", currentFragIons));
 
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
-            _key = "Precursor Charge State#Fragmentation Method#UVPD";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
+            //_key = "Precursor Charge State#Fragmentation Method#UVPD#0";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 25 && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("27"))).ToList();
             //_key = "Activation Level#Fragmentation Method#CID#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 && (a.Item5.Equals("5/5") || a.Item5.Equals("10/8") || a.Item5.Equals("10/10"))).ToList();
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 && (a.Item5.Equals("5/5") || a.Item5.Equals("10/8"))).ToList();
             //_key = "Activation Level#Fragmentation Method#EThcD#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
-            //currentFragIons = fragIons.Where(a => a.Item2 == 25).ToList();
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 && (a.Item5.Equals("10/10"))).ToList();
+            //_key = "Activation Level#Fragmentation Method#EThcD#1";
+            //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
+
+            //currentFragIons = fragIons.Where(a => a.Item2 == 25 && (a.Item1.Equals("CID")|| a.Item1.Equals("HCD"))).ToList();
             //_key = "Fragmentation Method#Precursor Charge State#25#0";
+            //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons));
+
+            //currentFragIons = fragIons.Where(a => a.Item2 == 25 && (a.Item1.Equals("EThcD") || a.Item1.Equals("UVPD"))).ToList();
+            //_key = "Fragmentation Method#Precursor Charge State#25#1";
             //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons));
 
             currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();

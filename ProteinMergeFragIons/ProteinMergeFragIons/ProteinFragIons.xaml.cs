@@ -61,6 +61,8 @@ namespace ProteinMergeFragIons
         private bool IsGlobalIntensityMap { get; set; } = false;
         private bool HasMergeConditions { get; set; } = false;
 
+        private bool AddCleavageFrequency { get; set; } = false;
+
         private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelDict { get; set; }
 
         private int SPACER_Y = 0;
@@ -133,7 +135,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool isGlobalIntensityMap = false, bool hasMergeMaps = false)
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool isGlobalIntensityMap = false, bool hasMergeMaps = false, bool addCleavageFrequency = false)
         {
             isPrecursorChargeState = false;
             isActivationLevel = false;
@@ -143,6 +145,7 @@ namespace ProteinMergeFragIons
             ProteinSequence = proteinSequence;
             ProteinSequenceInformation = proteinSequenceInformation;
             HasMergeConditions = hasMergeMaps;
+            AddCleavageFrequency = addCleavageFrequency;
 
             //List<(fragmentationMethod, precursorCharge/activation level/Replicate,IonType, aaPosition, intensity)>
             List<(string, string, string, int, double)> fragmentIons = new List<(string, string, string, int, double)>();
@@ -156,8 +159,9 @@ namespace ProteinMergeFragIons
                 {
                     if (entry.Key.StartsWith("Merge"))
                     {
+                        string[] cols = Regex.Split(entry.Key, "#");
                         List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#MC", fragmentationMethodList);
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#" + cols[3] + "#MC", fragmentationMethodList);
                         fragmentIons.AddRange((from eachEntry in entry.Value.Item4
                                                select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item1).ToList());
 
@@ -172,7 +176,7 @@ namespace ProteinMergeFragIons
                     {
                         string[] cols = Regex.Split(entry.Key, "#");
                         List<string> precursorChargeStateList = entry.Value.Item4.Select(a => a.Item2).OrderByDescending(a => a).Select(a => a.ToString()).Distinct().ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#PCS", precursorChargeStateList);
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#" + cols[3] + "#PCS", precursorChargeStateList);
                         var currentFragIons = (from eachEntry in entry.Value.Item4
                                                select (eachEntry.Item1, eachEntry.Item2, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item2).ToList();
                         fragmentIons.AddRange((from eachEntry in currentFragIons
@@ -189,7 +193,7 @@ namespace ProteinMergeFragIons
                     {
                         string[] cols = Regex.Split(entry.Key, "#");
                         List<string> activationLevelList = entry.Value.Item4.Select(a => a.Item5).Distinct().OrderByDescending(a => a).ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#AL", activationLevelList);
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#" + cols[3] + "#AL", activationLevelList);
                         fragmentIons.AddRange((from eachEntry in entry.Value.Item4
                                                select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item2).ToList());
 
@@ -197,8 +201,9 @@ namespace ProteinMergeFragIons
                     }
                     else if (entry.Key.StartsWith("Fragmentation Method"))
                     {
+                        string[] cols = Regex.Split(entry.Key, "#");
                         List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#FM", fragmentationMethodList);
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#" + cols[3] + "#FM", fragmentationMethodList);
                         fragmentIons.AddRange((from eachEntry in entry.Value.Item4
                                                select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item1).ToList());
 
@@ -207,10 +212,10 @@ namespace ProteinMergeFragIons
                     else if (entry.Key.StartsWith("Replicates"))
                     {
                         string[] cols = Regex.Split(entry.Key, "#");
-                        List<string> replicatesList = entry.Value.Item4.Select(a => a.Item6.ToString()).Distinct().OrderByDescending(a => a).ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#RP", replicatesList);
+                        List<string> replicatesList = entry.Value.Item4.Select(a => a.Item6.ToString()).Distinct().OrderBy(a => a).ToList();
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(cols[2] + "#" + cols[3] + "#RP", replicatesList);
                         fragmentIons.AddRange((from eachEntry in entry.Value.Item4
-                                               select (eachEntry.Item1, eachEntry.Item6.ToString(), eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item2).ToList());
+                                               select (eachEntry.Item1, eachEntry.Item6.ToString(), eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderBy(a => a.Item2).ToList());
 
                         isReplicate = true;
                     }
@@ -462,7 +467,7 @@ namespace ProteinMergeFragIons
 
                 string[] cols = Regex.Split(currentFragMethod.Key, "#");
                 string fragMethod = cols[0];
-                string studyCondition = cols[1];
+                string studyCondition = cols[2];
                 if (studyCondition.Equals("PCS"))
                     isPrecursorChargeState = true;
                 else if (studyCondition.Equals("AL"))
@@ -497,6 +502,7 @@ namespace ProteinMergeFragIons
                     #region Merge conditions
 
                     leftOffsetProtein = 0;
+
                     if (IsGlobalIntensityMap)
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
@@ -1134,48 +1140,51 @@ namespace ProteinMergeFragIons
 
                 if (this.HasMergeConditions)
                 {
-                    #region Insity label
+                    if (this.AddCleavageFrequency)
+                    {
+                        #region Insity label
 
-                    StudyConditionLabel.Content = "Cleavage frequency:";
+                        StudyConditionLabel.Content = "Cleavage frequency:";
 
-                    #region Start Intensity Label
-                    SolidColorBrush labelBrush_IntensityLabel = new SolidColorBrush(Colors.Gray);
-                    Label StartIntensityLabel = new Label();
-                    StartIntensityLabel.FontFamily = new FontFamily("Courier New");
-                    StartIntensityLabel.FontWeight = FontWeights.Bold;
-                    StartIntensityLabel.FontSize = 20;
-                    StartIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                    StartIntensityLabel.Content = "0";
-                    StartIntensityLabel.Foreground = labelBrush_IntensityLabel;
-                    StartIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                    MyCanvas.Children.Add(StartIntensityLabel);
-                    Canvas.SetLeft(StartIntensityLabel, 90 + 27 * (StudyConditionLabel.Content.ToString().Length));
-                    Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
-                    #endregion
+                        #region Start Intensity Label
+                        SolidColorBrush labelBrush_IntensityLabel = new SolidColorBrush(Colors.Gray);
+                        Label StartIntensityLabel = new Label();
+                        StartIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        StartIntensityLabel.FontWeight = FontWeights.Bold;
+                        StartIntensityLabel.FontSize = 20;
+                        StartIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        StartIntensityLabel.Content = "0";
+                        StartIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        StartIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(StartIntensityLabel);
+                        Canvas.SetLeft(StartIntensityLabel, 90 + 27 * (StudyConditionLabel.Content.ToString().Length));
+                        Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
+                        #endregion
 
-                    GridWidth /= 5;
-                    double accumulativeGridWidth = 0;
-                    for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
-                        accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
+                        GridWidth /= 5;
+                        double accumulativeGridWidth = 0;
+                        for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                            accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
 
-                    #region End Intensity Label
-                    Label EndIntensityLabel = new Label();
-                    EndIntensityLabel.FontFamily = new FontFamily("Courier New");
-                    EndIntensityLabel.FontWeight = FontWeights.Bold;
-                    EndIntensityLabel.FontSize = 20;
-                    EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                    if (this.HasMergeConditions)
-                        EndIntensityLabel.Content = intensity_normalization.ToString();
-                    else
-                        EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0");
-                    EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
-                    EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                    MyCanvas.Children.Add(EndIntensityLabel);
-                    Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 6) - (27 * EndIntensityLabel.Content.ToString().Length));
-                    Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
-                    #endregion
+                        #region End Intensity Label
+                        Label EndIntensityLabel = new Label();
+                        EndIntensityLabel.FontFamily = new FontFamily("Courier New");
+                        EndIntensityLabel.FontWeight = FontWeights.Bold;
+                        EndIntensityLabel.FontSize = 20;
+                        EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                        if (this.HasMergeConditions)
+                            EndIntensityLabel.Content = intensity_normalization.ToString();
+                        else
+                            EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0");
+                        EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
+                        EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                        MyCanvas.Children.Add(EndIntensityLabel);
+                        Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 6) - (27 * EndIntensityLabel.Content.ToString().Length));
+                        Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
+                        #endregion
 
-                    #endregion
+                        #endregion
+                    }
 
                     #region Residue Cleavages label
 
@@ -1251,6 +1260,7 @@ namespace ProteinMergeFragIons
             this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
 
             Label proteinSeqInformationLabel = new Label();
+
             #region Plot Legend Protein Sequence Information
             if (!String.IsNullOrEmpty(ProteinSequenceInformation))
             {
@@ -1651,7 +1661,10 @@ namespace ProteinMergeFragIons
                         currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
                     else
                         currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color);
+
                     currentColor.Opacity = currentPrecursorCharge[count].Item5 / local_intensity_normalization;
+                    if (this.HasMergeConditions && !this.AddCleavageFrequency)
+                        currentColor.Opacity = 1;
                     l.Stroke = currentColor;
                 }
                 else

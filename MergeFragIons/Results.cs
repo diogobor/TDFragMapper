@@ -120,7 +120,7 @@ namespace TDFragMapper
         {
             listBoxAllMergeConditions.Items.Clear();
             listBoxSelectedMergeConditions.Items.Clear();
-
+            Core.DiscriminativeMaps = new List<string>();
             /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
             /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
             foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> entry in Core.DictMaps)
@@ -256,6 +256,7 @@ namespace TDFragMapper
                     sbStudyCondition.Append(study_condition);
 
                     listBoxAllMergeConditions.Items.Add(sbStudyCondition);
+                    Core.DiscriminativeMaps.Add(sbStudyCondition.ToString() + "\n");
                 }
             }
         }
@@ -526,7 +527,7 @@ namespace TDFragMapper
             Core.GlobalNormalization = true;
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
+            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, checkBoxAddCleavageFrequency.Checked);
             this.tabControl1.SelectedIndex = 0;
 
             Core.DictMaps = DictMapsWithoutMergeConditions;
@@ -538,17 +539,7 @@ namespace TDFragMapper
             aboutScreen.ShowDialog();
         }
 
-        private void imageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.proteinFragIons1.SetInitialXY();
-            byte returnAnswer = this.proteinFragIons1.SaveFragmentIonsImage();
-            if (returnAnswer == 0)
-                System.Windows.Forms.MessageBox.Show("Image saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else if (returnAnswer == 1)
-                System.Windows.Forms.MessageBox.Show("Failed!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        private void resultsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.FileName = ""; // Default file name
@@ -571,6 +562,48 @@ namespace TDFragMapper
                     MessageBox.Show("Failed to save file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void imageToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            this.proteinFragIons1.SetInitialXY();
+            byte returnAnswer = this.proteinFragIons1.SaveFragmentIonsImage();
+            if (returnAnswer == 0)
+                System.Windows.Forms.MessageBox.Show("Image saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else if (returnAnswer == 1)
+                System.Windows.Forms.MessageBox.Show("Failed!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        }
+
+        private void summaryReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "summary_report.pdf"; // Default file name
+            dlg.Filter = "PDF file (*.pdf)|*.pdf"; // Filter files by extension
+            dlg.Title = "Summary report";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                byte returnAnswer = Core.ExportResultsToPDF(dlg.FileName);
+                if (returnAnswer == 0)
+                    System.Windows.Forms.MessageBox.Show("Data has been exported successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (returnAnswer == 1)
+                    System.Windows.Forms.MessageBox.Show("Export data failed!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void Results_ResizeEnd(object sender, EventArgs e)
+        {
+            int height_maps = this.userControlFilterCondition1.Height + 60;
+            this.tabPageFilter.AutoScrollMinSize = new Size(this.tabPageFilter.AutoScrollMinSize.Width, height_maps);
+        }
+
+        private void userControlFilterCondition1_Resize(object sender, EventArgs e)
+        {
+            Results_ResizeEnd(sender, e);
         }
     }
 }

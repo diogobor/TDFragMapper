@@ -71,15 +71,5 @@ namespace TDFragMapper
                 Console.WriteLine("", exception.Message);
             }
         }
-
-        private void buttonInitialSetting_Click(object sender, EventArgs e)
-        {
-            DialogResult answer = MessageBox.Show("Are you sure you want to reset the setting values ?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            if (answer == DialogResult.Yes)
-            {
-                MessageBox.Show("All values have been reset sucessfully!\nSoftware will be restarted!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Application.Restart();
-            }
-        }
     }
 }

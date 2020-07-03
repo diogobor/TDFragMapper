@@ -69,6 +69,7 @@
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.buttonDisplay = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
@@ -77,7 +78,6 @@
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -310,7 +310,6 @@
             // ActivationLevelCol
             // 
             resources.ApplyResources(this.ActivationLevelCol, "ActivationLevelCol");
-            this.ActivationLevelCol.MaxInputLength = 4;
             this.ActivationLevelCol.Name = "ActivationLevelCol";
             // 
             // PrecursorChargeStateCol
@@ -364,6 +363,11 @@
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // userControlFilterCondition1
+            // 
+            resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
+            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
+            // 
             // buttonDisplay
             // 
             resources.ApplyResources(this.buttonDisplay, "buttonDisplay");
@@ -407,11 +411,6 @@
             this.checkBoxIntensityPerMap.Name = "checkBoxIntensityPerMap";
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
-            // 
-            // userControlFilterCondition2
-            // 
-            resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition2");
-            this.userControlFilterCondition1.Name = "userControlFilterCondition2";
             // 
             // GUI
             // 
@@ -488,14 +487,14 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonOK;
+        private UserControlFilterCondition userControlFilterCondition1;
         private System.Windows.Forms.DataGridViewTextBoxColumn FragMethodCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn ActivationLevelCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrecursorChargeStateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
-        private System.Windows.Forms.Button buttonOK;
-        private UserControlFilterCondition userControlFilterCondition1;
     }
 }
 

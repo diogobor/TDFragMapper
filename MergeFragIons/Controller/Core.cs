@@ -1,4 +1,6 @@
 ﻿using Ionic.Zip;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TDFragMapper.Utils;
 
 namespace TDFragMapper.Controller
 {
@@ -37,6 +40,12 @@ namespace TDFragMapper.Controller
         public bool HasMergeMaps { get; set; }
         [ProtoMember(8)]
         public bool HasIntensities { get; set; }
+        [ProtoMember(9)]
+        public ProgramParams programParams { get; set; }
+
+        [ProtoMember(10)]
+        public List<string> DiscriminativeMaps { get; set; }
+
 
 
         /// <summary>
@@ -73,7 +82,7 @@ namespace TDFragMapper.Controller
                 double MH = fragment.Item7 + Utils.Util.HYDROGENMASS;
 
                 /// string,double,double -> Intensity file, monoisotopic mass, sum intensity
-                (string, double, double) intensity = currentIntesities.Where(item => Math.Abs(Utils.Util.PPM(item.Item2, MH)) < 5).FirstOrDefault();
+                (string, double, double) intensity = currentIntesities.Where(item => Math.Abs(Utils.Util.PPM(item.Item2, MH)) < 150).FirstOrDefault();
                 if (!intensity.Equals(default(ValueTuple<int, double, double>)))
                     FragIonsWithIntensities.Add((fragment.Item1, fragment.Item2, fragment.Item3, fragment.Item4, fragment.Item5, fragment.Item6, intensity.Item3));
                 else
@@ -113,6 +122,273 @@ namespace TDFragMapper.Controller
                     return toDeserialize[0];
                 }
             }
+        }
+
+        public byte ExportResultsToPDF(string fileName)
+        {
+            byte returnOK = 2;//0 -> ok, 1 -> failed, 2 -> cancel
+
+            Document doc = new Document(PageSize.A4, 30f, 20f, 150f, 40);
+
+            try
+            {
+                PdfWriter writer = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create));
+                writer.PageEvent = new HeaderFooter();
+                doc.Open();
+
+                iTextSharp.text.Font customFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL);
+                customFont = FontFactory.GetFont(FontFactory.HELVETICA, 14, iTextSharp.text.Font.BOLD);
+                iTextSharp.text.Paragraph summary = new iTextSharp.text.Paragraph("Summary report", customFont);
+                doc.Add(summary);
+
+                customFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL);
+                iTextSharp.text.Paragraph summary_text = new iTextSharp.text.Paragraph("This file contains summary information for all files processed in TDFragMapper, including the used parameters and the contents of input files.", customFont);
+                summary_text.SpacingBefore = 5;
+                summary_text.SpacingAfter = 15;
+                summary_text.Alignment = Element.ALIGN_JUSTIFIED;
+                doc.Add(summary_text);
+
+                PdfPTable table = new PdfPTable(2);
+                table.WidthPercentage = 100f;
+                PdfPCell cell_title = new PdfPCell(new Phrase("Name",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
+                );
+
+                table.AddCell(cell_title);
+                cell_title = new PdfPCell(new Phrase("Description",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
+                );
+                table.AddCell(cell_title);
+
+                PdfPCell cell_content = new PdfPCell(new Phrase("Protein Sequence file:",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+
+                table.AddCell(cell_content);
+                cell_content = new PdfPCell(new Phrase(programParams.ProteinSequenceFile,
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Protein Sequence:",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                table.AddCell(cell_content);
+                cell_content = new PdfPCell(new Phrase(this.ProteinSequence,
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Sequence information:",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                table.AddCell(cell_content);
+                if (!String.IsNullOrEmpty(programParams.SequenceInformation))
+                {
+                    cell_content = new PdfPCell(new Phrase(programParams.SequenceInformation,
+                        FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                    );
+                }
+                else
+                {
+                    cell_content = new PdfPCell(new Phrase("none",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                }
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Intensity normalization:",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                );
+                table.AddCell(cell_content);
+
+                if (this.Has_And_LocalNormalization)
+                {
+                    if (this.GlobalNormalization)
+                    {
+                        cell_content = new PdfPCell(new Phrase("Across all study maps",
+                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
+                    }
+                    else
+                    {
+                        cell_content = new PdfPCell(new Phrase("Per study map",
+                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
+                    }
+                }
+                else
+                    cell_content = new PdfPCell(new Phrase("none",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Total number of MS/MS data files:",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                int numberOfDataFiles = programParams.InputFileList.Count;
+                cell_content = new PdfPCell(new Phrase(String.Join(", ", numberOfDataFiles),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                if (programParams.HasIntensities)
+                {
+                    cell_content = new PdfPCell(new Phrase("Total number of Deconvoluted Spectra files:",
+                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
+                    table.AddCell(cell_content);
+
+                    int numberOfDeconvSpecFiles = programParams.InputFileList.Where(a => !String.IsNullOrEmpty(a.Item6)).ToList().Count;
+                    cell_content = new PdfPCell(new Phrase(String.Join(", ", numberOfDeconvSpecFiles),
+                       FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+                   );
+                    table.AddCell(cell_content);
+                }
+
+                cell_content = new PdfPCell(new Phrase("Fragmentation Method(s):",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                List<string> fragments = FragmentIons.Select(a => a.Item1).Distinct().ToList();
+                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Activation Level(s):",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                fragments = FragmentIons.Select(a => a.Item5).Distinct().ToList();
+                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Precursor Charge State(s):",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                fragments = FragmentIons.OrderBy(a => a.Item2).Select(a => a.Item2.ToString()).Distinct().ToList();
+                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Replicate(s):",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                fragments = FragmentIons.OrderBy(a => a.Item6).Select(a => a.Item6.ToString()).Distinct().ToList();
+                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Total number of Maps:",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase(DiscriminativeMaps.Count.ToString(),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase("Discriminative Map(s):",
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+                cell_content = new PdfPCell(new Phrase(String.Join("\n", DiscriminativeMaps),
+                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
+               );
+                table.AddCell(cell_content);
+
+
+                doc.Add(table);
+
+                //PdfContentByte content = writer.DirectContent;
+
+                //iTextSharp.text.Rectangle rectangle = new iTextSharp.text.Rectangle(doc.PageSize.);
+                //rectangle.Left += doc.LeftMargin;
+                //rectangle.Right -= doc.RightMargin;
+                //rectangle.Top -= doc.TopMargin;
+                //rectangle.Bottom += doc.BottomMargin;
+                //content.SetColorStroke(iTextSharp.text.Color.BLACK);
+                //content.Rectangle(rectangle.Left, rectangle.Bottom, rectangle.Width, rectangle.Height);
+                //content.Stroke();
+
+                returnOK = 0;//0 -> ok, 1 -> failed, 2 -> cancel
+            }
+            catch (Exception)
+            {
+                returnOK = 1;//0 -> ok, 1 -> failed, 2 -> cancel
+            }
+            finally
+            {
+                doc.Close();
+            }
+
+            return returnOK;
+        }
+    }
+
+    class HeaderFooter : PdfPageEventHelper
+    {
+        public override void OnEndPage(PdfWriter writer, Document doc)
+        {
+            //base.OnEndPage(writer, document);
+
+            PdfPTable tbHeader = new PdfPTable(3);
+            tbHeader.TotalWidth = doc.PageSize.Width - doc.LeftMargin - doc.RightMargin;
+            tbHeader.DefaultCell.Border = 0;
+
+            tbHeader.AddCell(new Paragraph());
+            #region TDFragMapper logo
+            iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(TDFragMapper.Properties.Resources.iconTDFragMapperShadow, System.Drawing.Imaging.ImageFormat.Bmp);
+            img.ScaleAbsolute(60f, 60f);
+            img.Alignment = Element.ALIGN_CENTER;
+            PdfPCell imgCell = new PdfPCell(img);
+            imgCell.HorizontalAlignment = Element.ALIGN_CENTER;
+            imgCell.Border = 0;
+            tbHeader.AddCell(imgCell);
+            #endregion
+            tbHeader.AddCell(new Paragraph());
+
+            PdfPCell cell_title = new PdfPCell(new Phrase("TDFragMapper - Results",
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
+                );
+            cell_title.Border = 0;
+            cell_title.HorizontalAlignment = Element.ALIGN_LEFT;
+            tbHeader.AddCell(cell_title);
+
+            tbHeader.AddCell(new Paragraph());
+
+            string strDate = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToShortTimeString();
+            cell_title = new PdfPCell(new Phrase(strDate,
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
+                );
+            cell_title.Border = 0;
+            cell_title.HorizontalAlignment = Element.ALIGN_RIGHT;
+            tbHeader.AddCell(cell_title);
+            tbHeader.WriteSelectedRows(0, -1, doc.LeftMargin, writer.PageSize.GetTop(doc.TopMargin) + 100, writer.DirectContent);
+
+            PdfPTable tbFooter = new PdfPTable(3);
+            tbFooter.TotalWidth = doc.PageSize.Width - doc.LeftMargin - doc.RightMargin;
+            tbFooter.DefaultCell.Border = 0;
+            tbFooter.AddCell(new Paragraph());
+            tbFooter.AddCell(new Paragraph());
+            cell_title = new PdfPCell(new Phrase("Page: " + writer.PageNumber,
+                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
+                );
+            cell_title.Border = 0;
+            cell_title.HorizontalAlignment = Element.ALIGN_RIGHT;
+            tbFooter.AddCell(cell_title);
+            tbFooter.WriteSelectedRows(0, -1, doc.LeftMargin, writer.PageSize.GetBottom(doc.BottomMargin) - 5, writer.DirectContent);
         }
     }
 }

@@ -164,6 +164,7 @@ namespace TDFragMapper
             Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
             Console.WriteLine("##################################################################################################################");
 
+            mainCore.programParams = programParams;
             ReadProteinSequence();
             ReadFragmentIons();
             if (programParams.HasIntensities)
@@ -176,7 +177,6 @@ namespace TDFragMapper
             mainCore.HasIntensities = programParams.HasIntensities;
 
             Console.WriteLine(" Files have been loaded successfully!");
-
             FinishProcessing = true;
         }
 

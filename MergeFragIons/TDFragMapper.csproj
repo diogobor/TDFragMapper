@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=4.1.2.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="protobuf-net, Version=3.0.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
@@ -182,12 +186,21 @@
     <None Include="icons\button_cancel_little.png" />
     <None Include="icons\Collapse.png" />
     <None Include="icons\Expand.png" />
-    <None Include="icons\arrow.png" />
     <None Include="icons\arrow_left.jpg" />
     <None Include="icons\arrow_right.jpg" />
     <None Include="icons\addButton.png" />
     <None Include="icons\iconFilter.png" />
     <None Include="icons\load.jpg" />
+    <None Include="icons\iconTDFragMapper.png" />
+    <None Include="icons\iconTDFragMapperShadow.png" />
+    <Content Include="icons\document_save.ico" />
+    <Content Include="icons\exit.ico" />
+    <Content Include="icons\export.ico" />
+    <Content Include="icons\iconTDFragMapper.ico" />
+    <Content Include="icons\interrogation_icon.png" />
+    <Content Include="icons\pdf.png" />
+    <Content Include="icons\report.jpg" />
+    <Content Include="icons\Save-icon.png" />
     <Content Include="libs\Interop.MSFileReaderLib.dll" />
     <Content Include="libs\Ionic.Zip.dll" />
     <Content Include="libs\itextsharp.dll" />

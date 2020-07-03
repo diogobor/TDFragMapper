@@ -1585,7 +1585,7 @@ namespace TDFragMapper
                 }
                 else if (condition.StartsWith("Repl"))
                 {
-                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
+                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderBy(a => a).ToList())
                         listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
@@ -1699,7 +1699,7 @@ namespace TDFragMapper
                 }
                 else if (condition.StartsWith("Repl"))
                 {
-                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
+                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderBy(a => a).ToList())
                         listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
@@ -1889,7 +1889,7 @@ namespace TDFragMapper
                 }
                 else if (condition.StartsWith("Repl"))
                 {
-                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderByDescending(a => a).ToList())
+                    foreach (int replicate in allFragmentIonsAllConditions.Select(a => a.Item6).Distinct().OrderBy(a => a).ToList())
                         listboxAllConditions.Items.Add("R" + replicate);
                 }
             }
@@ -2472,32 +2472,32 @@ namespace TDFragMapper
                 }
                 else //New map
                 {
-                    List<string> _keys = Core.DictMaps.Keys.ToList();
-                    if (_keys.Exists(a => a.Contains(studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString())))
-                    {
-                        System.Windows.Forms.MessageBox.Show(
-                   "Similar Map has already been created!",
-                   "Warning",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Warning);
+                   // List<string> _keys = Core.DictMaps.Keys.ToList();
+                   // if (_keys.Exists(a => a.Contains(studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString())))
+                   // {
+                   //     System.Windows.Forms.MessageBox.Show(
+                   //"Similar Map has already been created!",
+                   //"Warning",
+                   //MessageBoxButtons.OK,
+                   //MessageBoxIcon.Warning);
 
-                        #region Reset study fields
-                        ResetFields(null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        listBoxAllStudyCondition,
-                        listBoxSelectedStudyCondition,
-                        null,
-                        null,
-                        null,
-                        comboBoxStudyCondition);
-                        #endregion
+                   //     #region Reset study fields
+                   //     ResetFields(null,
+                   //     null,
+                   //     null,
+                   //     null,
+                   //     null,
+                   //     null,
+                   //     listBoxAllStudyCondition,
+                   //     listBoxSelectedStudyCondition,
+                   //     null,
+                   //     null,
+                   //     null,
+                   //     comboBoxStudyCondition);
+                   //     #endregion
 
-                        return;
-                    }
+                   //     return;
+                   // }
                     Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions));
                 }
             }

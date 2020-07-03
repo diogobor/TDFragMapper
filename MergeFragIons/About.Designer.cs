@@ -51,6 +51,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.buttonInitialSetting = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -58,6 +59,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox1.Controls.Add(this.buttonInitialSetting);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Controls.Add(this.listBoxAuthors);
             this.groupBox1.Controls.Add(this.versionNumberLabel);
@@ -89,7 +92,6 @@
             this.listBoxAuthors.BackColor = System.Drawing.SystemColors.Control;
             this.listBoxAuthors.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listBoxAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listBoxAuthors.FormattingEnabled = true;
             this.listBoxAuthors.Items.AddRange(new object[] {
             "Diogo Borges (diogobor@gmail.com)",
             "Jonathan Dhenin (jonathan.dhenin@pasteur.fr)",
@@ -99,7 +101,7 @@
             this.listBoxAuthors.Name = "listBoxAuthors";
             this.listBoxAuthors.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.listBoxAuthors.Size = new System.Drawing.Size(336, 65);
-            this.listBoxAuthors.TabIndex = 4;
+            this.listBoxAuthors.TabIndex = 13;
             // 
             // versionNumberLabel
             // 
@@ -285,12 +287,27 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe Print", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(97, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 23);
+            this.label1.Size = new System.Drawing.Size(100, 19);
             this.label1.TabIndex = 0;
             this.label1.Text = "TDFragMapper";
+            // 
+            // buttonInitialSetting
+            // 
+            this.buttonInitialSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInitialSetting.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonInitialSetting.BackColor = System.Drawing.Color.Transparent;
+            this.buttonInitialSetting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonInitialSetting.ForeColor = System.Drawing.SystemColors.Control;
+            this.buttonInitialSetting.Location = new System.Drawing.Point(1, 12);
+            this.buttonInitialSetting.Name = "buttonInitialSetting";
+            this.buttonInitialSetting.Size = new System.Drawing.Size(1, 27);
+            this.buttonInitialSetting.TabIndex = 17;
+            this.buttonInitialSetting.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonInitialSetting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.buttonInitialSetting.UseVisualStyleBackColor = false;
             // 
             // About
             // 
@@ -339,5 +356,6 @@
         private System.Windows.Forms.Label RAMmemoryLabel;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button buttonInitialSetting;
     }
 }
