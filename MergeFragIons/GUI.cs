@@ -84,9 +84,15 @@ namespace TDFragMapper
 
             foreach (DataGridViewRow row in dataGridViewInputFiles.Rows)
             {
-                row.HeaderCell.Value = String.Format("{0}", row.Index + 1);
+                if (row.Index + 1 < 100)
+                    row.HeaderCell.Value = String.Format("{0}", row.Index + 1);
+                else
+                    row.HeaderCell.Value = String.Format("{00}", row.Index + 1);
                 row.HeaderCell.Style.Font = new Font("Tahoma", 9.75F);
-                row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                if (dataGridViewInputFiles.Rows.Count < 100)
+                    row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                else
+                    row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
                 DataGridViewButtonCell btnCell = (DataGridViewButtonCell)row.Cells[5];
                 btnCell.FlatStyle = FlatStyle.Standard;
@@ -96,7 +102,10 @@ namespace TDFragMapper
                 btnCell2.FlatStyle = FlatStyle.Standard;
                 btnCell2.Value = "Browse file";
             }
-            dataGridViewInputFiles.RowHeadersWidth = 50;
+            if (dataGridViewInputFiles.Rows.Count < 100)
+                dataGridViewInputFiles.RowHeadersWidth = 50;
+            else
+                dataGridViewInputFiles.RowHeadersWidth = 70;
         }
 
         private void ActiveListBoxControl()
@@ -621,15 +630,24 @@ namespace TDFragMapper
             #region Format datagridView
             foreach (DataGridViewRow row in dataGridViewInputFiles.Rows)
             {
-                row.HeaderCell.Value = String.Format("{0}", row.Index + 1);
+                if (row.Index + 1 < 100)
+                    row.HeaderCell.Value = String.Format("{0}", row.Index + 1);
+                else
+                    row.HeaderCell.Value = String.Format("{00}", row.Index + 1);
                 row.HeaderCell.Style.Font = new Font("Tahoma", 9.75F);
-                row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                if (dataGridViewInputFiles.Rows.Count < 100)
+                    row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                else
+                    row.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
                 DataGridViewButtonCell btnCell = (DataGridViewButtonCell)row.Cells[5];
                 btnCell.FlatStyle = FlatStyle.Standard;
                 btnCell.Value = "Browse file";
             }
-            dataGridViewInputFiles.RowHeadersWidth = 50;
+            if (dataGridViewInputFiles.Rows.Count < 100)
+                dataGridViewInputFiles.RowHeadersWidth = 50;
+            else
+                dataGridViewInputFiles.RowHeadersWidth = 70;
             #endregion
         }
 

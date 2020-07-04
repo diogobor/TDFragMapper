@@ -441,7 +441,7 @@ namespace TDFragMapper
                         listBoxAllStudyCondition.Items.AddRange(RemainItemsstudycondition.ToArray());
                     }
 
-                    if (entry.Value.Item1.ToString().StartsWith("Replicates"))
+                    if (entry.Key.ToString().StartsWith("Replicates"))
                         listBoxSelectedStudyCondition0.Items.AddRange((from item in selectedItemsStudyCondition
                                                                        select "R" + item).ToArray());
                     else
@@ -701,10 +701,11 @@ namespace TDFragMapper
                     else if (entry.Key.ToString().StartsWith("Replicates"))
                     {
                         selectedItemsStudyCondition = (from item in entry.Value.Item4
-                                                       select "R" + item.Item6.ToString()).Distinct().ToList();
-
+                                                       select item.Item6.ToString()).Distinct().ToList();
                         RemainItemsstudycondition = (from item in allFragmentIonsAllConditions.Select(a => a.Item6.ToString()).Distinct().Except(selectedItemsStudyCondition)
                                                      select "R" + item).ToList();
+                        selectedItemsStudyCondition = (from item in selectedItemsStudyCondition
+                                                       select "R" + item).ToList();
                     }
                     else if (entry.Key.ToString().StartsWith("Precursor"))
                     {

@@ -82,11 +82,17 @@ namespace TDFragMapper.Controller
                 double MH = fragment.Item7 + Utils.Util.HYDROGENMASS;
 
                 /// string,double,double -> Intensity file, monoisotopic mass, sum intensity
-                (string, double, double) intensity = currentIntesities.Where(item => Math.Abs(Utils.Util.PPM(item.Item2, MH)) < 150).FirstOrDefault();
-                if (!intensity.Equals(default(ValueTuple<int, double, double>)))
+                (string, double, double) intensity = currentIntesities.Where(item => Math.Abs(Utils.Util.PPM(item.Item2, MH)) < 5).FirstOrDefault();
+                if (intensity.Item1 != null)
                     FragIonsWithIntensities.Add((fragment.Item1, fragment.Item2, fragment.Item3, fragment.Item4, fragment.Item5, fragment.Item6, intensity.Item3));
                 else
-                    FragIonsWithIntensities.Add((fragment.Item1, fragment.Item2, fragment.Item3, fragment.Item4, fragment.Item5, fragment.Item6, 0));
+                {
+                    intensity = currentIntesities.Where(item => Math.Abs(Utils.Util.PPM(item.Item2, fragment.Item7)) < 5).FirstOrDefault();
+                    if (intensity.Item1 != null)
+                        FragIonsWithIntensities.Add((fragment.Item1, fragment.Item2, fragment.Item3, fragment.Item4, fragment.Item5, fragment.Item6, intensity.Item3));
+                    else
+                        FragIonsWithIntensities.Add((fragment.Item1, fragment.Item2, fragment.Item3, fragment.Item4, fragment.Item5, fragment.Item6, 0));
+                }
             }
 
             return FragIonsWithIntensities;
@@ -160,7 +166,7 @@ namespace TDFragMapper.Controller
                 );
                 table.AddCell(cell_title);
 
-                PdfPCell cell_content = new PdfPCell(new Phrase("Protein Sequence file:",
+                PdfPCell cell_content = new PdfPCell(new Phrase("Protein sequence file:",
                     FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                 );
 
@@ -170,7 +176,7 @@ namespace TDFragMapper.Controller
                 );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase("Protein Sequence:",
+                cell_content = new PdfPCell(new Phrase("Protein sequence:",
                     FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                 );
                 table.AddCell(cell_content);
@@ -233,7 +239,7 @@ namespace TDFragMapper.Controller
 
                 if (programParams.HasIntensities)
                 {
-                    cell_content = new PdfPCell(new Phrase("Total number of Deconvoluted Spectra files:",
+                    cell_content = new PdfPCell(new Phrase("Total number of deconvoluted spectra files:",
                             FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
                     table.AddCell(cell_content);
 
@@ -244,7 +250,7 @@ namespace TDFragMapper.Controller
                     table.AddCell(cell_content);
                 }
 
-                cell_content = new PdfPCell(new Phrase("Fragmentation Method(s):",
+                cell_content = new PdfPCell(new Phrase("Fragmentation method(s):",
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
@@ -255,7 +261,7 @@ namespace TDFragMapper.Controller
                );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase("Activation Level(s):",
+                cell_content = new PdfPCell(new Phrase("Activation level(s):",
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
@@ -266,7 +272,7 @@ namespace TDFragMapper.Controller
                );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase("Precursor Charge State(s):",
+                cell_content = new PdfPCell(new Phrase("Precursor charge state(s):",
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
@@ -288,17 +294,17 @@ namespace TDFragMapper.Controller
                );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase("Total number of Maps:",
+                cell_content = new PdfPCell(new Phrase("Total number of maps:",
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase(DiscriminativeMaps.Count.ToString(),
+                cell_content = new PdfPCell(new Phrase(DictMaps.Count.ToString(),
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
 
-                cell_content = new PdfPCell(new Phrase("Discriminative Map(s):",
+                cell_content = new PdfPCell(new Phrase("Discriminative map(s):",
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
@@ -308,19 +314,7 @@ namespace TDFragMapper.Controller
                );
                 table.AddCell(cell_content);
 
-
                 doc.Add(table);
-
-                //PdfContentByte content = writer.DirectContent;
-
-                //iTextSharp.text.Rectangle rectangle = new iTextSharp.text.Rectangle(doc.PageSize.);
-                //rectangle.Left += doc.LeftMargin;
-                //rectangle.Right -= doc.RightMargin;
-                //rectangle.Top -= doc.TopMargin;
-                //rectangle.Bottom += doc.BottomMargin;
-                //content.SetColorStroke(iTextSharp.text.Color.BLACK);
-                //content.Rectangle(rectangle.Left, rectangle.Bottom, rectangle.Width, rectangle.Height);
-                //content.Stroke();
 
                 returnOK = 0;//0 -> ok, 1 -> failed, 2 -> cancel
             }
