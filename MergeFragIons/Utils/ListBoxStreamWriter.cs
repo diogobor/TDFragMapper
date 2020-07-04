@@ -57,7 +57,6 @@ namespace TDFragMapper.Utils
                     value.Contains("Post processing") ||//Comet string
                     value.Contains("Temp/comet") ||     //Comet string
                     value.Contains("Scan ") ||          //Quantitation
-                    value.Contains("...") ||            //Quantitation
                     value.Contains("parsed in") ||            //FastaReaser
                     value.Contains("spectra skipped (0 isotopic envelopes)") || //Determine precursor charge state
                     value.Contains("Plot time"))//SpectrumViewer2

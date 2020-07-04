@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBoxMap_0 = new System.Windows.Forms.GroupBox();
+            this.checkBoxCleavageConfidence0 = new System.Windows.Forms.CheckBox();
+            this.checkBoxGoldenComplemPairs0 = new System.Windows.Forms.CheckBox();
             this.groupBoxStudyCondition1 = new System.Windows.Forms.GroupBox();
             this.comboBoxStudyCondition_0 = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -63,15 +65,40 @@
             // 
             // groupBoxMap_0
             // 
+            this.groupBoxMap_0.Controls.Add(this.checkBoxCleavageConfidence0);
+            this.groupBoxMap_0.Controls.Add(this.checkBoxGoldenComplemPairs0);
             this.groupBoxMap_0.Controls.Add(this.groupBoxStudyCondition1);
             this.groupBoxMap_0.Controls.Add(this.groupBoxFixedCondition1);
             this.groupBoxMap_0.Controls.Add(this.buttonAddMap_0);
             this.groupBoxMap_0.Location = new System.Drawing.Point(3, 3);
             this.groupBoxMap_0.Name = "groupBoxMap_0";
-            this.groupBoxMap_0.Size = new System.Drawing.Size(1159, 230);
+            this.groupBoxMap_0.Size = new System.Drawing.Size(1159, 248);
             this.groupBoxMap_0.TabIndex = 1;
             this.groupBoxMap_0.TabStop = false;
             this.groupBoxMap_0.Text = "Map 1";
+            // 
+            // checkBoxCleavageConfidence0
+            // 
+            this.checkBoxCleavageConfidence0.AutoSize = true;
+            this.checkBoxCleavageConfidence0.Location = new System.Drawing.Point(860, 219);
+            this.checkBoxCleavageConfidence0.Name = "checkBoxCleavageConfidence0";
+            this.checkBoxCleavageConfidence0.Size = new System.Drawing.Size(175, 17);
+            this.checkBoxCleavageConfidence0.TabIndex = 5;
+            this.checkBoxCleavageConfidence0.Text = "Add bond cleavage confidence";
+            this.checkBoxCleavageConfidence0.UseVisualStyleBackColor = true;
+            this.checkBoxCleavageConfidence0.CheckedChanged += new System.EventHandler(this.checkBoxCleavageConfidence0_CheckedChanged);
+            // 
+            // checkBoxGoldenComplemPairs0
+            // 
+            this.checkBoxGoldenComplemPairs0.AutoSize = true;
+            this.checkBoxGoldenComplemPairs0.Enabled = false;
+            this.checkBoxGoldenComplemPairs0.Location = new System.Drawing.Point(860, 196);
+            this.checkBoxGoldenComplemPairs0.Name = "checkBoxGoldenComplemPairs0";
+            this.checkBoxGoldenComplemPairs0.Size = new System.Drawing.Size(179, 17);
+            this.checkBoxGoldenComplemPairs0.TabIndex = 4;
+            this.checkBoxGoldenComplemPairs0.Text = "Add golden complementary pairs";
+            this.checkBoxGoldenComplemPairs0.UseVisualStyleBackColor = true;
+            this.checkBoxGoldenComplemPairs0.CheckedChanged += new System.EventHandler(this.checkBoxGoldenComplemPairs_CheckedChanged);
             // 
             // groupBoxStudyCondition1
             // 
@@ -382,7 +409,7 @@
             // 
             this.buttonAddMap_0.Image = global::TDFragMapper.Properties.Resources.addButton;
             this.buttonAddMap_0.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonAddMap_0.Location = new System.Drawing.Point(9, 196);
+            this.buttonAddMap_0.Location = new System.Drawing.Point(9, 213);
             this.buttonAddMap_0.Name = "buttonAddMap_0";
             this.buttonAddMap_0.Size = new System.Drawing.Size(137, 23);
             this.buttonAddMap_0.TabIndex = 3;
@@ -399,8 +426,9 @@
             this.Controls.Add(this.groupBoxMap_0);
             this.MinimumSize = new System.Drawing.Size(1170, 244);
             this.Name = "UserControlFilterCondition";
-            this.Size = new System.Drawing.Size(1170, 244);
+            this.Size = new System.Drawing.Size(1170, 260);
             this.groupBoxMap_0.ResumeLayout(false);
+            this.groupBoxMap_0.PerformLayout();
             this.groupBoxStudyCondition1.ResumeLayout(false);
             this.groupBoxStudyCondition1.PerformLayout();
             this.groupBoxFixedCondition1.ResumeLayout(false);
@@ -439,5 +467,7 @@
         private System.Windows.Forms.ListBox listBoxSelectedFixedCondition3;
         private System.Windows.Forms.ListBox listBoxAllFixedCondition3;
         private System.Windows.Forms.ComboBox comboBoxCondition1_0;
+        private System.Windows.Forms.CheckBox checkBoxCleavageConfidence0;
+        private System.Windows.Forms.CheckBox checkBoxGoldenComplemPairs0;
     }
 }

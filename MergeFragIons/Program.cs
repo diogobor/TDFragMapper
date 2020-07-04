@@ -1,4 +1,11 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿/**
+ * Program:     TDFragMapper
+ * Author:      Diogo Borges Lima
+ * Update:      4/12/2020
+ * Update by:   Diogo Borges Lima
+ * Description: main class
+ */
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ExcelDataReader;
 using TDFragMapper.Controller;
@@ -182,7 +189,7 @@ namespace TDFragMapper
 
         private void ReadProteinSequence()
         {
-            Console.WriteLine(" Reading protein sequence file...");
+            Console.WriteLine(" Reading protein sequence file: " + programParams.ProteinSequenceFile);
             try
             {
                 StreamReader sr = new StreamReader(programParams.ProteinSequenceFile);
@@ -216,9 +223,10 @@ namespace TDFragMapper
             /// <summary>
             /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intensity Data)>
             /// </summary>
+            int countFile = 1;
             foreach ((string, string, string, int, int, string) dataFile in programParams.InputFileList)
             {
-                Console.WriteLine(" Reading {0} ...", dataFile.Item1);
+                Console.WriteLine(" Reading {0} of {1}: {2}", countFile, programParams.InputFileList.Count, dataFile.Item1);
                 string ionType = "";
                 int aminoacidPos = 0;
                 double observedMass = 0;
@@ -253,12 +261,14 @@ namespace TDFragMapper
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(" ERROR to read some files:\n" + e.Message);
                     System.Windows.Forms.MessageBox.Show(
                                         "Error to read some files:\n" + e.Message,
                                         "Error",
                                         MessageBoxButtons.OK,
                                         MessageBoxIcon.Error);
                 }
+                countFile++;
             }
 
             //mainCore.FragmentIons = FragIons.Distinct().ToList();
@@ -283,13 +293,14 @@ namespace TDFragMapper
             /// <summary>
             /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intesity data)>
             /// </summary>
+            int countFile = 1;
             foreach ((string, string, string, int, int, string) dataFile in programParams.InputFileList)
             {
                 if (String.IsNullOrEmpty(dataFile.Item6))
                 {
                     continue;
                 }
-                Console.WriteLine(" Reading {0} ...", dataFile.Item6);
+                Console.WriteLine(" Reading {0} of {1}: {2}", countFile, programParams.InputFileList.Count, dataFile.Item6);
                 double monoIsotopicMass = 0;
                 double intensity = 0;
                 Intensities = new List<(string, double, double)>();
@@ -327,17 +338,20 @@ namespace TDFragMapper
                             }
                         }
 
-                        FragIonsWithIntensities.AddRange(mainCore.MatchFragmentIonsAndIntensities(FragIons.Where(a=>a.Item8.Equals(dataFile.Item6)).ToList(), Intensities));
+                        Console.WriteLine(" Matching fragment ions and intensities...");
+                        FragIonsWithIntensities.AddRange(mainCore.MatchFragmentIonsAndIntensities(FragIons.Where(a => a.Item8.Equals(dataFile.Item6)).ToList(), Intensities));
                     }
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(" ERROR to read some files:\n" + e.Message);
                     System.Windows.Forms.MessageBox.Show(
                                         "Error to read some files:\n" + e.Message,
                                         "Error",
                                         MessageBoxButtons.OK,
                                         MessageBoxIcon.Error);
                 }
+                countFile++;
             }
 
             mainCore.FragmentIons = FragIonsWithIntensities;
