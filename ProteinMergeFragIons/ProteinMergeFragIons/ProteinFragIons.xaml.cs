@@ -135,7 +135,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool isGlobalIntensityMap = false, bool hasMergeMaps = false, bool addCleavageFrequency = false)
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> DictMaps, string proteinSequence, string proteinSequenceInformation, bool hasIntensityperMap = false, bool isGlobalIntensityMap = false, bool hasMergeMaps = false, bool addCleavageFrequency = false)
         {
             isPrecursorChargeState = false;
             isActivationLevel = false;
@@ -153,7 +153,7 @@ namespace ProteinMergeFragIons
             List<int> allPrecursorChargeStateList = new List<int>();
             PrecursorChargeStatesOrActivationLevelsOrReplicatesColors = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> entry in DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> entry in DictMaps)
             {
                 if (HasMergeConditions)
                 {

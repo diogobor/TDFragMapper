@@ -25,9 +25,9 @@ namespace ProteinMergeFragIons
         private void button1_Click(object sender, EventArgs e)
         {
             /// <summary>
-            /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
+            /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions), isGoldenComplementaryPairs, isBondCleavageConfidence>
             /// </summary>
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)> DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>)>();
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)>();
 
             //string protein = "EVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKI";
             string protein = "QSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKSHRSYSCQVTHEGSTVEKTVAPTECSQSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKS";
@@ -36,8 +36,8 @@ namespace ProteinMergeFragIons
             /// <summary>
             /// List of Fragment Ions
             /// </summary>
-            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
-            List<(string, int, string, int, string, int, double)> fragIons = new List<(string, int, string, int, string, int, double)>();
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, MS/MS Data file
+            List<(string, int, string, int, string, int, double, string)> fragIons = new List<(string, int, string, int, string, int, double, string)>();
 
 
             List<(string, string, string, int, int)> inputFiles = new List<(string, string, string, int, int)>();
@@ -190,7 +190,7 @@ namespace ProteinMergeFragIons
                                 countCell++;
                             }
                             if (!String.IsNullOrEmpty(ionType))
-                                fragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, 0));
+                                fragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, 0, dataFile.Item1));
                         }
                     }
                 }
@@ -204,19 +204,19 @@ namespace ProteinMergeFragIons
                 }
             }
 
-            List<(string, int, string, int, string, int, double)> tmpFragIons = new List<(string, int, string, int, string, int, double)>();
+            List<(string, int, string, int, string, int, double, string)> tmpFragIons = new List<(string, int, string, int, string, int, double, string)>();
             double count = 0.5;
-            foreach ((string, int, string, int, string, int, double) frag in fragIons)
+            foreach ((string, int, string, int, string, int, double, string) frag in fragIons)
             {
-                tmpFragIons.Add((frag.Item1, frag.Item2, frag.Item3, frag.Item4, frag.Item5, frag.Item6, count));
+                tmpFragIons.Add((frag.Item1, frag.Item2, frag.Item3, frag.Item4, frag.Item5, frag.Item6, count, frag.Item8));
                 count += 1.75;
             }
             fragIons = tmpFragIons;
 
             //Example: CID, Act level: 10,15,20, Repl: 1, Prec Charge: 25,22,17,11
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
-            List<(string, int, string, int, string, int, double)> currentFragIons = new List<(string, int, string, int, string, int, double)>();
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity, MS/MS Data file)>
+            List<(string, int, string, int, string, int, double, string)> currentFragIons = new List<(string, int, string, int, string, int, double, string)>();
             string _key = string.Empty;
 
             ////currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && a.Item6 == 1 && (a.Item5.Equals("8") || a.Item5.Equals("10") || a.Item5.Equals("12"))).ToList();
@@ -240,7 +240,7 @@ namespace ProteinMergeFragIons
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
             currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17) /*&& a.Item6 == 1*/).ToList();
             _key = "Replicates#Fragmentation Method#CID#0";
-            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Precursor Charge State", currentFragIons));
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Precursor Charge State", currentFragIons, false, false));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17) && a.Item6 == 2).ToList();
             //_key = "Replicates#Fragmentation Method#CID#1";
@@ -274,19 +274,19 @@ namespace ProteinMergeFragIons
 
             #region creating merged fragIons 
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
-            List<(string, int, string, int, string, int, double)> currentNtermFragIons = currentFragIons.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
-            List<(string, int, string, int, string, int, double)> currentCtermFragIons = currentFragIons.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity, MS/MS Data file)>
+            List<(string, int, string, int, string, int, double, string)> currentNtermFragIons = currentFragIons.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
+            List<(string, int, string, int, string, int, double, string)> currentCtermFragIons = currentFragIons.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
 
             var groupedNtermFragIons = currentNtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentNtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            currentNtermFragIons = new List<(string, int, string, int, string, int, double, string)>();
             foreach (var nTermFragIon in groupedNtermFragIons)
-                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count));
+                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count, nTermFragIon[0].Item8));
 
             var groupedCtermFragIons = currentCtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentCtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            currentCtermFragIons = new List<(string, int, string, int, string, int, double, string)>();
             foreach (var cTermFragIon in groupedCtermFragIons)
-                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count));
+                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count, cTermFragIon[0].Item8));
 
 
             currentFragIons = currentNtermFragIons.Concat(currentCtermFragIons).ToList();

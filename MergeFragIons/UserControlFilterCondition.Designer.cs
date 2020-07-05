@@ -86,7 +86,7 @@
             this.checkBoxCleavageConfidence0.TabIndex = 5;
             this.checkBoxCleavageConfidence0.Text = "Add bond cleavage confidence";
             this.checkBoxCleavageConfidence0.UseVisualStyleBackColor = true;
-            this.checkBoxCleavageConfidence0.CheckedChanged += new System.EventHandler(this.checkBoxCleavageConfidence0_CheckedChanged);
+            this.checkBoxCleavageConfidence0.CheckedChanged += new System.EventHandler(this.checkBoxCleavageConfidence_CheckedChanged);
             // 
             // checkBoxGoldenComplemPairs0
             // 
