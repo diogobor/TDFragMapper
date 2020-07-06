@@ -136,7 +136,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> DictMaps,
+        public void SetFragMethodDictionary_Plot(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> DictMaps,
             string proteinSequence,
             string proteinSequenceInformation,
             bool hasIntensityperMap = false,
@@ -1605,10 +1605,16 @@ namespace ProteinMergeFragIons
                 }
                 #endregion
                 countCurrentFragMethod++;
+
+                double newHighestX = 0;
+                if (PtnCharPositions.Count > 0)
+                {
+                    newHighestX = initialXLine + PtnCharPositions[PtnCharPositions.Count - 1] - 40;
+                    if (newHighestX > HighestX)
+                        HighestX = newHighestX;
+                }
             }
 
-            if (PtnCharPositions.Count == 0) return;
-            HighestX = initialXLine + PtnCharPositions[PtnCharPositions.Count - 1] - 40;
             HighestY = initialYLine + offSetY - 10;
             this.SetCanvasScrollBarSize(HighestX + 100, HighestY + 100);
 

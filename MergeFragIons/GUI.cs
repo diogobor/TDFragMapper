@@ -364,10 +364,20 @@ namespace TDFragMapper
                     mainProgramGUI.mainCore = new Controller.Core();
                     mainProgramGUI.mainCore = mainProgramGUI.mainCore.DeserializeResults(dlg.FileName);
                     this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore, false);
+                    Console.WriteLine("##################################################################################################################");
+                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
+                    Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
+                    Console.WriteLine("##################################################################################################################");
+                    Console.WriteLine(" File has been loaded successfully!");
                     buttonDisplay_Click(null, null);
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("##################################################################################################################");
+                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
+                    Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
+                    Console.WriteLine("##################################################################################################################");
+                    Console.WriteLine(" ERROR: Failed to load file!");
                     System.Windows.Forms.MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     mainProgramGUI = null;
                 }

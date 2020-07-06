@@ -39,7 +39,7 @@ namespace TDFragMapper
         {
             MyGui = _gui;
             Core = core;
-            this.proteinFragIons1.SetFragMethodDictionary(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization);
             this.userControlFilterCondition1.Setup(Core, false);
             this.UpdateIntensities();
             this.FillListBoxMergeConditions();
@@ -112,7 +112,7 @@ namespace TDFragMapper
                 Core.HasMergeMaps = false;
             }
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
             this.tabControl1.SelectedIndex = 0;
         }
 
@@ -527,7 +527,7 @@ namespace TDFragMapper
             Core.GlobalNormalization = true;
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, checkBoxAddCleavageFrequency.Checked);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, checkBoxAddCleavageFrequency.Checked);
             this.tabControl1.SelectedIndex = 0;
 
             Core.DictMaps = DictMapsWithoutMergeConditions;

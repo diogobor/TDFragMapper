@@ -1632,9 +1632,20 @@ namespace TDFragMapper
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
                 {
-                    foreach (int item in listboxSelectedCondition1.Items)//Precursor Charge State
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        foreach (int item in listboxSelectedCondition1.Items)//Precursor Charge State
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                        }
                     }
                 }
                 allFragmentIonsAllConditions = _tempFragMethods;
@@ -1700,9 +1711,20 @@ namespace TDFragMapper
                 }
                 else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
                 {
-                    foreach (int item in listboxSelectedCondition1.Items)//Precursor Charge State
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        foreach (int item in listboxSelectedCondition1.Items)//Precursor Charge State
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition1.Items)//Replicates
+                        {
+                            int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                        }
                     }
                 }
                 allFragmentIonsAllConditions = _tempFragMethods;
@@ -1745,9 +1767,20 @@ namespace TDFragMapper
                 }
                 else if (listboxSelectedCondition2.Tag.Equals("Precursor Charge State"))
                 {
-                    foreach (int item in listboxSelectedCondition2.Items)//Precursor Charge State
+                    try
                     {
-                        _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        foreach (int item in listboxSelectedCondition2.Items)//Precursor Charge State
+                        {
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        foreach (string item in listboxSelectedCondition2.Items)//Replicates
+                        {
+                            int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                        }
                     }
                 }
                 allFragmentIonsAllConditions = _tempFragMethods;
@@ -2294,8 +2327,8 @@ namespace TDFragMapper
                         {
                             foreach (string item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
                             {
-                                int replicate = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
-                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item6 == replicate).ToList());
+                                int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
                             }
                         }
                     }
@@ -2775,9 +2808,20 @@ namespace TDFragMapper
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                            }
                         }
                     }
                     allFragmentIonsAllConditions = _tempFragMethods;
@@ -2839,9 +2883,20 @@ namespace TDFragMapper
                     }
                     else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition1.Items)//Precursor Charge State
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition1.Items)//Replicates
+                            {
+                                int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                            }
                         }
                     }
                     allFragmentIonsAllConditions = _tempFragMethods;
@@ -2884,9 +2939,20 @@ namespace TDFragMapper
                     }
                     else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
                     {
-                        foreach (int item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
+                        try
                         {
-                            _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            foreach (int item in listBoxSelectedFixedCondition2.Items)//Precursor Charge State
+                            {
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == item).ToList());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            foreach (string item in listBoxSelectedFixedCondition2.Items)//Replicates
+                            {
+                                int precursorChargeState = Convert.ToInt32(numberCaptured.Matches(item)[0].Value);
+                                _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item2 == precursorChargeState).ToList());
+                            }
                         }
                     }
                     allFragmentIonsAllConditions = _tempFragMethods;
