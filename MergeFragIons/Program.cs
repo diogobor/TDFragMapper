@@ -30,11 +30,11 @@ namespace TDFragMapper
         /// <summary>
         /// List of Fragment Ions
         /// </summary>
-        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile, MS/MS file
-        private List<(string, int, string, int, string, int, double, string, string)> FragIons { get; set; }
+        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile
+        private List<(string, int, string, int, string, int, double, string)> FragIons { get; set; }
 
-        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, MS/MS file
-        private List<(string, int, string, int, string, int, double, string)> FragIonsWithIntensities { get; set; }
+        /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+        private List<(string, int, string, int, string, int, double)> FragIonsWithIntensities { get; set; }
         public Core mainCore { get; set; }
         public bool FinishProcessing { get; set; }
         public ProgramParams programParams { get; set; }
@@ -217,8 +217,8 @@ namespace TDFragMapper
             /// <summary>
             /// List of Fragment Ions
             /// </summary>
-            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile, MS/MS Data file
-            FragIons = new List<(string, int, string, int, string, int, double, string, string)>();
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Observed Mass, IntensityFile
+            FragIons = new List<(string, int, string, int, string, int, double, string)>();
 
             /// <summary>
             /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intensity Data)>
@@ -254,7 +254,7 @@ namespace TDFragMapper
                                 ionType = values[1].ToString();
                                 aminoacidPos = Convert.ToInt32(values[2]);
                                 observedMass = Convert.ToDouble(values[4]);
-                                FragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, observedMass, dataFile.Item6, dataFile.Item1));
+                                FragIons.Add((fragMethod, precursorChargeState, ionType, aminoacidPos, activationLevel, replicate, observedMass, dataFile.Item6));
                             }
                         }
                     }
@@ -281,8 +281,8 @@ namespace TDFragMapper
         {
             Console.WriteLine(" Reading intensity file(s)...");
 
-            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, MS/MS Data file
-            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double, string)>();
+            /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
+            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double)>();
 
             /// <summary>
             /// List of Intensities
@@ -360,11 +360,11 @@ namespace TDFragMapper
         private void SetNullIntensitiesFragIons()
         {
             /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, MS/MS Data file
-            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double, string)>();
+            FragIonsWithIntensities = new List<(string, int, string, int, string, int, double)>();
 
             FragIons.ForEach(a =>
             {
-                FragIonsWithIntensities.Add((a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, 0, a.Item9));
+                FragIonsWithIntensities.Add((a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, 0));
             });
             mainCore.FragmentIons = FragIonsWithIntensities;
             FragIons = null;

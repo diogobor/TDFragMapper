@@ -18,7 +18,7 @@ namespace TDFragMapper
         private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
 
         // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
-        private List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions { get; set; }
+        private List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions { get; set; }
 
         private List<(Button, Button)> Add_Remove_MapBtnList { get; set; }
 
@@ -135,7 +135,7 @@ namespace TDFragMapper
                 SetTagsInitialCondition();
                 if (isInitialResults)
                 {
-                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)>();
+                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>();
                     comboBoxCondition2_0.Enabled = false;
                     comboBoxCondition3_0.Enabled = false;
                     comboBoxStudyCondition_0.Enabled = false;
@@ -150,24 +150,24 @@ namespace TDFragMapper
         public void UpdateMaps()
         {
             int countCondition = 0;
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)>(Core.DictMaps);
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>(Core.DictMaps);
             List<string> selectedItemsCondition1 = null;
             List<string> selectedItemsCondition2 = null;
             List<string> selectedItemsCondition3 = null;
             List<string> selectedItemsStudyCondition = null;
 
-            List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions = null;
-            List<(string, int, string, int, string, int, double, string)> _tempFragMethods = null;
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double)> _tempFragMethods = null;
             List<string> RemainItemscondition1 = null;
             List<string> RemainItemscondition2 = null;
             List<string> RemainItemscondition3 = null;
             List<string> RemainItemsstudycondition = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> entry in _DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in _DictMaps)
             {
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (countCondition == 0)
                 {
                     //For filtering
@@ -281,7 +281,7 @@ namespace TDFragMapper
                     #region fill fixed condition2 selected items
                     listBoxAllFixedCondition2.Items.Clear();
                     listBoxSelectedFixedCondition2.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -349,7 +349,7 @@ namespace TDFragMapper
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
                     listBoxSelectedFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -590,7 +590,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region fill fixed condition2 selected items
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -651,7 +651,7 @@ namespace TDFragMapper
 
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -1368,7 +1368,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = null;
             Button addNewMap = null;
             Button addSelectedCondition = null;
-            List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
             CheckBox checkBoxGoldenComplemPairs = null;
             CheckBox checkBoxCleavageConfidence = null;
 
@@ -1388,7 +1388,7 @@ namespace TDFragMapper
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)sender).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)sender).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)sender).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, string)>)((object[])((ComboBox)sender).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)sender).Tag)[14];
                 checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)sender).Tag)[15];
                 checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)sender).Tag)[16];
             }
@@ -1408,7 +1408,7 @@ namespace TDFragMapper
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, string)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
                 checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
                 checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
             }
@@ -1555,7 +1555,7 @@ namespace TDFragMapper
                 return false;
         }
 
-        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions)
+        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions)
         {
             string condition = currentCombobox.SelectedItem.ToString();
             listboxAllConditions.Items.Clear();
@@ -1597,7 +1597,7 @@ namespace TDFragMapper
             else if (currentCombobox.Name.StartsWith("comboBoxCondition2"))
             {
                 listboxSelectedCondition2.Items.Clear();
-                List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Frag Method
@@ -1663,7 +1663,7 @@ namespace TDFragMapper
             else if (currentCombobox.Name.StartsWith("comboBoxCondition3"))
             {
                 listboxSelectedCondition3.Items.Clear();
-                List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 #region filter 1
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
@@ -1709,7 +1709,7 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -1778,7 +1778,7 @@ namespace TDFragMapper
             {
                 listboxSelectedStudyCondition.Items.Clear();
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 #region filter 1
                 if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
@@ -1834,7 +1834,7 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
                 {
@@ -1889,7 +1889,7 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 3
-                _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                 if (listboxSelectedCondition3.Tag.Equals("Fragmentation Method"))
                 {
@@ -2028,7 +2028,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, string)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
             CheckBox checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
             CheckBox checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
 
@@ -2121,7 +2121,7 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2193,7 +2193,7 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = true;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2247,7 +2247,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -2315,7 +2315,7 @@ namespace TDFragMapper
 
                     #region filter Condition1
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2369,7 +2369,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition2
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -2424,7 +2424,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
                     {
@@ -2479,7 +2479,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Study Condition
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
                     {
@@ -2543,10 +2543,27 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
-                    string _key = studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString() + "#" + numberOfCondition;
+                    string firstFixedCondition = string.Empty;
+                    if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                        firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<int>().ToList());
+                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level")||
+                        listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                        firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<string>().ToList());
+                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    {
+                        StringBuilder sbReplicate = new StringBuilder();
+                        foreach (string item in listBoxSelectedFixedCondition1.Items)
+                        {
+                            sbReplicate.Append(Regex.Replace(item, "R", ""));
+                            sbReplicate.Append("&");
+                        }
+                        firstFixedCondition = sbReplicate.ToString().Substring(0, sbReplicate.ToString().Length - 1);
+                    }
+
+                    string _key = studyCondition + "#" + fixedCondition1 + "#" + firstFixedCondition + "#" + numberOfCondition;
                     if (Core.DictMaps.TryGetValue(_key, out currentMap))
                     {
                         Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, checkBoxGoldenComplemPairs.Checked, checkBoxCleavageConfidence.Checked);
@@ -2623,7 +2640,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int, double, string)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, string)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
             CheckBox checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
             CheckBox checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
 
@@ -2723,7 +2740,7 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2787,7 +2804,7 @@ namespace TDFragMapper
 
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2831,7 +2848,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -2910,7 +2927,7 @@ namespace TDFragMapper
 
                     #region filter Condition1
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double, string)> _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
                     if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
@@ -2964,7 +2981,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition2
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
                     {
@@ -3019,7 +3036,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
                     {
@@ -3074,7 +3091,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Study Condition
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double, string)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
 
                     if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
                     {
@@ -3137,10 +3154,27 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
-                    string _key = studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString() + "#" + numberOfCondition;
+                    string firstFixedCondition = string.Empty;
+                    if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                        firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<int>().ToList());
+                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level") ||
+                        listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                        firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<string>().ToList());
+                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    {
+                        StringBuilder sbReplicate = new StringBuilder();
+                        foreach (string item in listBoxSelectedFixedCondition1.Items)
+                        {
+                            sbReplicate.Append(Regex.Replace(item, "R", ""));
+                            sbReplicate.Append("&");
+                        }
+                        firstFixedCondition = sbReplicate.ToString().Substring(0, sbReplicate.ToString().Length - 1);
+                    }
+
+                    string _key = studyCondition + "#" + fixedCondition1 + "#" + firstFixedCondition + "#" + numberOfCondition;
                     if (Core.DictMaps.TryGetValue(_key, out currentMap))
                     {
                         Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, false, false);
@@ -3213,7 +3247,7 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
                             Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, ((CheckBox)sender).Checked, currentMap.Item6);
@@ -3237,7 +3271,7 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
                             Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, currentMap.Item5, ((CheckBox)sender).Checked);

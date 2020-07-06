@@ -136,7 +136,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> DictMaps,
+        public void SetFragMethodDictionary(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> DictMaps,
             string proteinSequence,
             string proteinSequenceInformation,
             bool hasIntensityperMap = false,
@@ -160,7 +160,7 @@ namespace ProteinMergeFragIons
             List<int> allPrecursorChargeStateList = new List<int>();
             PrecursorChargeStatesOrActivationLevelsOrReplicatesColors = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, string)>, bool, bool)> entry in DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in DictMaps)
             {
                 if (HasMergeConditions)
                 {
@@ -230,29 +230,6 @@ namespace ProteinMergeFragIons
 
                         isActivationLevel = true;
                     }
-                    else if (entry.Key.StartsWith("Fragmentation Method"))
-                    {
-                        string[] cols = Regex.Split(entry.Key, "#");
-                        List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
-                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#" + cols[3] + "#FM#" + entry.Value.Item5 + "#" + entry.Value.Item6, fragmentationMethodList);
-
-                        var groupedByPositionsAndFragMethod = (from eachEntry in entry.Value.Item4
-                                                               group eachEntry by new { eachEntry.Item4, eachEntry.Item1 }).ToList();
-
-                        foreach (var eachPosFrag in groupedByPositionsAndFragMethod)
-                        {
-                            var newgroupedListPosFrag = (from eachEntry in eachPosFrag
-                                                         group eachEntry by eachEntry.Item3).ToList();
-                            foreach (var eachpos in newgroupedListPosFrag)
-                            {
-                                (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
-                                fragmentIons.Add(currentPos);
-                            }
-                        }
-                        fragmentIons = fragmentIons.Distinct().OrderByDescending(a => a.Item1).ToList();
-
-                        isFragmentationMethod = true;
-                    }
                     else if (entry.Key.StartsWith("Replicates"))
                     {
                         string[] cols = Regex.Split(entry.Key, "#");
@@ -275,6 +252,49 @@ namespace ProteinMergeFragIons
                         fragmentIons = fragmentIons.Distinct().ToList();
 
                         isReplicate = true;
+                    }
+                    else if (entry.Key.StartsWith("Fragmentation Method"))
+                    {
+                        string[] cols = Regex.Split(entry.Key, "#");
+                        List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
+                        FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#" + cols[3] + "#FM#" + cols[2] + "#" + entry.Value.Item5 + "#" + entry.Value.Item6, fragmentationMethodList);
+
+                        var groupedByPositionsAndFragMethod = (from eachEntry in entry.Value.Item4
+                                                               group eachEntry by new { eachEntry.Item4, eachEntry.Item1 }).ToList();
+
+                        foreach (var eachPosFrag in groupedByPositionsAndFragMethod)
+                        {
+                            var newgroupedListPosFrag = (from eachEntry in eachPosFrag
+                                                         group eachEntry by eachEntry.Item3).ToList();
+
+                            if (entry.Value.Item1.StartsWith("Precursor"))
+                            {
+                                foreach (var eachpos in newgroupedListPosFrag)
+                                {
+                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item2.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    fragmentIons.Add(currentPos);
+                                }
+                            }
+                            else if (entry.Value.Item1.StartsWith("Activation"))
+                            {
+                                foreach (var eachpos in newgroupedListPosFrag)
+                                {
+                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    fragmentIons.Add(currentPos);
+                                }
+                            }
+                            else if (entry.Value.Item1.StartsWith("Replicates"))
+                            {
+                                foreach (var eachpos in newgroupedListPosFrag)
+                                {
+                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item6.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    fragmentIons.Add(currentPos);
+                                }
+                            }
+                        }
+                        fragmentIons = fragmentIons.Distinct().OrderByDescending(a => a.Item1).ToList();
+
+                        isFragmentationMethod = true;
                     }
                 }
             }
@@ -479,7 +499,9 @@ namespace ProteinMergeFragIons
 
             #region set initial variables
             List<double> PtnCharPositions = new List<double>();
-            int[] ProteinBondCleavageConfidenceCountAA;
+            int[] ProteinBondCleavageConfidenceCountAA = new int[0];
+            //(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x, b/y, c/z)]
+            List<(string, int[], int)> ProteinGoldenComplementaryPairs = new List<(string, int[], int)>(0);
             double initialXLine = 0;
             double initialYLine = 0;
 
@@ -522,7 +544,7 @@ namespace ProteinMergeFragIons
                 isGoldenComplementaryPairs = false;
                 isBondCleavageConfidence = false;
 
-                List<string> PrecursorChargesOrActivationLevels = currentFragMethod.Value;
+                List<string> PrecursorChargesOrActivationLevelsOrReplicates = currentFragMethod.Value;
 
                 string[] cols = Regex.Split(currentFragMethod.Key, "#");
                 string fragMethod = cols[0];
@@ -535,16 +557,40 @@ namespace ProteinMergeFragIons
                     isFragmentationMethod = true;
                 else if (studyCondition.Equals("RP"))
                     isReplicate = true;
-                if (cols[3].Equals("True"))
-                    isGoldenComplementaryPairs = true;
-                if (cols[4].Equals("True"))
-                    isBondCleavageConfidence = true;
 
-                leftOffsetProtein = PrecursorChargesOrActivationLevels.Max(a => a.Length);
+                string[] firstFixedStudy = new string[0];
+                if (isFragmentationMethod)
+                {
+                    firstFixedStudy = Regex.Split(cols[3], "&");
+                    if (cols[4].Equals("True"))
+                        isGoldenComplementaryPairs = true;
+                    if (cols[5].Equals("True"))
+                        isBondCleavageConfidence = true;
+                }
+                else
+                {
+                    if (cols[3].Equals("True"))
+                        isGoldenComplementaryPairs = true;
+                    if (cols[4].Equals("True"))
+                        isBondCleavageConfidence = true;
+                }
+
+                leftOffsetProtein = PrecursorChargesOrActivationLevelsOrReplicates.Max(a => a.Length);
 
                 List<(string, string, string, int, double)> currentFragmentIons = null;
                 if (this.HasMergeConditions || (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates)))
-                    currentFragmentIons = fragmentIons;
+                {
+                    if (this.HasMergeConditions)
+                        currentFragmentIons = fragmentIons;
+                    else
+                    {
+                        currentFragmentIons = new List<(string, string, string, int, double)>();
+                        foreach (string firstFixCond in firstFixedStudy)
+                        {
+                            currentFragmentIons.AddRange(fragmentIons.Where(a => a.Item2.Equals(firstFixCond)).ToList());
+                        }
+                    }
+                }
                 else
                     currentFragmentIons = fragmentIons.Where(a => a.Item1.Equals(fragMethod)).ToList();
 
@@ -559,6 +605,7 @@ namespace ProteinMergeFragIons
 
                 double intensity_normalization = 0;
                 int maximumBondCleavageConfidence = 0;
+                Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition = null;
 
                 if (fragMethod.Equals("Merge"))
                 {
@@ -579,7 +626,6 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
                     #endregion
 
                     #region Serie N-Term
@@ -587,7 +633,7 @@ namespace ProteinMergeFragIons
                     List<(string, string, string, int, double)> fragmentIonsNterm = currentAFragmentIons.Concat(currentBFragmentIons).Concat(currentCFragmentIons).ToList();
                     if (fragmentIonsNterm.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, fragmentIonsNterm, proteinCharsAndSpaces, ref countPrecursorChargesNterm, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, fragmentIonsNterm, proteinCharsAndSpaces, ref countPrecursorChargesNterm, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectNterm = (countPrecursorChargesNterm + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesNterm * 9.5);
 
                         // create Background rect N-term
@@ -605,6 +651,14 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
+
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = proteinY - 20 + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30);
+                    }
                     #endregion
 
                     #region Serie C-term
@@ -615,7 +669,7 @@ namespace ProteinMergeFragIons
                     List<(string, string, string, int, double)> fragmentIonsCterm = currentXFragmentIons.Concat(currentYFragmentIons).Concat(currentZFragmentIons).ToList();
                     if (fragmentIonsCterm.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, fragmentIonsCterm, proteinCharsAndSpaces, ref countPrecursorChargesCterm, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, fragmentIonsCterm, proteinCharsAndSpaces, ref countPrecursorChargesCterm, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
                         HeightRectY = (countPrecursorChargesCterm + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesCterm * 9.5);
 
                         // create Background rect C-term
@@ -647,7 +701,7 @@ namespace ProteinMergeFragIons
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
                     if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevels.Count;
+                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectA = 0;
                     HeightRectNterm = 0;
@@ -659,14 +713,28 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+                    #region Inititalizing Protein Bond cleavage confidence and golden complementary pairs
+                    if (isBondCleavageConfidence)
+                        ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                        for (int i = 1; i < 4; i++)
+                        {
+                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
+                        }
+                    }
+                    #endregion
                     #endregion
 
                     #region Serie A
                     int countPrecursorChargesA = 0;
                     if (currentAFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 1);
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
@@ -681,7 +749,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectNterm = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -703,7 +771,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -722,7 +790,17 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
-                    proteinY = HeightRectA + HeightRectNterm + HeightRectC + 95;
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = HeightRectA + HeightRectNterm + HeightRectC + 95;
+                        proteinY = proteinY + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30) + 41;
+                    }
+                    else
+                        proteinY = HeightRectA + HeightRectNterm + HeightRectC + 95;
                     #endregion
 
                     #region Serie X
@@ -732,7 +810,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesX = 0;
                     if (currentXFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 1);
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
@@ -747,7 +825,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -762,12 +840,18 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
+                    #endregion
+
+                    #region Plot stars for Golden complementary pairs
+                    TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
+                    if (isGoldenComplementaryPairs)
+                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -776,8 +860,9 @@ namespace ProteinMergeFragIons
                         for (int i = 0; i < ProteinSequence.Length; i++)
                         {
                             SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevels.Count * 4);
+                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * 4);
                             proteinCharsAndSpaces[i].Foreground = currentColor;
+                            proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
                         }
                     }
 
@@ -785,6 +870,8 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod UVPD
                     double height_rect = (HeightRectA + HeightRectNterm + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 175);
+                    if (isGoldenComplementaryPairs)
+                        height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectA + HeightRectNterm + HeightRectC + 130;
                     RectCondition(initialYLine, 0, height_rect, font_pos_condition, ref offSetY, "UVPD");
                     #endregion
@@ -800,7 +887,7 @@ namespace ProteinMergeFragIons
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
                     if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 4 * PrecursorChargesOrActivationLevels.Count;
+                        maximumBondCleavageConfidence = 4 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectNterm = 0;
                     HeightRectC = 0;
@@ -812,14 +899,28 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+                    #region Inititalizing Protein Bond cleavage confidence and golden complementary pairs
+                    if (isBondCleavageConfidence)
+                        ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                        for (int i = 2; i < 4; i++)
+                        {
+                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
+                        }
+                    }
+                    #endregion
                     #endregion
 
                     #region Serie B
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectNterm = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -835,7 +936,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -853,6 +954,14 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
+
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = proteinY - 20 + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30);
+                    }
                     #endregion
 
                     #region Serie Y 
@@ -862,7 +971,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -877,12 +986,18 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
+                    #endregion
+
+                    #region Plot stars for Golden complementary pairs
+                    TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
+                    if (isGoldenComplementaryPairs)
+                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -891,8 +1006,9 @@ namespace ProteinMergeFragIons
                         for (int i = 0; i < ProteinSequence.Length; i++)
                         {
                             SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevels.Count * 4);
+                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * 4);
                             proteinCharsAndSpaces[i].Foreground = currentColor;
+                            proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
                         }
                     }
 
@@ -904,6 +1020,10 @@ namespace ProteinMergeFragIons
                         height_rect = (HeightRectNterm + HeightRectC + HeightRectY + HeightRectZ + 115);
                     else
                         height_rect = (HeightRectNterm + HeightRectC + HeightRectY + HeightRectZ + 130);
+
+                    if (isGoldenComplementaryPairs)
+                        height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
+
                     double font_pos_condition = HeightRectNterm + HeightRectC + 130;
 
                     RectCondition(initialYLine, offsetRectEThcD, height_rect, font_pos_condition, ref offSetY, "EThcD");
@@ -922,7 +1042,7 @@ namespace ProteinMergeFragIons
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
                     if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevels.Count;
+                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectNterm = 0;
                     HeightRectY = 0;
@@ -932,14 +1052,27 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    #region Inititalizing Protein Bond cleavage confidence and golden complementary pairs
+                    if (isBondCleavageConfidence)
+                        ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 2));
+                    }
+                    #endregion
+
                     #endregion
 
                     #region Serie B
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectNterm = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -957,6 +1090,13 @@ namespace ProteinMergeFragIons
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
 
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = proteinY - 20 + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30);
+                    }
                     #endregion
 
                     #region Serie Y
@@ -966,12 +1106,18 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectY, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Y");
                     }
+                    #endregion
+
+                    #region Plot stars for Golden complementary pairs
+                    TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
+                    if (isGoldenComplementaryPairs)
+                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -980,8 +1126,9 @@ namespace ProteinMergeFragIons
                         for (int i = 0; i < ProteinSequence.Length; i++)
                         {
                             SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevels.Count * 4);
+                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * 4);
                             proteinCharsAndSpaces[i].Foreground = currentColor;
+                            proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
                         }
                     }
 
@@ -989,6 +1136,8 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = HeightRectNterm + HeightRectY + 100;
+                    if (isGoldenComplementaryPairs)
+                        height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectNterm + 90;
                     if (fragMethod.Equals("CID"))
                         RectCondition(initialYLine, offsetRectCID, height_rect, font_pos_condition, ref offSetY, "CID");
@@ -1009,7 +1158,7 @@ namespace ProteinMergeFragIons
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
                     if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevels.Count;
+                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectC = 0;
                     HeightRectZ = 0;
@@ -1019,14 +1168,25 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+                    #region Inititalizing Protein Bond cleavage confidence and golden complementary pairs
+                    if (isBondCleavageConfidence)
+                        ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 3));
+                    }
+                    #endregion
                     #endregion
 
                     #region Serie C
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -1044,6 +1204,14 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
+
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = proteinY - 20 + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30);
+                    }
                     #endregion
 
                     #region Serie Z
@@ -1053,12 +1221,18 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
+                    #endregion
+
+                    #region Plot stars for Golden complementary pairs
+                    TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
+                    if (isGoldenComplementaryPairs)
+                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1067,8 +1241,9 @@ namespace ProteinMergeFragIons
                         for (int i = 0; i < ProteinSequence.Length; i++)
                         {
                             SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevels.Count * 4);
+                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * 4);
                             proteinCharsAndSpaces[i].Foreground = currentColor;
+                            proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
                         }
                     }
 
@@ -1076,6 +1251,8 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = HeightRectC + HeightRectZ + 100;
+                    if (isGoldenComplementaryPairs)
+                        height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectC + 90;
                     if (fragMethod.Equals("ECD"))
                         RectCondition(initialYLine, offsetRectECD_ETD, height_rect, font_pos_condition, ref offSetY, "ECD");
@@ -1095,7 +1272,9 @@ namespace ProteinMergeFragIons
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
                     if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevels.Count;
+                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+
+                    List<string> precursorChargeStatesOrActivationLevelsOrReplicates = currentFragmentIons.Select(a => a.Item2).Distinct().ToList();
 
                     HeightRectA = 0;
                     HeightRectNterm = 0;
@@ -1109,14 +1288,28 @@ namespace ProteinMergeFragIons
                     #region Plot protein Sequence
                     List<Label> proteinCharsAndSpaces = new List<Label>();
                     PlotProteinSequence(PtnCharPositions, proteinCharsAndSpaces, leftOffsetProtein);
-                    ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+                    #region Inititalizing Protein Bond cleavage confidence and golden complementary pairs
+                    if (isBondCleavageConfidence)
+                        ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
+
+                    if (isGoldenComplementaryPairs)
+                    {
+                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                        for (int i = 1; i < 4; i++)
+                        {
+                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
+                        }
+                    }
+                    #endregion
                     #endregion
 
                     #region Serie A
                     int countPrecursorChargesA = 0;
                     if (currentAFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentAFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesA, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 1);
                         HeightRectA = (countPrecursorChargesA + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesA * 9.5);
 
                         // create Background rect Serie A
@@ -1131,7 +1324,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesB = 0;
                     if (currentBFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentBFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesB, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectNterm = (countPrecursorChargesB + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesB * 9.5);
 
                         // create Background rect Serie B
@@ -1153,7 +1346,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesC = 0;
                     if (currentCFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentCFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesC, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectC = (countPrecursorChargesC + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesC * 9.5);
 
                         // create Background rect Serie C
@@ -1172,6 +1365,14 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], initialYLine + proteinY + offSetY);
                     }
+
+                    double posYrow1Start = initialYLine + proteinY + offSetY + 50;
+                    if (isGoldenComplementaryPairs)
+                    {
+                        proteinY += 60;
+                        PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
+                        proteinY = proteinY - 20 + ((PrecursorChargesOrActivationLevelsOrReplicates.Count - 1) * 30);
+                    }
                     #endregion
 
                     #region Serie X
@@ -1181,7 +1382,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesX = 0;
                     if (currentXFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentXFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesX, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 1);
                         HeightRectX = (countPrecursorChargesX + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesX * 9.5);
 
                         // create Background rect Serie X
@@ -1196,7 +1397,7 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesY = 0;
                     if (currentYFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentYFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesY, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 2);
                         HeightRectY = (countPrecursorChargesY + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesY * 9.5);
 
                         // create Background rect Serie Y
@@ -1211,12 +1412,18 @@ namespace ProteinMergeFragIons
                     int countPrecursorChargesZ = 0;
                     if (currentZFragmentIons.Count > 0)
                     {
-                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevels, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence);
+                        PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, currentZFragmentIons, proteinCharsAndSpaces, ref countPrecursorChargesZ, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization, isBondCleavageConfidence, isGoldenComplementaryPairs, 3);
                         HeightRectZ = (countPrecursorChargesZ + 1) * FRAGMENT_ION_HEIGHT + (countPrecursorChargesZ * 9.5);
 
                         // create Background rect Serie Z
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectZ, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "Z");
                     }
+                    #endregion
+
+                    #region Plot stars for Golden complementary pairs
+                    TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
+                    if (isGoldenComplementaryPairs)
+                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1225,8 +1432,9 @@ namespace ProteinMergeFragIons
                         for (int i = 0; i < ProteinSequence.Length; i++)
                         {
                             SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevels.Count * 4);
+                            currentColor.Opacity = 0.35 + (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * 4);
                             proteinCharsAndSpaces[i].Foreground = currentColor;
+                            proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
                         }
                     }
 
@@ -1234,13 +1442,15 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = (HeightRectA + HeightRectNterm + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 175);
+                    if (isGoldenComplementaryPairs)
+                        height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectA + HeightRectNterm + HeightRectC + 130;
                     if (showPrecursorChargeState)
-                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Precursor Charge States");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Charge States", String.Join(", ", precursorChargeStatesOrActivationLevelsOrReplicates));
                     else if (showActivationLevel)
-                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Activation Levels");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Activation Levels", String.Join(", ", precursorChargeStatesOrActivationLevelsOrReplicates));
                     else
-                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Replicates");
+                        RectCondition(initialYLine, offsetRectFragmentation, height_rect, font_pos_condition, ref offSetY, "Replicates", String.Join(", ", precursorChargeStatesOrActivationLevelsOrReplicates));
                     #endregion
 
                     #endregion
@@ -1278,7 +1488,7 @@ namespace ProteinMergeFragIons
 
                 #region Plot Residue cleavages table
                 if (!IsGlobalIntensityMap)
-                    CreateResidueCleavagesTable(PrecursorChargesOrActivationLevels, currentFragmentIons, ref offSetY, out GridWidth, !printIntensity, maximumBondCleavageConfidence);
+                    CreateResidueCleavagesTable(PrecursorChargesOrActivationLevelsOrReplicates, currentFragmentIons, TotalNumberOfGoldenComplementaryPairsPerCondition, ref offSetY, out GridWidth, !printIntensity, maximumBondCleavageConfidence);
                 #endregion
 
                 if (this.HasMergeConditions)
@@ -1332,9 +1542,9 @@ namespace ProteinMergeFragIons
                     #region Residue Cleavages label
 
                     StringBuilder _content = new StringBuilder();
-                    _content.Append("Residue Cleavages: ");
+                    _content.Append("Residue cleavages: ");
                     List<int> positions = currentFragmentIons.Select(a => a.Item4).Distinct().ToList();
-                    _content.Append((((double)positions.Count / (double)ProteinSequence.Length) * 100).ToString("0.00"));
+                    _content.Append((((double)positions.Count / (double)ProteinSequence.Length) * 100).ToString("0.0"));
                     _content.Append("%");
 
                     offSetY += 90;
@@ -1426,6 +1636,52 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
+        private void PlotStartsGoldenComplementaryPairs(List<(string, int[], int)> ProteinGoldenComplementaryPairs, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, List<Label> proteinCharsAndSpaces, double posYrow1Start)
+        {
+            double restartPosYrow1Start = posYrow1Start;
+            ProteinGoldenComplementaryPairs.Sort((a, b) => a.Item3.CompareTo(b.Item3));
+
+            var groupedBySeriesNumber = (from item in ProteinGoldenComplementaryPairs
+                                         group item by item.Item3).ToList();
+
+            foreach (var _group in groupedBySeriesNumber)
+            {
+                foreach ((string, int[], int) match in _group.ToList())
+                {
+                    for (int _index_countMatch = 0; _index_countMatch < match.Item2.Length; _index_countMatch++)
+                    {
+                        if (match.Item2[_index_countMatch] == 2)
+                        {
+                            Label starLabel = new Label();
+                            starLabel.FontFamily = new FontFamily("Courier New");
+                            starLabel.FontWeight = FontWeights.Bold;
+                            starLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                            starLabel.Content = "*";
+                            starLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                            // Fill rectangle with color 
+                            int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsOrReplicatesColors, a => a.Equals(match.Item1));
+                            starLabel.Foreground = FRAGMENT_ION_LINE_COLORS[_index];
+                            starLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                            double starCharPosX = Canvas.GetLeft(proteinCharsAndSpaces[_index_countMatch]);
+                            MyCanvas.Children.Add(starLabel);
+                            Canvas.SetLeft(starLabel, starCharPosX);
+                            Canvas.SetTop(starLabel, posYrow1Start);
+                            if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(match.Item1))
+                            {
+                                TotalNumberOfGoldenComplementaryPairsPerCondition[match.Item1].Add(_index_countMatch);
+                                TotalNumberOfGoldenComplementaryPairsPerCondition[match.Item1] = TotalNumberOfGoldenComplementaryPairsPerCondition[match.Item1].Distinct().ToList();
+                            }
+                            else
+                                TotalNumberOfGoldenComplementaryPairsPerCondition.Add(match.Item1, new List<int>() { _index_countMatch });
+                        }
+                    }
+                    posYrow1Start += 20;
+                }
+
+                posYrow1Start = restartPosYrow1Start;
+            }
+        }
+
         private double CreateIntensityBox(int countCurrentFragMethod, Label StudyConditionLabel, double ColorsTop, double GridWidth, double accumulativeGridWidth, double countGradient)
         {
             // Create a Rectangle
@@ -1452,9 +1708,9 @@ namespace ProteinMergeFragIons
             return accumulativeGridWidth;
         }
 
-        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double)> currentFragmentIons, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0)
+        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double)> currentFragmentIons, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0)
         {
-            List<(string, double)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double)>();
+            List<(string, double, int)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double, int)>();
 
             foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevels)
             {
@@ -1466,7 +1722,15 @@ namespace ProteinMergeFragIons
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
 
                 List<int> positions = currentPrecursorCharge.Select(a => a.Item4).Distinct().ToList();
-                precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100));
+                if (isGoldenComplementaryPairs)
+                {
+                    if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(precursorChargeOrActivationLevel))
+                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, TotalNumberOfGoldenComplementaryPairsPerCondition[precursorChargeOrActivationLevel].Count));
+                    else
+                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0));
+                }
+                else
+                    precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0));
 
             }
 
@@ -1480,7 +1744,9 @@ namespace ProteinMergeFragIons
 
             // Create Columns
             ColumnDefinition gridCol1 = new ColumnDefinition();
-            if (isBondCleavageConfidence)
+            if (isGoldenComplementaryPairs)
+                gridCol1.Width = new GridLength(800);
+            else if (isBondCleavageConfidence)
                 gridCol1.Width = new GridLength(640);
             else
                 gridCol1.Width = new GridLength(600);
@@ -1503,11 +1769,17 @@ namespace ProteinMergeFragIons
             gridRow2.Height = new GridLength(45);
             DynamicGrid.RowDefinitions.Add(gridRow1);
             DynamicGrid.RowDefinitions.Add(gridRow2);
-            if (isBondCleavageConfidence)
+            if (isGoldenComplementaryPairs)
             {
                 RowDefinition gridRow3 = new RowDefinition();
                 gridRow3.Height = new GridLength(45);
                 DynamicGrid.RowDefinitions.Add(gridRow3);
+            }
+            if (isBondCleavageConfidence)
+            {
+                RowDefinition gridRow4 = new RowDefinition();
+                gridRow4.Height = new GridLength(45);
+                DynamicGrid.RowDefinitions.Add(gridRow4);
             }
 
             for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count; i++)
@@ -1584,13 +1856,13 @@ namespace ProteinMergeFragIons
             txtBlock_contentStudyCondition.Margin = new Thickness(15, 0, 0, 0);
 
             if (isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod && !isReplicate)
-                txtBlock_contentStudyCondition.Text = "Precursor Charge State";
+                txtBlock_contentStudyCondition.Text = "Precursor charge state";
             else if (isActivationLevel && !isPrecursorChargeState && !isFragmentationMethod && !isReplicate)
-                txtBlock_contentStudyCondition.Text = "Activation Level";
+                txtBlock_contentStudyCondition.Text = "Activation level";
             else if (isReplicate && !isActivationLevel && !isFragmentationMethod && !isPrecursorChargeState)
                 txtBlock_contentStudyCondition.Text = "Replicate";
             else if (isFragmentationMethod && !isActivationLevel && !isPrecursorChargeState && !isReplicate)
-                txtBlock_contentStudyCondition.Text = "Fragmentation Method";
+                txtBlock_contentStudyCondition.Text = "Fragmentation method";
 
             Grid.SetRow(txtBlock_contentStudyCondition, 0);
             Grid.SetColumn(txtBlock_contentStudyCondition, 0);
@@ -1620,14 +1892,43 @@ namespace ProteinMergeFragIons
             DynamicGrid.Children.Add(txtBlock_contentResidueCleavages);
             #endregion
 
+            #region Golden complementary pairs
+            if (isGoldenComplementaryPairs)
+            {
+                Rectangle rectRowGoldenComplementaryPairs = new Rectangle();
+                rectRowGoldenComplementaryPairs.StrokeThickness = 1;
+                rectRowGoldenComplementaryPairs.Stroke = new SolidColorBrush(Colors.Black);
+                rectRowGoldenComplementaryPairs.Fill = new SolidColorBrush(Colors.LightGray);
+                Grid.SetRow(rectRowGoldenComplementaryPairs, 2);
+                Grid.SetColumn(rectRowGoldenComplementaryPairs, 0);
+                DynamicGrid.Children.Add(rectRowGoldenComplementaryPairs);
+
+                TextBlock txtBlock_contentGoldenComplementaryPairs = new TextBlock();
+                txtBlock_contentGoldenComplementaryPairs.Text = "Golden complementary pairs (*)";
+                txtBlock_contentGoldenComplementaryPairs.FontFamily = new FontFamily("Courier New");
+                txtBlock_contentGoldenComplementaryPairs.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                txtBlock_contentGoldenComplementaryPairs.FontWeight = FontWeights.Bold;
+                txtBlock_contentGoldenComplementaryPairs.Foreground = new SolidColorBrush(Colors.Black);
+                txtBlock_contentGoldenComplementaryPairs.VerticalAlignment = VerticalAlignment.Center;
+                txtBlock_contentGoldenComplementaryPairs.HorizontalAlignment = HorizontalAlignment.Left;
+                txtBlock_contentGoldenComplementaryPairs.Margin = new Thickness(15, 0, 0, 0);
+                Grid.SetRow(txtBlock_contentGoldenComplementaryPairs, 2);
+                Grid.SetColumn(txtBlock_contentGoldenComplementaryPairs, 0);
+                DynamicGrid.Children.Add(txtBlock_contentGoldenComplementaryPairs);
+            }
+            #endregion
+
+            #region Bond cleavage confidence
             if (isBondCleavageConfidence)
             {
-                #region Bond cleavage confidence
                 Rectangle rectRowBondCleavageConfidence = new Rectangle();
                 rectRowBondCleavageConfidence.StrokeThickness = 1;
                 rectRowBondCleavageConfidence.Stroke = new SolidColorBrush(Colors.Black);
                 rectRowBondCleavageConfidence.Fill = new SolidColorBrush(Colors.LightGray);
-                Grid.SetRow(rectRowBondCleavageConfidence, 2);
+                if (isGoldenComplementaryPairs)
+                    Grid.SetRow(rectRowBondCleavageConfidence, 3);
+                else
+                    Grid.SetRow(rectRowBondCleavageConfidence, 2);
                 Grid.SetColumn(rectRowBondCleavageConfidence, 0);
                 DynamicGrid.Children.Add(rectRowBondCleavageConfidence);
 
@@ -1640,7 +1941,10 @@ namespace ProteinMergeFragIons
                 txtBlock_contentBondCleavageConfidence.VerticalAlignment = VerticalAlignment.Center;
                 txtBlock_contentBondCleavageConfidence.HorizontalAlignment = HorizontalAlignment.Left;
                 txtBlock_contentBondCleavageConfidence.Margin = new Thickness(15, 0, 0, 0);
-                Grid.SetRow(txtBlock_contentBondCleavageConfidence, 2);
+                if (isGoldenComplementaryPairs)
+                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 3);
+                else
+                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 2);
                 Grid.SetColumn(txtBlock_contentBondCleavageConfidence, 0);
                 DynamicGrid.Children.Add(txtBlock_contentBondCleavageConfidence);
 
@@ -1649,7 +1953,10 @@ namespace ProteinMergeFragIons
                 rectRowColor.StrokeThickness = 1;
                 rectRowColor.Stroke = new SolidColorBrush(Colors.Black);
                 rectRowColor.Fill = new SolidColorBrush(Colors.LightGray);
-                Grid.SetRow(rectRowColor, 2);
+                if (isGoldenComplementaryPairs)
+                    Grid.SetRow(rectRowColor, 3);
+                else
+                    Grid.SetRow(rectRowColor, 2);
                 Grid.SetColumn(rectRowColor, 1);
                 Grid.SetColumnSpan(rectRowColor, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                 DynamicGrid.Children.Add(rectRowColor);
@@ -1673,7 +1980,10 @@ namespace ProteinMergeFragIons
                     if (countGradient > 0.1)
                         accumulativeGridWidth += currentGridWith;
                     RetangleColorRange.Margin = new Thickness(5 + accumulativeGridWidth, 10, 0, 0);
-                    Grid.SetRow(RetangleColorRange, 2);
+                    if (isGoldenComplementaryPairs)
+                        Grid.SetRow(RetangleColorRange, 3);
+                    else
+                        Grid.SetRow(RetangleColorRange, 2);
                     Grid.SetColumn(RetangleColorRange, 1);
                     Grid.SetColumnSpan(RetangleColorRange, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                     DynamicGrid.Children.Add(RetangleColorRange);
@@ -1689,7 +1999,10 @@ namespace ProteinMergeFragIons
                 StartIntensityLabelBondCleavage.Foreground = labelBrush_PTN;
                 StartIntensityLabelBondCleavage.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 StartIntensityLabelBondCleavage.Margin = new Thickness(0, -5, 0, 0);
-                Grid.SetRow(StartIntensityLabelBondCleavage, 2);
+                if (isGoldenComplementaryPairs)
+                    Grid.SetRow(StartIntensityLabelBondCleavage, 3);
+                else
+                    Grid.SetRow(StartIntensityLabelBondCleavage, 2);
                 Grid.SetColumn(StartIntensityLabelBondCleavage, 1);
                 DynamicGrid.Children.Add(StartIntensityLabelBondCleavage);
                 #endregion
@@ -1704,18 +2017,20 @@ namespace ProteinMergeFragIons
                 EndIntensityLabelBondCleavage.Foreground = labelBrush_PTN;
                 EndIntensityLabelBondCleavage.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 EndIntensityLabelBondCleavage.Margin = new Thickness(accumulativeGridWidth + currentGridWith - 5 - (10 * maximumBondCleavageConfidence.ToString().Length), -5, 0, 0);
-                Grid.SetRow(EndIntensityLabelBondCleavage, 2);
+                if (isGoldenComplementaryPairs)
+                    Grid.SetRow(EndIntensityLabelBondCleavage, 3);
+                else
+                    Grid.SetRow(EndIntensityLabelBondCleavage, 2);
                 Grid.SetColumn(EndIntensityLabelBondCleavage, 1);
                 Grid.SetColumnSpan(EndIntensityLabelBondCleavage, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                 DynamicGrid.Children.Add(EndIntensityLabelBondCleavage);
                 #endregion
-
-
-                #endregion
             }
+            #endregion
 
             for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count; i++)
             {
+                #region condition
                 //Background color and borders
                 Rectangle rectRowColor = new Rectangle();
                 rectRowColor.StrokeThickness = 1;
@@ -1737,6 +2052,34 @@ namespace ProteinMergeFragIons
                 Grid.SetRow(txtBlock, 1);
                 Grid.SetColumn(txtBlock, (i + 1));
                 DynamicGrid.Children.Add(txtBlock);
+                #endregion
+
+                #region Golden complementary pairs
+                if (isGoldenComplementaryPairs)
+                {
+                    //Background color and borders
+                    Rectangle rectRowColorGCP = new Rectangle();
+                    rectRowColorGCP.StrokeThickness = 1;
+                    rectRowColorGCP.Stroke = new SolidColorBrush(Colors.Black);
+                    rectRowColorGCP.Fill = new SolidColorBrush(Colors.LightGray);
+                    Grid.SetRow(rectRowColorGCP, 2);
+                    Grid.SetColumn(rectRowColorGCP, (i + 1));
+                    DynamicGrid.Children.Add(rectRowColorGCP);
+
+                    // Add row text
+                    TextBlock txtBlockGCP = new TextBlock();
+                    txtBlockGCP.Text = precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates[i].Item3.ToString();
+                    txtBlockGCP.FontFamily = new FontFamily("Courier New");
+                    txtBlockGCP.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                    txtBlockGCP.FontWeight = FontWeights.Bold;
+                    txtBlockGCP.Foreground = new SolidColorBrush(Colors.Black);
+                    txtBlockGCP.VerticalAlignment = VerticalAlignment.Center;
+                    txtBlockGCP.HorizontalAlignment = HorizontalAlignment.Center;
+                    Grid.SetRow(txtBlockGCP, 2);
+                    Grid.SetColumn(txtBlockGCP, (i + 1));
+                    DynamicGrid.Children.Add(txtBlockGCP);
+                }
+                #endregion
             }
 
             MyCanvas.Children.Add(DynamicGrid);
@@ -1747,7 +2090,9 @@ namespace ProteinMergeFragIons
                 Canvas.SetTop(DynamicGrid, offsetY + 70);
 
             offsetY += 130;
-            if(isBondCleavageConfidence)
+            if (isGoldenComplementaryPairs)
+                offsetY += 40;
+            if (isBondCleavageConfidence)
                 offsetY += 40;
 
             double _width = 170;
@@ -1757,7 +2102,7 @@ namespace ProteinMergeFragIons
             GridWidth = _width;
         }
 
-        private void RectCondition(double initialYLine, int offsetCondition, double Height_Rect, double font_pos_condition, ref int offsetY, string nameCondition)
+        private void RectCondition(double initialYLine, int offsetCondition, double Height_Rect, double font_pos_condition, ref int offsetY, string nameCondition, string _toolTip = "")
         {
             Rectangle Rectangle_Condition = new Rectangle();
             Rectangle_Condition.Height = Height_Rect;
@@ -1779,29 +2124,23 @@ namespace ProteinMergeFragIons
             label_condition.FontWeight = FontWeights.SemiBold;
             label_condition.FontSize = FONTSIZE_BOX_CONDITION_SERIE - 20;
             label_condition.Content = nameCondition;
+            if (!String.IsNullOrEmpty(_toolTip))
+                label_condition.ToolTip = _toolTip;
             label_condition.Foreground = new SolidColorBrush(Colors.White);
             label_condition.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
             label_condition.RenderTransform = new RotateTransform(270);
             MyCanvas.Children.Add(label_condition);
             Canvas.SetLeft(label_condition, 30);
-            if (isFragmentationMethod && showPrecursorChargeState)
-            {
-                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 178.5);
-            }
-            else if (isFragmentationMethod && showActivationLevel)
-            {
-                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 118.5);
-            }
-            else if (isFragmentationMethod && showReplicates)
-            {
-                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition + 28.5);
-            }
-            else
+            double setY_label_condition = 0;
+            setY_label_condition = (Height_Rect - 21 * nameCondition.Length) / 2;
+            if (!isFragmentationMethod && !showPrecursorChargeState && !showActivationLevel && !showReplicates)
             {
                 label_condition.FontSize = FONTSIZE_BOX_CONDITION_SERIE;
                 Canvas.SetLeft(label_condition, 20);
-                Canvas.SetTop(label_condition, initialYLine + font_pos_condition + offsetCondition);
+                setY_label_condition -= 20;
             }
+
+            Canvas.SetTop(label_condition, initialYLine + Height_Rect + offsetCondition - setY_label_condition + 10);
 
             offsetY = (int)Canvas.GetTop(Rectangle_Condition) + (int)Rectangle_Condition.Height + 10;
         }
@@ -1868,7 +2207,7 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
-        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref int[] ProteinBondCleavageConfidenceCountAA, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0, bool isBondCleavageConfidence = false)
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref int[] ProteinBondCleavageConfidenceCountAA, ref List<(string, int[], int)> ProteinGoldenComplementaryPairs, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0, bool isBondCleavageConfidence = false, bool isGoldenComplementaryPairs = false, int representativeSeries = 0)
         {
             if (!this.HasMergeConditions)
             {
@@ -1889,6 +2228,20 @@ namespace ProteinMergeFragIons
                             foreach ((string, string, string, int, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
                             {
                                 ProteinBondCleavageConfidenceCountAA[frag.Item4 - 1]++;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region Update protein golden complementary pairs
+                    if (isGoldenComplementaryPairs)
+                    {
+                        if (ProteinGoldenComplementaryPairs != null)
+                        {
+                            (string, int[], int) currentPtnGoldenComplPairs = ProteinGoldenComplementaryPairs.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel) && a.Item3 == representativeSeries).FirstOrDefault();
+                            foreach ((string, string, string, int, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
+                            {
+                                currentPtnGoldenComplPairs.Item2[frag.Item4 - 1]++;
                             }
                         }
                     }
@@ -2003,6 +2356,27 @@ namespace ProteinMergeFragIons
             }
         }
 
+        private void PlotRectangleGoldenComplementaryPairs(double offsetXProtein, double offsetYProtein, List<double> PtnCharPositions, Color COLOR_SERIES_RECTANGLE, int numberOfItemsToBeStudied)
+        {
+            #region plot rectangle
+            if (isPrecursorChargeState) offsetXProtein++;
+            double leftOffset = offsetXProtein * SPACER_X + 75;
+            // Create a Rectangle  
+            Rectangle GoldenComplPairsRectangle = new Rectangle();
+            GoldenComplPairsRectangle.Height = numberOfItemsToBeStudied * 30;
+            GoldenComplPairsRectangle.Width = 60 + PtnCharPositions[PtnCharPositions.Count - 1] + 10 - (offsetXProtein * SPACER_X + 75);
+            // Set Rectangle's width and color  
+            GoldenComplPairsRectangle.StrokeThickness = 0.5;
+
+            // Fill rectangle with blue color  
+            GoldenComplPairsRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
+            // Add Rectangle to the Grid.  
+            MyCanvas.Children.Add(GoldenComplPairsRectangle);
+            Canvas.SetLeft(GoldenComplPairsRectangle, leftOffset + 40);
+            Canvas.SetTop(GoldenComplPairsRectangle, offsetYProtein);
+            #endregion
+        }
+
         private void PlotAminoAcidNumberOnTheTopOfProteinSequence(double offsetXProtein, double offsetYProtein, List<double> PtnCharPositions, Color COLOR_SERIES_RECTANGLE)
         {
             #region plot aminoacid number on the top of the sequence
@@ -2034,10 +2408,6 @@ namespace ProteinMergeFragIons
             Canvas.SetLeft(AANumberRectangle, leftOffset + 40);
             Canvas.SetTop(AANumberRectangle, offsetYProtein);
 
-            //Canvas.SetLeft(AANumberRectangle, offsetXProtein + 40);
-            //Canvas.SetTop(AANumberRectangle, offsetYProtein - 48);
-
-            //float offsetSPACER = 1.5f;
             for (int i = 0; i <= ProteinSequence.Length; i += 50)
             {
                 if (i % 50 == 0 && i > 0)
