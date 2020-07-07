@@ -725,6 +725,11 @@ namespace TDFragMapper
             About aboutScreen = new About();
             aboutScreen.ShowDialog();
         }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteDataToDataGridView();
+        }
     }
 
 

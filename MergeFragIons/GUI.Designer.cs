@@ -65,6 +65,8 @@
             this.ReplicateCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStripPasteValues = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,6 +89,7 @@
             this.groupBoxLog.SuspendLayout();
             this.groupBoxInputFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).BeginInit();
+            this.contextMenuStripPasteValues.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBoxIntensityNorm.SuspendLayout();
@@ -287,6 +290,7 @@
             // 
             this.dataGridViewInputFiles.AllowUserToAddRows = false;
             resources.ApplyResources(this.dataGridViewInputFiles, "dataGridViewInputFiles");
+            this.dataGridViewInputFiles.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewInputFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewInputFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.FragMethodCol,
@@ -295,6 +299,7 @@
             this.ReplicateCol,
             this.MSMSData,
             this.DeconvSpectra});
+            this.dataGridViewInputFiles.ContextMenuStrip = this.contextMenuStripPasteValues;
             this.dataGridViewInputFiles.Name = "dataGridViewInputFiles";
             this.dataGridViewInputFiles.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridViewInputFiles.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInputFiles_CellClick);
@@ -334,6 +339,19 @@
             this.DeconvSpectra.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             resources.ApplyResources(this.DeconvSpectra, "DeconvSpectra");
             this.DeconvSpectra.Name = "DeconvSpectra";
+            // 
+            // contextMenuStripPasteValues
+            // 
+            this.contextMenuStripPasteValues.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pasteToolStripMenuItem});
+            this.contextMenuStripPasteValues.Name = "contextMenuStripPasteValues";
+            resources.ApplyResources(this.contextMenuStripPasteValues, "contextMenuStripPasteValues");
+            // 
+            // pasteToolStripMenuItem
+            // 
+            resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
+            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // buttonBrowseProteinSequence
             // 
@@ -436,6 +454,7 @@
             this.groupBoxInputFiles.ResumeLayout(false);
             this.groupBoxInputFiles.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).EndInit();
+            this.contextMenuStripPasteValues.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
@@ -495,6 +514,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ReplicateCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn MSMSData;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripPasteValues;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
     }
 }
 
