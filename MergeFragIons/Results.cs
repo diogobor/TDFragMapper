@@ -22,7 +22,7 @@ namespace TDFragMapper
         /// <summary>
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
         /// </summary>
-        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> DictMapsWithoutMergeConditions { get; set; }
+        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> DictMapsWithoutMergeConditions { get; set; }
 
         public Results()
         {
@@ -122,8 +122,8 @@ namespace TDFragMapper
             listBoxSelectedMergeConditions.Items.Clear();
             Core.DiscriminativeMaps = new List<string>();
             /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-            /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in Core.DictMaps)
+            /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, Theoretical Mass
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in Core.DictMaps)
             {
                 if (entry.Key.StartsWith("Merge")) continue;
 
@@ -327,8 +327,8 @@ namespace TDFragMapper
 
         private void buttonMerge_Click(object sender, EventArgs e)
         {
-            DictMapsWithoutMergeConditions = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>(Core.DictMaps);
-            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = new List<(string, int, string, int, string, int, double)>();
+            DictMapsWithoutMergeConditions = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
+            List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = new List<(string, int, string, int, string, int, double, double)>();
 
             foreach (StringBuilder item in listBoxSelectedMergeConditions.Items)
             {
@@ -343,10 +343,10 @@ namespace TDFragMapper
                 string study_condition_value = colsCondition[3].Trim();
 
                 /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
-                foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in Core.DictMaps)
+                /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, Theoretical Mass
+                foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in Core.DictMaps)
                 {
-                    List<(string, int, string, int, string, int, double)> FragmentIons = null;
+                    List<(string, int, string, int, string, int, double, double)> FragmentIons = null;
                     if (!entry.Key.StartsWith("Merge") && entry.Key.EndsWith("#" + map.ToString()))
                         FragmentIons = entry.Value.Item4;
                     else
@@ -356,7 +356,7 @@ namespace TDFragMapper
                     if (entry.Value.Item1.StartsWith("Frag"))//First condition is 'Fragmentation Method'
                     {
                         string[] colsSubCondition = Regex.Split(first_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
 
@@ -365,7 +365,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item1.StartsWith("Act"))//First condition is 'Activation Level'
                     {
                         string[] colsSubCondition = Regex.Split(first_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
 
@@ -374,7 +374,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item1.StartsWith("Prec"))//First condition is 'Precursor Charge State'
                     {
                         string[] colsSubCondition = Regex.Split(first_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
 
@@ -383,7 +383,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item1.StartsWith("Repl"))//First condition is 'Replicates'
                     {
                         string[] colsSubCondition = Regex.Split(first_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
 
@@ -395,7 +395,7 @@ namespace TDFragMapper
                     if (entry.Value.Item2.StartsWith("Frag"))//Second condition is 'Fragmentation Method'
                     {
                         string[] colsSubCondition = Regex.Split(second_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
 
@@ -404,7 +404,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item2.StartsWith("Act"))//Second condition is 'Activation Level'
                     {
                         string[] colsSubCondition = Regex.Split(second_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
 
@@ -413,7 +413,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item2.StartsWith("Prec"))//Second condition is 'Precursor Charge State'
                     {
                         string[] colsSubCondition = Regex.Split(second_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
 
@@ -422,7 +422,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item2.StartsWith("Repl"))//Second condition is 'Replicates'
                     {
                         string[] colsSubCondition = Regex.Split(second_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
 
@@ -434,7 +434,7 @@ namespace TDFragMapper
                     if (entry.Value.Item3.StartsWith("Frag"))//Third condition is 'Fragmentation Method'
                     {
                         string[] colsSubCondition = Regex.Split(third_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item1.Equals(sbCondition)).ToList());
 
@@ -443,7 +443,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item3.StartsWith("Act"))//Third condition is 'Activation Level'
                     {
                         string[] colsSubCondition = Regex.Split(third_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item5.Equals(sbCondition)).ToList());
 
@@ -452,7 +452,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item3.StartsWith("Prec"))//Third condition is 'Precursor Charge State'
                     {
                         string[] colsSubCondition = Regex.Split(third_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item2.ToString().Equals(sbCondition)).ToList());
 
@@ -461,7 +461,7 @@ namespace TDFragMapper
                     else if (entry.Value.Item3.StartsWith("Repl"))//Third condition is 'Replicates'
                     {
                         string[] colsSubCondition = Regex.Split(third_condition_value, "&");
-                        List<(string, int, string, int, string, int, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double)>();
+                        List<(string, int, string, int, string, int, double, double)> _tmpFragmentIons = new List<(string, int, string, int, string, int, double, double)>();
                         foreach (string sbCondition in colsSubCondition)
                             _tmpFragmentIons.AddRange(FragmentIons.Where(a => a.Item6.ToString().Equals(sbCondition.Replace("R", ""))).ToList());
 
@@ -497,19 +497,19 @@ namespace TDFragMapper
 
             #region creating merged fragIons 
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity)>
-            List<(string, int, string, int, string, int, double)> currentNtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
-            List<(string, int, string, int, string, int, double)> currentCtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity, theoretical mass)>
+            List<(string, int, string, int, string, int, double, double)> currentNtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
+            List<(string, int, string, int, string, int, double, double)> currentCtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
 
             var groupedNtermFragIons = currentNtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentNtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            currentNtermFragIons = new List<(string, int, string, int, string, int, double, double)>();
             foreach (var nTermFragIon in groupedNtermFragIons)
-                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count));
+                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count, 0));
 
             var groupedCtermFragIons = currentCtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentCtermFragIons = new List<(string, int, string, int, string, int, double)>();
+            currentCtermFragIons = new List<(string, int, string, int, string, int, double, double)>();
             foreach (var cTermFragIon in groupedCtermFragIons)
-                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count));
+                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count, 0));
 
 
             allFragmentIonsAllConditions = currentNtermFragIons.Concat(currentCtermFragIons).ToList();

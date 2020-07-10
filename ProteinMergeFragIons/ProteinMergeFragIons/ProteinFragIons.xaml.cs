@@ -136,7 +136,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
-        public void SetFragMethodDictionary_Plot(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> DictMaps,
+        public void SetFragMethodDictionary_Plot(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> DictMaps,
             string proteinSequence,
             string proteinSequenceInformation,
             bool hasIntensityperMap = false,
@@ -154,13 +154,13 @@ namespace ProteinMergeFragIons
             HasMergeConditions = hasMergeMaps;
             AddCleavageFrequency = addCleavageFrequency;
 
-            //List<(fragmentationMethod, precursorCharge/activation level/Replicate,IonType, aaPosition, intensity)>
-            List<(string, string, string, int, double)> fragmentIons = new List<(string, string, string, int, double)>();
+            //List<(fragmentationMethod, precursorCharge/activation level/Replicate,IonType, aaPosition, intensity, theoretical mass)>
+            List<(string, string, string, int, double, double)> fragmentIons = new List<(string, string, string, int, double, double)>();
             FragMethodsWithPrecursorChargeOrActivationLevelDict = new Dictionary<string, List<string>>();
             List<int> allPrecursorChargeStateList = new List<int>();
             PrecursorChargeStatesOrActivationLevelsOrReplicatesColors = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in DictMaps)
             {
                 if (HasMergeConditions)
                 {
@@ -170,7 +170,7 @@ namespace ProteinMergeFragIons
                         List<string> fragmentationMethodList = entry.Value.Item4.Select(a => a.Item1).Distinct().ToList();
                         FragMethodsWithPrecursorChargeOrActivationLevelDict.Add(entry.Value.Item1 + "#" + cols[3] + "#MC#" + entry.Value.Item5 + "#" + entry.Value.Item6, fragmentationMethodList);
                         fragmentIons.AddRange((from eachEntry in entry.Value.Item4
-                                               select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7)).OrderByDescending(a => a.Item1).ToList());
+                                               select (eachEntry.Item1, eachEntry.Item5, eachEntry.Item3, eachEntry.Item4, eachEntry.Item7, eachEntry.Item8)).OrderByDescending(a => a.Item1).ToList());
 
                     }
                     else
@@ -194,7 +194,7 @@ namespace ProteinMergeFragIons
                                                          group eachEntry by eachEntry.Item3).ToList();
                             foreach (var eachpos in newgroupedListPosPrec)
                             {
-                                (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item2.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item2.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                 fragmentIons.Add(currentPos);
                             }
                         }
@@ -222,7 +222,7 @@ namespace ProteinMergeFragIons
                                                         group eachEntry by eachEntry.Item3).ToList();
                             foreach (var eachpos in newgroupedListPosAct)
                             {
-                                (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                 fragmentIons.Add(currentPos);
                             }
                         }
@@ -245,7 +245,7 @@ namespace ProteinMergeFragIons
                                                          group eachEntry by eachEntry.Item3).ToList();
                             foreach (var eachpos in newgroupedListPosRepl)
                             {
-                                (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item6.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item6.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                 fragmentIons.Add(currentPos);
                             }
                         }
@@ -271,7 +271,7 @@ namespace ProteinMergeFragIons
                             {
                                 foreach (var eachpos in newgroupedListPosFrag)
                                 {
-                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item2.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item2.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                     fragmentIons.Add(currentPos);
                                 }
                             }
@@ -279,7 +279,7 @@ namespace ProteinMergeFragIons
                             {
                                 foreach (var eachpos in newgroupedListPosFrag)
                                 {
-                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item5, eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                     fragmentIons.Add(currentPos);
                                 }
                             }
@@ -287,7 +287,7 @@ namespace ProteinMergeFragIons
                             {
                                 foreach (var eachpos in newgroupedListPosFrag)
                                 {
-                                    (string, string, string, int, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item6.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7));
+                                    (string, string, string, int, double, double) currentPos = (eachpos.ToList()[0].Item1, eachpos.ToList()[0].Item6.ToString(), eachpos.ToList()[0].Item3, eachpos.ToList()[0].Item4, eachpos.ToList().Sum(a => a.Item7), eachpos.ToList()[0].Item8);
                                     fragmentIons.Add(currentPos);
                                 }
                             }
@@ -368,7 +368,7 @@ namespace ProteinMergeFragIons
             PreparePictureProteinFragmentIons(true, fragmentIons, hasIntensityperMap);
 
         }
-        public void PreparePictureProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false)
+        public void PreparePictureProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double, double)> fragmentIons, bool hasIntensityperMap = false)
         {
             SPACER_Y = 0;
 
@@ -383,7 +383,7 @@ namespace ProteinMergeFragIons
             MyCanvas.Children.Clear();
         }
 
-        public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double)> fragmentIons, bool hasIntensityperMap = false)
+        public void DrawProteinFragmentIons(bool isSingleLine, List<(string, string, string, int, double, double)> fragmentIons, bool hasIntensityperMap = false)
         {
             if (FragMethodsWithPrecursorChargeOrActivationLevelDict == null)
                 return;
@@ -530,6 +530,18 @@ namespace ProteinMergeFragIons
             double HeightRectZ = 0;
             int offSetY = 0;
             int leftOffsetProtein = 0;
+
+            #region define protein offset_X
+            foreach (KeyValuePair<string, List<string>> currentFragMethod in FragMethodsWithPrecursorChargeOrActivationLevelDict)
+            {
+                int max_current_list = currentFragMethod.Value.Max(a => a.Length);
+                string[] cols = Regex.Split(currentFragMethod.Key, "#");
+                if (cols[2].Equals("PCS")) max_current_list++;
+                if (leftOffsetProtein < max_current_list)
+                    leftOffsetProtein = max_current_list;
+            }
+            #endregion
+
             // Create a blue and a black Brush  
             SolidColorBrush backgroundColor = new SolidColorBrush();
             SolidColorBrush blackBrush = new SolidColorBrush();
@@ -575,16 +587,14 @@ namespace ProteinMergeFragIons
                         isBondCleavageConfidence = true;
                 }
 
-                leftOffsetProtein = PrecursorChargesOrActivationLevelsOrReplicates.Max(a => a.Length);
-
-                List<(string, string, string, int, double)> currentFragmentIons = null;
+                List<(string, string, string, int, double, double)> currentFragmentIons = null;
                 if (this.HasMergeConditions || (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates)))
                 {
                     if (this.HasMergeConditions)
                         currentFragmentIons = fragmentIons;
                     else
                     {
-                        currentFragmentIons = new List<(string, string, string, int, double)>();
+                        currentFragmentIons = new List<(string, string, string, int, double, double)>();
                         foreach (string firstFixCond in firstFixedStudy)
                         {
                             currentFragmentIons.AddRange(fragmentIons.Where(a => a.Item2.Equals(firstFixCond)).ToList());
@@ -595,13 +605,13 @@ namespace ProteinMergeFragIons
                     currentFragmentIons = fragmentIons.Where(a => a.Item1.Equals(fragMethod)).ToList();
 
                 //Series left -> right (a,b,c)
-                List<(string, string, string, int, double)> currentAFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("A")).ToList();
-                List<(string, string, string, int, double)> currentBFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("B")).ToList();
-                List<(string, string, string, int, double)> currentCFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("C")).ToList();
+                List<(string, string, string, int, double, double)> currentAFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("A")).ToList();
+                List<(string, string, string, int, double, double)> currentBFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("B")).ToList();
+                List<(string, string, string, int, double, double)> currentCFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("C")).ToList();
                 //Series right-> left (x,y,z)
-                List<(string, string, string, int, double)> currentXFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("X")).ToList();
-                List<(string, string, string, int, double)> currentYFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Y")).ToList();
-                List<(string, string, string, int, double)> currentZFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Z")).ToList();
+                List<(string, string, string, int, double, double)> currentXFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("X")).ToList();
+                List<(string, string, string, int, double, double)> currentYFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Y")).ToList();
+                List<(string, string, string, int, double, double)> currentZFragmentIons = currentFragmentIons.Where(a => a.Item3.Equals("Z")).ToList();
 
                 double intensity_normalization = 0;
                 int maximumBondCleavageConfidence = 0;
@@ -630,7 +640,7 @@ namespace ProteinMergeFragIons
 
                     #region Serie N-Term
                     int countPrecursorChargesNterm = 0;
-                    List<(string, string, string, int, double)> fragmentIonsNterm = currentAFragmentIons.Concat(currentBFragmentIons).Concat(currentCFragmentIons).ToList();
+                    List<(string, string, string, int, double, double)> fragmentIonsNterm = currentAFragmentIons.Concat(currentBFragmentIons).Concat(currentCFragmentIons).ToList();
                     if (fragmentIonsNterm.Count > 0)
                     {
                         PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, fragmentIonsNterm, proteinCharsAndSpaces, ref countPrecursorChargesNterm, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
@@ -666,7 +676,7 @@ namespace ProteinMergeFragIons
                     offSetY += (int)initialYLine + (int)proteinY;
 
                     int countPrecursorChargesCterm = 0;
-                    List<(string, string, string, int, double)> fragmentIonsCterm = currentXFragmentIons.Concat(currentYFragmentIons).Concat(currentZFragmentIons).ToList();
+                    List<(string, string, string, int, double, double)> fragmentIonsCterm = currentXFragmentIons.Concat(currentYFragmentIons).Concat(currentZFragmentIons).ToList();
                     if (fragmentIonsCterm.Count > 0)
                     {
                         PlotFragmentIons(initialYLine, offSetY, PrecursorChargesOrActivationLevelsOrReplicates, fragmentIonsCterm, proteinCharsAndSpaces, ref countPrecursorChargesCterm, ref ProteinBondCleavageConfidenceCountAA, ref ProteinGoldenComplementaryPairs, countCurrentFragMethod, hasIntensityperMap, intensity_normalization);
@@ -1714,13 +1724,14 @@ namespace ProteinMergeFragIons
             return accumulativeGridWidth;
         }
 
-        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double)> currentFragmentIons, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0)
+        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double, double)> currentFragmentIons, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0)
         {
-            List<(string, double, int)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double, int)>();
+            //List<(label: precursorChargeState/Activation Level / Replicate, percentage, Total Number of Golden Complementary Pairs Per Condition, total number of matching fragments )>
+            List<(string, double, int, int)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double, int, int)>();
 
             foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevels)
             {
-                List<(string, string, string, int, double)> currentPrecursorCharge = null;
+                List<(string, string, string, int, double, double)> currentPrecursorCharge = null;
 
                 if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
@@ -1731,12 +1742,12 @@ namespace ProteinMergeFragIons
                 if (isGoldenComplementaryPairs)
                 {
                     if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(precursorChargeOrActivationLevel))
-                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, TotalNumberOfGoldenComplementaryPairsPerCondition[precursorChargeOrActivationLevel].Count));
+                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, TotalNumberOfGoldenComplementaryPairsPerCondition[precursorChargeOrActivationLevel].Count, currentPrecursorCharge.Count));
                     else
-                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0));
+                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0, currentPrecursorCharge.Count));
                 }
                 else
-                    precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0));
+                    precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0, currentPrecursorCharge.Count));
 
             }
 
@@ -1752,10 +1763,8 @@ namespace ProteinMergeFragIons
             ColumnDefinition gridCol1 = new ColumnDefinition();
             if (isGoldenComplementaryPairs)
                 gridCol1.Width = new GridLength(800);
-            else if (isBondCleavageConfidence)
-                gridCol1.Width = new GridLength(640);
             else
-                gridCol1.Width = new GridLength(600);
+                gridCol1.Width = new GridLength(750);
             DynamicGrid.ColumnDefinitions.Add(gridCol1);
 
             for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count; i++)
@@ -1773,19 +1782,22 @@ namespace ProteinMergeFragIons
             //Content
             RowDefinition gridRow2 = new RowDefinition();
             gridRow2.Height = new GridLength(45);
+            RowDefinition gridRow3 = new RowDefinition();
+            gridRow3.Height = new GridLength(45);
             DynamicGrid.RowDefinitions.Add(gridRow1);
             DynamicGrid.RowDefinitions.Add(gridRow2);
+            DynamicGrid.RowDefinitions.Add(gridRow3);
             if (isGoldenComplementaryPairs)
-            {
-                RowDefinition gridRow3 = new RowDefinition();
-                gridRow3.Height = new GridLength(45);
-                DynamicGrid.RowDefinitions.Add(gridRow3);
-            }
-            if (isBondCleavageConfidence)
             {
                 RowDefinition gridRow4 = new RowDefinition();
                 gridRow4.Height = new GridLength(45);
                 DynamicGrid.RowDefinitions.Add(gridRow4);
+            }
+            if (isBondCleavageConfidence)
+            {
+                RowDefinition gridRow5 = new RowDefinition();
+                gridRow5.Height = new GridLength(45);
+                DynamicGrid.RowDefinitions.Add(gridRow5);
             }
 
             for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count; i++)
@@ -1898,6 +1910,29 @@ namespace ProteinMergeFragIons
             DynamicGrid.Children.Add(txtBlock_contentResidueCleavages);
             #endregion
 
+            #region Number of Matching fragments
+            Rectangle rectRowMatchingFragments = new Rectangle();
+            rectRowMatchingFragments.StrokeThickness = 1;
+            rectRowMatchingFragments.Stroke = new SolidColorBrush(Colors.Black);
+            rectRowMatchingFragments.Fill = new SolidColorBrush(Colors.LightGray);
+            Grid.SetRow(rectRowMatchingFragments, 2);
+            Grid.SetColumn(rectRowMatchingFragments, 0);
+            DynamicGrid.Children.Add(rectRowMatchingFragments);
+
+            TextBlock txtBlock_contentMatchingFragments = new TextBlock();
+            txtBlock_contentMatchingFragments.Text = "Number of matching fragments";
+            txtBlock_contentMatchingFragments.FontFamily = new FontFamily("Courier New");
+            txtBlock_contentMatchingFragments.FontSize = FONTSIZE_PROTEINSEQUENCE;
+            txtBlock_contentMatchingFragments.FontWeight = FontWeights.Bold;
+            txtBlock_contentMatchingFragments.Foreground = new SolidColorBrush(Colors.Black);
+            txtBlock_contentMatchingFragments.VerticalAlignment = VerticalAlignment.Center;
+            txtBlock_contentMatchingFragments.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBlock_contentMatchingFragments.Margin = new Thickness(15, 0, 0, 0);
+            Grid.SetRow(txtBlock_contentMatchingFragments, 2);
+            Grid.SetColumn(txtBlock_contentMatchingFragments, 0);
+            DynamicGrid.Children.Add(txtBlock_contentMatchingFragments);
+            #endregion
+
             #region Golden complementary pairs
             if (isGoldenComplementaryPairs)
             {
@@ -1905,12 +1940,12 @@ namespace ProteinMergeFragIons
                 rectRowGoldenComplementaryPairs.StrokeThickness = 1;
                 rectRowGoldenComplementaryPairs.Stroke = new SolidColorBrush(Colors.Black);
                 rectRowGoldenComplementaryPairs.Fill = new SolidColorBrush(Colors.LightGray);
-                Grid.SetRow(rectRowGoldenComplementaryPairs, 2);
+                Grid.SetRow(rectRowGoldenComplementaryPairs, 3);
                 Grid.SetColumn(rectRowGoldenComplementaryPairs, 0);
                 DynamicGrid.Children.Add(rectRowGoldenComplementaryPairs);
 
                 TextBlock txtBlock_contentGoldenComplementaryPairs = new TextBlock();
-                txtBlock_contentGoldenComplementaryPairs.Text = "Golden complementary pairs (*)";
+                txtBlock_contentGoldenComplementaryPairs.Text = "*: Golden complementary pairs";
                 txtBlock_contentGoldenComplementaryPairs.FontFamily = new FontFamily("Courier New");
                 txtBlock_contentGoldenComplementaryPairs.FontSize = FONTSIZE_PROTEINSEQUENCE;
                 txtBlock_contentGoldenComplementaryPairs.FontWeight = FontWeights.Bold;
@@ -1918,7 +1953,7 @@ namespace ProteinMergeFragIons
                 txtBlock_contentGoldenComplementaryPairs.VerticalAlignment = VerticalAlignment.Center;
                 txtBlock_contentGoldenComplementaryPairs.HorizontalAlignment = HorizontalAlignment.Left;
                 txtBlock_contentGoldenComplementaryPairs.Margin = new Thickness(15, 0, 0, 0);
-                Grid.SetRow(txtBlock_contentGoldenComplementaryPairs, 2);
+                Grid.SetRow(txtBlock_contentGoldenComplementaryPairs, 3);
                 Grid.SetColumn(txtBlock_contentGoldenComplementaryPairs, 0);
                 DynamicGrid.Children.Add(txtBlock_contentGoldenComplementaryPairs);
             }
@@ -1932,9 +1967,9 @@ namespace ProteinMergeFragIons
                 rectRowBondCleavageConfidence.Stroke = new SolidColorBrush(Colors.Black);
                 rectRowBondCleavageConfidence.Fill = new SolidColorBrush(Colors.LightGray);
                 if (isGoldenComplementaryPairs)
-                    Grid.SetRow(rectRowBondCleavageConfidence, 3);
+                    Grid.SetRow(rectRowBondCleavageConfidence, 4);
                 else
-                    Grid.SetRow(rectRowBondCleavageConfidence, 2);
+                    Grid.SetRow(rectRowBondCleavageConfidence, 3);
                 Grid.SetColumn(rectRowBondCleavageConfidence, 0);
                 DynamicGrid.Children.Add(rectRowBondCleavageConfidence);
 
@@ -1948,9 +1983,9 @@ namespace ProteinMergeFragIons
                 txtBlock_contentBondCleavageConfidence.HorizontalAlignment = HorizontalAlignment.Left;
                 txtBlock_contentBondCleavageConfidence.Margin = new Thickness(15, 0, 0, 0);
                 if (isGoldenComplementaryPairs)
-                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 3);
+                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 4);
                 else
-                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 2);
+                    Grid.SetRow(txtBlock_contentBondCleavageConfidence, 3);
                 Grid.SetColumn(txtBlock_contentBondCleavageConfidence, 0);
                 DynamicGrid.Children.Add(txtBlock_contentBondCleavageConfidence);
 
@@ -1960,9 +1995,9 @@ namespace ProteinMergeFragIons
                 rectRowColor.Stroke = new SolidColorBrush(Colors.Black);
                 rectRowColor.Fill = new SolidColorBrush(Colors.LightGray);
                 if (isGoldenComplementaryPairs)
-                    Grid.SetRow(rectRowColor, 3);
+                    Grid.SetRow(rectRowColor, 4);
                 else
-                    Grid.SetRow(rectRowColor, 2);
+                    Grid.SetRow(rectRowColor, 3);
                 Grid.SetColumn(rectRowColor, 1);
                 Grid.SetColumnSpan(rectRowColor, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                 DynamicGrid.Children.Add(rectRowColor);
@@ -1987,9 +2022,9 @@ namespace ProteinMergeFragIons
                         accumulativeGridWidth += currentGridWith;
                     RetangleColorRange.Margin = new Thickness(5 + accumulativeGridWidth, 10, 0, 0);
                     if (isGoldenComplementaryPairs)
-                        Grid.SetRow(RetangleColorRange, 3);
+                        Grid.SetRow(RetangleColorRange, 4);
                     else
-                        Grid.SetRow(RetangleColorRange, 2);
+                        Grid.SetRow(RetangleColorRange, 3);
                     Grid.SetColumn(RetangleColorRange, 1);
                     Grid.SetColumnSpan(RetangleColorRange, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                     DynamicGrid.Children.Add(RetangleColorRange);
@@ -2006,9 +2041,9 @@ namespace ProteinMergeFragIons
                 StartIntensityLabelBondCleavage.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 StartIntensityLabelBondCleavage.Margin = new Thickness(0, -5, 0, 0);
                 if (isGoldenComplementaryPairs)
-                    Grid.SetRow(StartIntensityLabelBondCleavage, 3);
+                    Grid.SetRow(StartIntensityLabelBondCleavage, 4);
                 else
-                    Grid.SetRow(StartIntensityLabelBondCleavage, 2);
+                    Grid.SetRow(StartIntensityLabelBondCleavage, 3);
                 Grid.SetColumn(StartIntensityLabelBondCleavage, 1);
                 DynamicGrid.Children.Add(StartIntensityLabelBondCleavage);
                 #endregion
@@ -2024,9 +2059,9 @@ namespace ProteinMergeFragIons
                 EndIntensityLabelBondCleavage.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                 EndIntensityLabelBondCleavage.Margin = new Thickness(accumulativeGridWidth + currentGridWith - 5 - (10 * maximumBondCleavageConfidence.ToString().Length), -5, 0, 0);
                 if (isGoldenComplementaryPairs)
-                    Grid.SetRow(EndIntensityLabelBondCleavage, 3);
+                    Grid.SetRow(EndIntensityLabelBondCleavage, 4);
                 else
-                    Grid.SetRow(EndIntensityLabelBondCleavage, 2);
+                    Grid.SetRow(EndIntensityLabelBondCleavage, 3);
                 Grid.SetColumn(EndIntensityLabelBondCleavage, 1);
                 Grid.SetColumnSpan(EndIntensityLabelBondCleavage, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                 DynamicGrid.Children.Add(EndIntensityLabelBondCleavage);
@@ -2060,6 +2095,30 @@ namespace ProteinMergeFragIons
                 DynamicGrid.Children.Add(txtBlock);
                 #endregion
 
+                #region number of matching fragments
+                //Background color and borders
+                Rectangle rectRowColorFrags = new Rectangle();
+                rectRowColorFrags.StrokeThickness = 1;
+                rectRowColorFrags.Stroke = new SolidColorBrush(Colors.Black);
+                rectRowColorFrags.Fill = new SolidColorBrush(Colors.LightGray);
+                Grid.SetRow(rectRowColorFrags, 2);
+                Grid.SetColumn(rectRowColorFrags, (i + 1));
+                DynamicGrid.Children.Add(rectRowColorFrags);
+
+                // Add row text
+                TextBlock txtBlock_frags = new TextBlock();
+                txtBlock_frags.Text = precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates[i].Item4.ToString();
+                txtBlock_frags.FontFamily = new FontFamily("Courier New");
+                txtBlock_frags.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                txtBlock_frags.FontWeight = FontWeights.Bold;
+                txtBlock_frags.Foreground = new SolidColorBrush(Colors.Black);
+                txtBlock_frags.VerticalAlignment = VerticalAlignment.Center;
+                txtBlock_frags.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetRow(txtBlock_frags, 2);
+                Grid.SetColumn(txtBlock_frags, (i + 1));
+                DynamicGrid.Children.Add(txtBlock_frags);
+                #endregion
+
                 #region Golden complementary pairs
                 if (isGoldenComplementaryPairs)
                 {
@@ -2068,7 +2127,7 @@ namespace ProteinMergeFragIons
                     rectRowColorGCP.StrokeThickness = 1;
                     rectRowColorGCP.Stroke = new SolidColorBrush(Colors.Black);
                     rectRowColorGCP.Fill = new SolidColorBrush(Colors.LightGray);
-                    Grid.SetRow(rectRowColorGCP, 2);
+                    Grid.SetRow(rectRowColorGCP, 3);
                     Grid.SetColumn(rectRowColorGCP, (i + 1));
                     DynamicGrid.Children.Add(rectRowColorGCP);
 
@@ -2081,7 +2140,7 @@ namespace ProteinMergeFragIons
                     txtBlockGCP.Foreground = new SolidColorBrush(Colors.Black);
                     txtBlockGCP.VerticalAlignment = VerticalAlignment.Center;
                     txtBlockGCP.HorizontalAlignment = HorizontalAlignment.Center;
-                    Grid.SetRow(txtBlockGCP, 2);
+                    Grid.SetRow(txtBlockGCP, 3);
                     Grid.SetColumn(txtBlockGCP, (i + 1));
                     DynamicGrid.Children.Add(txtBlockGCP);
                 }
@@ -2095,7 +2154,7 @@ namespace ProteinMergeFragIons
             else
                 Canvas.SetTop(DynamicGrid, offsetY + 70);
 
-            offsetY += 130;
+            offsetY += 160;
             if (isGoldenComplementaryPairs)
                 offsetY += 40;
             if (isBondCleavageConfidence)
@@ -2213,13 +2272,13 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
-        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref int[] ProteinBondCleavageConfidenceCountAA, ref List<(string, int[], int)> ProteinGoldenComplementaryPairs, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0, bool isBondCleavageConfidence = false, bool isGoldenComplementaryPairs = false, int representativeSeries = 0)
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref int[] ProteinBondCleavageConfidenceCountAA, ref List<(string, int[], int)> ProteinGoldenComplementaryPairs, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, double local_intensity_normalization = 0, bool isBondCleavageConfidence = false, bool isGoldenComplementaryPairs = false, int representativeSeries = 0)
         {
             if (!this.HasMergeConditions)
             {
                 foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevelOrFragMethods)
                 {
-                    List<(string, string, string, int, double)> currentPrecursorChargeOrActivationLevelOrReplicate = null;
+                    List<(string, string, string, int, double, double)> currentPrecursorChargeOrActivationLevelOrReplicate = null;
 
                     if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
                         currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
@@ -2231,7 +2290,7 @@ namespace ProteinMergeFragIons
                     {
                         if (ProteinBondCleavageConfidenceCountAA != null)
                         {
-                            foreach ((string, string, string, int, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
+                            foreach ((string, string, string, int, double, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
                             {
                                 ProteinBondCleavageConfidenceCountAA[frag.Item4 - 1]++;
                             }
@@ -2245,7 +2304,7 @@ namespace ProteinMergeFragIons
                         if (ProteinGoldenComplementaryPairs != null)
                         {
                             (string, int[], int) currentPtnGoldenComplPairs = ProteinGoldenComplementaryPairs.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel) && a.Item3 == representativeSeries).FirstOrDefault();
-                            foreach ((string, string, string, int, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
+                            foreach ((string, string, string, int, double, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
                             {
                                 currentPtnGoldenComplPairs.Item2[frag.Item4 - 1]++;
                             }
@@ -2261,7 +2320,7 @@ namespace ProteinMergeFragIons
             }
         }
 
-        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityperMap, double local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double)> currentPrecursorCharge)
+        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityperMap, double local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double, double)> currentPrecursorCharge)
         {
             for (int count = 0; count < currentPrecursorCharge.Count; count++)
             {
@@ -2298,16 +2357,21 @@ namespace ProteinMergeFragIons
                     l.Stroke = FRAGMENT_ION_LINE_COLORS[_index];
                 }
                 l.StrokeThickness = WIDTH_LINE;
+
+                int aa_position = currentPrecursorCharge[count].Item4;
+                if (currentPrecursorCharge[count].Item3.Equals("X") || currentPrecursorCharge[count].Item3.Equals("Y") || currentPrecursorCharge[count].Item3.Equals("Z"))
+                    aa_position = proteinCharsAndSpaces.Count - aa_position + 1;
+
                 if (isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod && !isReplicate)
-                    l.ToolTip = "Charge: " + currentPrecursorCharge[count].Item2.ToString() + "+\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    l.ToolTip = "Charge: " + currentPrecursorCharge[count].Item2.ToString() + "+\nIon name: " + currentPrecursorCharge[count].Item3.ToString() + aa_position.ToString() + "\nTheoretical mass: " + currentPrecursorCharge[count].Item6.ToString("0.0") + " Da";
                 else if (isActivationLevel && !isPrecursorChargeState && !isFragmentationMethod && !isReplicate)
-                    l.ToolTip = "Activation Level: " + currentPrecursorCharge[count].Item2.ToString() + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    l.ToolTip = "Activation Level: " + currentPrecursorCharge[count].Item2.ToString() + "\nIon name: " + currentPrecursorCharge[count].Item3.ToString() + aa_position.ToString() + "\nTheoretical mass: " + currentPrecursorCharge[count].Item6.ToString("0.0") + " Da";
                 else if (isFragmentationMethod && !isPrecursorChargeState && !isActivationLevel && !isReplicate)
-                    l.ToolTip = "Fragmentation Method: " + currentPrecursorCharge[count].Item1 + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    l.ToolTip = "Fragmentation Method: " + currentPrecursorCharge[count].Item1 + "\nIon name: " + currentPrecursorCharge[count].Item3.ToString() + aa_position.ToString() + "\nTheoretical mass: " + currentPrecursorCharge[count].Item6.ToString("0.0") + " Da";
                 else if (isReplicate && !isPrecursorChargeState && !isActivationLevel && !isFragmentationMethod)
-                    l.ToolTip = "Replicate: " + currentPrecursorCharge[count].Item2 + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    l.ToolTip = "Replicate: " + currentPrecursorCharge[count].Item2 + "\nIon name: " + currentPrecursorCharge[count].Item3.ToString() + aa_position.ToString() + "\nTheoretical mass: " + currentPrecursorCharge[count].Item6.ToString("0.0") + " Da";
                 else // Merge Frag Ion
-                    l.ToolTip = "Cleavage Frequency: " + currentPrecursorCharge[count].Item5 + "\nPosition: " + currentPrecursorCharge[count].Item4.ToString();
+                    l.ToolTip = "Cleavage Frequency: " + currentPrecursorCharge[count].Item5 + "\nPosition: " + aa_position.ToString();
 
                 MyCanvas.Children.Add(l);
                 Canvas.SetTop(l, initialYLine + offSetY);
@@ -2343,7 +2407,6 @@ namespace ProteinMergeFragIons
 
         private void PlotProteinSequence(List<double> PtnCharPositions, List<Label> proteinCharsAndSpaces, int leftOffset)
         {
-            if (isPrecursorChargeState) leftOffset++;
             PtnCharPositions.Clear();
             for (int i = 0; i < ProteinSequence.Length; i++)
             {
@@ -2386,7 +2449,6 @@ namespace ProteinMergeFragIons
         private void PlotAminoAcidNumberOnTheTopOfProteinSequence(double offsetXProtein, double offsetYProtein, List<double> PtnCharPositions, Color COLOR_SERIES_RECTANGLE)
         {
             #region plot aminoacid number on the top of the sequence
-            if (isPrecursorChargeState) offsetXProtein++;
             double leftOffset = offsetXProtein * SPACER_X + 75;
 
             //First aminoacid
@@ -2400,19 +2462,19 @@ namespace ProteinMergeFragIons
             Canvas.SetLeft(numberAATop1, leftOffset + 40);
             Canvas.SetTop(numberAATop1, offsetYProtein);
 
-            // Create a Rectangle  
-            Rectangle AANumberRectangle = new Rectangle();
-            AANumberRectangle.Height = 30;
-            AANumberRectangle.Width = 60 + PtnCharPositions[PtnCharPositions.Count - 1] + 10 - (offsetXProtein * SPACER_X + 75);
-            // Set Rectangle's width and color  
-            AANumberRectangle.StrokeThickness = 0.5;
+            //// Create a Rectangle  
+            //Rectangle AANumberRectangle = new Rectangle();
+            //AANumberRectangle.Height = 30;
+            //AANumberRectangle.Width = 60 + PtnCharPositions[PtnCharPositions.Count - 1] + 10 - (offsetXProtein * SPACER_X + 75);
+            //// Set Rectangle's width and color  
+            //AANumberRectangle.StrokeThickness = 0.5;
 
-            // Fill rectangle with blue color  
-            AANumberRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
-            // Add Rectangle to the Grid.  
-            MyCanvas.Children.Add(AANumberRectangle);
-            Canvas.SetLeft(AANumberRectangle, leftOffset + 40);
-            Canvas.SetTop(AANumberRectangle, offsetYProtein);
+            //// Fill rectangle with blue color  
+            //AANumberRectangle.Fill = new SolidColorBrush(COLOR_SERIES_RECTANGLE);
+            //// Add Rectangle to the Grid.  
+            //MyCanvas.Children.Add(AANumberRectangle);
+            //Canvas.SetLeft(AANumberRectangle, leftOffset + 40);
+            //Canvas.SetTop(AANumberRectangle, offsetYProtein);
 
             for (int i = 0; i <= ProteinSequence.Length; i += 50)
             {

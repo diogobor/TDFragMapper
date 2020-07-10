@@ -17,8 +17,8 @@ namespace TDFragMapper
         private Core Core { get; set; }
         private Regex numberCaptured = new Regex("[0-9|\\.]+", RegexOptions.Compiled);
 
-        // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
-        private List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions { get; set; }
+        // List of Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, Theoretical Mass
+        private List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions { get; set; }
 
         private List<(Button, Button)> Add_Remove_MapBtnList { get; set; }
 
@@ -110,6 +110,10 @@ namespace TDFragMapper
             };
 
             Add_Remove_MapBtnList = new List<(Button, Button)>() { (buttonAddMap_0, null) };
+
+            listBoxSelectedStudyCondition0.DrawMode = DrawMode.OwnerDrawFixed;
+            listBoxSelectedStudyCondition0.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstBox_DrawItem);
+
         }
 
         public void Setup(Core core, bool isInitialResults = true)
@@ -135,7 +139,7 @@ namespace TDFragMapper
                 SetTagsInitialCondition();
                 if (isInitialResults)
                 {
-                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>();
+                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>();
                     comboBoxCondition2_0.Enabled = false;
                     comboBoxCondition3_0.Enabled = false;
                     comboBoxStudyCondition_0.Enabled = false;
@@ -150,24 +154,24 @@ namespace TDFragMapper
         public void UpdateMaps()
         {
             int countCondition = 0;
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>(Core.DictMaps);
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
             List<string> selectedItemsCondition1 = null;
             List<string> selectedItemsCondition2 = null;
             List<string> selectedItemsCondition3 = null;
             List<string> selectedItemsStudyCondition = null;
 
-            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
-            List<(string, int, string, int, string, int, double)> _tempFragMethods = null;
+            List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double, double)> _tempFragMethods = null;
             List<string> RemainItemscondition1 = null;
             List<string> RemainItemscondition2 = null;
             List<string> RemainItemscondition3 = null;
             List<string> RemainItemsstudycondition = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool)> entry in _DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in _DictMaps)
             {
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
                 if (countCondition == 0)
                 {
                     //For filtering
@@ -281,7 +285,7 @@ namespace TDFragMapper
                     #region fill fixed condition2 selected items
                     listBoxAllFixedCondition2.Items.Clear();
                     listBoxSelectedFixedCondition2.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -349,7 +353,7 @@ namespace TDFragMapper
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
                     listBoxSelectedFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -590,7 +594,7 @@ namespace TDFragMapper
                     #endregion
 
                     #region fill fixed condition2 selected items
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
                     if (entry.Value.Item2.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition2 = (from item in entry.Value.Item4
@@ -651,7 +655,7 @@ namespace TDFragMapper
 
                     #region fill fixed condition3 selected items
                     listBoxAllFixedCondition3.Items.Clear();
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
                     if (entry.Value.Item3.ToString().StartsWith("Frag"))
                     {
                         selectedItemsCondition3 = (from item in entry.Value.Item4
@@ -1368,7 +1372,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = null;
             Button addNewMap = null;
             Button addSelectedCondition = null;
-            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = null;
+            List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = null;
             CheckBox checkBoxGoldenComplemPairs = null;
             CheckBox checkBoxCleavageConfidence = null;
 
@@ -1388,7 +1392,7 @@ namespace TDFragMapper
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)sender).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)sender).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)sender).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)sender).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, double)>)((object[])((ComboBox)sender).Tag)[14];
                 checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)sender).Tag)[15];
                 checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)sender).Tag)[16];
             }
@@ -1408,7 +1412,7 @@ namespace TDFragMapper
                 listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
                 addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
                 addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+                allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
                 checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
                 checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
             }
@@ -1509,7 +1513,7 @@ namespace TDFragMapper
                     addSelectedCondition.Enabled = true;
 
                 //Set tag to SelectedListBox to know the kind of data
-                currentListBoxSelectedCondition.Tag = ((ComboBox)sender).SelectedItem.ToString();
+                currentListBoxSelectedCondition.Tag = new object[] { ((ComboBox)sender).SelectedItem.ToString() };
 
                 try
                 {
@@ -1555,7 +1559,7 @@ namespace TDFragMapper
                 return false;
         }
 
-        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions)
+        private void FillComboboxCondition(ComboBox currentCombobox, ListBox listboxAllConditions, ListBox listboxSelectedCondition1, ListBox listboxSelectedCondition2, ListBox listboxSelectedCondition3, ListBox listboxSelectedStudyCondition, List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions)
         {
             string condition = currentCombobox.SelectedItem.ToString();
             listboxAllConditions.Items.Clear();
@@ -1597,22 +1601,22 @@ namespace TDFragMapper
             else if (currentCombobox.Name.StartsWith("comboBoxCondition2"))
             {
                 listboxSelectedCondition2.Items.Clear();
-                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
+                List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1630,7 +1634,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -1674,24 +1678,24 @@ namespace TDFragMapper
             else if (currentCombobox.Name.StartsWith("comboBoxCondition3"))
             {
                 listboxSelectedCondition3.Items.Clear();
-                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
                 #region filter 1
-                if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
+                if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1709,7 +1713,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -1731,23 +1735,23 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
+                if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition2.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition2.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1765,7 +1769,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -1811,24 +1815,24 @@ namespace TDFragMapper
             {
                 listboxSelectedStudyCondition.Items.Clear();
                 allFragmentIonsAllConditions = Core.FragmentIons;
-                List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
                 #region filter 1
-                if (listboxSelectedCondition1.Tag.Equals("Fragmentation Method"))
+                if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition1.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1846,7 +1850,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition1.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition1.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -1867,23 +1871,23 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 2
-                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                if (listboxSelectedCondition2.Tag.Equals("Fragmentation Method"))
+                if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition2.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition2.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1901,7 +1905,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition2.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition2.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -1922,23 +1926,23 @@ namespace TDFragMapper
                 #endregion
 
                 #region filter 3
-                _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                if (listboxSelectedCondition3.Tag.Equals("Fragmentation Method"))
+                if (((object[])listboxSelectedCondition3.Tag)[0].Equals("Fragmentation Method"))
                 {
                     foreach (string item in listboxSelectedCondition3.Items)//Frag Method
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition3.Tag.Equals("Activation Level"))
+                else if (((object[])listboxSelectedCondition3.Tag)[0].Equals("Activation Level"))
                 {
                     foreach (string item in listboxSelectedCondition3.Items)//Activation Level
                     {
                         _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                     }
                 }
-                else if (listboxSelectedCondition3.Tag.Equals("Replicates"))
+                else if (((object[])listboxSelectedCondition3.Tag)[0].Equals("Replicates"))
                 {
                     try
                     {
@@ -1956,7 +1960,7 @@ namespace TDFragMapper
                         }
                     }
                 }
-                else if (listboxSelectedCondition3.Tag.Equals("Precursor Charge State"))
+                else if (((object[])listboxSelectedCondition3.Tag)[0].Equals("Precursor Charge State"))
                 {
                     try
                     {
@@ -2061,7 +2065,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
             CheckBox checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
             CheckBox checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
 
@@ -2154,22 +2158,22 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2187,7 +2191,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2226,22 +2230,22 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = true;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2259,7 +2263,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2280,23 +2284,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2314,7 +2318,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2348,22 +2352,22 @@ namespace TDFragMapper
 
                     #region filter Condition1
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2381,7 +2385,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2402,23 +2406,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition2
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2436,7 +2440,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2457,23 +2461,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2491,7 +2495,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2512,23 +2516,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Study Condition
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2546,7 +2550,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2576,16 +2580,16 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                     string firstFixedCondition = string.Empty;
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                         firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<int>().ToList());
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level")||
-                        listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level") ||
+                        ((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                         firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<string>().ToList());
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         StringBuilder sbReplicate = new StringBuilder();
                         foreach (string item in listBoxSelectedFixedCondition1.Items)
@@ -2673,7 +2677,7 @@ namespace TDFragMapper
             ListBox listBoxSelectedStudyCondition = (ListBox)((object[])((ComboBox)comboBoxCondition1).Tag)[11];
             Button addNewMap = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[12];
             Button addSelectedCondition = (Button)((object[])((ComboBox)comboBoxCondition1).Tag)[13];
-            List<(string, int, string, int, string, int, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
+            List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = (List<(string, int, string, int, string, int, double, double)>)((object[])((ComboBox)comboBoxCondition1).Tag)[14];
             CheckBox checkBoxGoldenComplemPairs = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[15];
             CheckBox checkBoxCleavageConfidence = (CheckBox)((object[])((ComboBox)comboBoxCondition1).Tag)[16];
 
@@ -2773,22 +2777,22 @@ namespace TDFragMapper
                     comboBoxStudyCondition.Enabled = false;
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2806,7 +2810,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2848,22 +2852,22 @@ namespace TDFragMapper
 
                     #region filter 2
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2881,7 +2885,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2903,23 +2907,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter 3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -2937,7 +2941,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -2993,22 +2997,22 @@ namespace TDFragMapper
 
                     #region filter Condition1
                     allFragmentIonsAllConditions = Core.FragmentIons;
-                    List<(string, int, string, int, string, int, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    List<(string, int, string, int, string, int, double, double)> _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition1.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -3026,7 +3030,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -3047,23 +3051,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition2
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition2.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition2.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -3081,7 +3085,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition2.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition2.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -3102,23 +3106,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Condition3
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedFixedCondition3.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedFixedCondition3.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -3136,7 +3140,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedFixedCondition3.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedFixedCondition3.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -3157,23 +3161,23 @@ namespace TDFragMapper
                     #endregion
 
                     #region filter Study Condition
-                    _tempFragMethods = new List<(string, int, string, int, string, int, double)>();
+                    _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
 
-                    if (listBoxSelectedStudyCondition.Tag.Equals("Fragmentation Method"))
+                    if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Fragmentation Method"))
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Frag Method
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item1.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Activation Level"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Activation Level"))
                     {
                         foreach (string item in listBoxSelectedStudyCondition.Items)//Activation Level
                         {
                             _tempFragMethods.AddRange(allFragmentIonsAllConditions.Where(a => a.Item5.Equals(item)).ToList());
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Replicates"))
                     {
                         try
                         {
@@ -3191,7 +3195,7 @@ namespace TDFragMapper
                             }
                         }
                     }
-                    else if (listBoxSelectedStudyCondition.Tag.Equals("Precursor Charge State"))
+                    else if (((object[])listBoxSelectedStudyCondition.Tag)[0].Equals("Precursor Charge State"))
                     {
                         try
                         {
@@ -3220,16 +3224,16 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                     string firstFixedCondition = string.Empty;
-                    if (listBoxSelectedFixedCondition1.Tag.Equals("Precursor Charge State"))
+                    if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Precursor Charge State"))
                         firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<int>().ToList());
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Activation Level") ||
-                        listBoxSelectedFixedCondition1.Tag.Equals("Fragmentation Method"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Activation Level") ||
+                        ((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Fragmentation Method"))
                         firstFixedCondition = String.Join("&", listBoxSelectedFixedCondition1.Items.Cast<string>().ToList());
-                    else if (listBoxSelectedFixedCondition1.Tag.Equals("Replicates"))
+                    else if (((object[])listBoxSelectedFixedCondition1.Tag)[0].Equals("Replicates"))
                     {
                         StringBuilder sbReplicate = new StringBuilder();
                         foreach (string item in listBoxSelectedFixedCondition1.Items)
@@ -3313,7 +3317,7 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
                             Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, ((CheckBox)sender).Checked, currentMap.Item6);
@@ -3337,7 +3341,7 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
                             Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, currentMap.Item5, ((CheckBox)sender).Checked);
@@ -3346,6 +3350,118 @@ namespace TDFragMapper
                     }
                 }
             }
+        }
+
+        private void lstBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            try
+            {
+                e.DrawBackground();
+                bool hasColor = false;
+                int itemIndex = e.Index;
+                if (itemIndex >= 0 && itemIndex < ((ListBox)sender).Items.Count)
+                {
+                    Graphics g = e.Graphics;
+                    string itemText = ((ListBox)sender).Items[e.Index].ToString();
+
+                    if (((object[])((ListBox)sender).Tag).Length > 1)
+                    {
+                        foreach (object itemTag in ((object[])((ListBox)sender).Tag))
+                        {
+                            SolidBrush backgroundColorBrush = null;
+                            SolidBrush itemTextColorBrush = null;
+                            if (itemTag.ToString().StartsWith(itemText + "#"))
+                            {
+                                string[] color = Regex.Split(itemTag.ToString(), "#");
+                                Color currentColor = System.Drawing.Color.FromArgb(Convert.ToInt32(color[1]), Convert.ToInt32(color[2]), Convert.ToInt32(color[3]), Convert.ToInt32(color[4]));
+                                // Background Color
+                                backgroundColorBrush = new SolidBrush(currentColor);
+                                // Set text color
+                                itemTextColorBrush = new SolidBrush(Color.White);
+                                hasColor = true;
+
+                                g.FillRectangle(backgroundColorBrush, e.Bounds);
+                                g.DrawString(itemText, e.Font, itemTextColorBrush, e.Bounds, StringFormat.GenericDefault);
+                                // Clean up
+                                itemTextColorBrush.Dispose();
+                                backgroundColorBrush.Dispose();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        hasColor = false;
+                        // Background Color
+
+                    }
+                    if (!hasColor)
+                    {
+                        SolidBrush backgroundColorBrush = null;
+                        // Set text color
+                        SolidBrush itemTextColorBrush = null;
+                        if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                        {
+                            backgroundColorBrush = new SolidBrush(System.Drawing.Color.FromArgb(255, 50, 116, 215));
+                            // Set text color
+                            itemTextColorBrush = new SolidBrush(Color.White);
+
+                        }
+                        else
+                        {
+                            backgroundColorBrush = new SolidBrush(Color.White);
+
+                            // Set text color
+                            itemTextColorBrush = new SolidBrush(Color.Black);
+                        }
+                        g.FillRectangle(backgroundColorBrush, e.Bounds);
+                        g.DrawString(itemText, e.Font, itemTextColorBrush, ((ListBox)sender).GetItemRectangle(itemIndex).Location);
+                        // Clean up
+                        itemTextColorBrush.Dispose();
+                        backgroundColorBrush.Dispose();
+                    }
+
+                }
+                e.DrawFocusRectangle();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void listBoxSelectedStudyCondition_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (((ListBox)sender).SelectedItem == null) return;
+            ColorDialog colorDlg = new ColorDialog(); //create colordialog instance
+            colorDlg.AllowFullOpen = true;
+            colorDlg.AnyColor = true;
+            if (((object[])listBoxSelectedStudyCondition0.Tag).Length > 1)
+            {
+                foreach (object item in ((object[])listBoxSelectedStudyCondition0.Tag))
+                {
+                    if (!item.ToString().StartsWith(((ListBox)sender).SelectedItem.ToString() + "#")) continue;
+                    string[] color = Regex.Split(item.ToString(), "#");
+                    colorDlg.Color = System.Drawing.Color.FromArgb(Convert.ToInt32(color[1]), Convert.ToInt32(color[2]), Convert.ToInt32(color[3]), Convert.ToInt32(color[4]));
+                }
+            }
+
+            // Show the color dialog.
+            DialogResult result = colorDlg.ShowDialog();
+            // See if user pressed ok.
+            if (result == DialogResult.OK)
+            {
+                int totalTagItems = ((object[])listBoxSelectedStudyCondition0.Tag).Length;
+                List<string> oldItems = new List<string>(totalTagItems);
+                for (int i = 0; i < totalTagItems; i++)
+                    oldItems.Add(((object[])listBoxSelectedStudyCondition0.Tag)[i].ToString());
+                oldItems.RemoveAll(a => a.StartsWith(((ListBox)sender).SelectedItem.ToString()));
+                listBoxSelectedStudyCondition0.Tag = new object[oldItems.Count + 1];
+
+                for (int i = 0; i < oldItems.Count; i++)
+                    ((object[])listBoxSelectedStudyCondition0.Tag)[i] = oldItems[i];
+
+                ((object[])listBoxSelectedStudyCondition0.Tag)[oldItems.Count] = ((ListBox)sender).SelectedItem.ToString() + "#" + colorDlg.Color.A + "#" + colorDlg.Color.R + "#" + colorDlg.Color.G + "#" + colorDlg.Color.B; //keep the selected value
+            }
+
         }
     }
 }

@@ -171,6 +171,7 @@
             this.listBoxSelectedStudyCondition0.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxSelectedStudyCondition0.Size = new System.Drawing.Size(77, 108);
             this.listBoxSelectedStudyCondition0.TabIndex = 5;
+            this.listBoxSelectedStudyCondition0.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelectedStudyCondition_MouseDoubleClick);
             // 
             // listBoxAllStudyCondition
             // 
