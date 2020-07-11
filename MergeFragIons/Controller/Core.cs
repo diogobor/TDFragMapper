@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TDFragMapper.Utils;
 
@@ -266,8 +267,9 @@ namespace TDFragMapper.Controller
                );
                 table.AddCell(cell_content);
 
-                fragments = FragmentIons.Select(a => a.Item5).Distinct().ToList();
-                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
+                List<(string, string)> actLevels = (from item in FragmentIons
+                                                    select (item.Item1, item.Item5)).Distinct().ToList();
+                cell_content = new PdfPCell(new Phrase(Regex.Replace(String.Join("\n", actLevels), "[(|)|,]", ""),
                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
                );
                 table.AddCell(cell_content);
