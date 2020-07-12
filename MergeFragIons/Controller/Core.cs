@@ -29,10 +29,10 @@ namespace TDFragMapper.Controller
         [ProtoMember(3)]
         public string SequenceInformation { get; set; }
         /// <summary>
-        /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions), isGoldenComplementaryPairs, isBondCleavageConfidence>
+        /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions), isGoldenComplementaryPairs, isBondCleavageConfidence, List<eachStudyItem,color>>
         /// </summary>
         [ProtoMember(4)]
-        public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> DictMaps { get; set; }
+        public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string,string)>)> DictMaps { get; set; }
         [ProtoMember(5)]
         public bool Has_And_LocalNormalization { get; set; }
         [ProtoMember(6)]

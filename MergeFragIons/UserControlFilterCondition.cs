@@ -112,7 +112,7 @@ namespace TDFragMapper
             Add_Remove_MapBtnList = new List<(Button, Button)>() { (buttonAddMap_0, null) };
 
             listBoxSelectedStudyCondition0.DrawMode = DrawMode.OwnerDrawFixed;
-            listBoxSelectedStudyCondition0.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstBox_DrawItem);
+            listBoxSelectedStudyCondition0.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBoxSelectedStudyCondition_DrawItem);
 
         }
 
@@ -139,7 +139,7 @@ namespace TDFragMapper
                 SetTagsInitialCondition();
                 if (isInitialResults)
                 {
-                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>();
+                    Core.DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)>();
                     comboBoxCondition2_0.Enabled = false;
                     comboBoxCondition3_0.Enabled = false;
                     comboBoxStudyCondition_0.Enabled = false;
@@ -154,8 +154,8 @@ namespace TDFragMapper
         public void UpdateMaps()
         {
             int countCondition = 0;
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
-            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> _DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)>(Core.DictMaps);
+            Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> _DictMapsToBeChanged = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)>(Core.DictMaps);
             List<string> selectedItemsCondition1 = null;
             List<string> selectedItemsCondition2 = null;
             List<string> selectedItemsCondition3 = null;
@@ -168,7 +168,7 @@ namespace TDFragMapper
             List<string> RemainItemscondition3 = null;
             List<string> RemainItemsstudycondition = null;
 
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in _DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> entry in _DictMaps)
             {
                 allFragmentIonsAllConditions = Core.FragmentIons;
                 _tempFragMethods = new List<(string, int, string, int, string, int, double, double)>();
@@ -1063,6 +1063,9 @@ namespace TDFragMapper
             listboxSelectedStudyCondition.Location = new Point(189, 50);
             listboxSelectedStudyCondition.Size = new Size(77, 108);
             listboxSelectedStudyCondition.SelectionMode = SelectionMode.MultiExtended;
+            listboxSelectedStudyCondition.DrawMode = DrawMode.OwnerDrawFixed;
+            listboxSelectedStudyCondition.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBoxSelectedStudyCondition_DrawItem);
+            listboxSelectedStudyCondition.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelectedStudyCondition_MouseDoubleClick);
             groupBoxStudyCondition.Controls.Add(listboxSelectedStudyCondition);
             #endregion
 
@@ -2580,7 +2583,7 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                     string firstFixedCondition = string.Empty;
@@ -2603,42 +2606,19 @@ namespace TDFragMapper
                     string _key = studyCondition + "#" + fixedCondition1 + "#" + firstFixedCondition + "#" + numberOfCondition;
                     if (Core.DictMaps.TryGetValue(_key, out currentMap))
                     {
-                        Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, checkBoxGoldenComplemPairs.Checked, checkBoxCleavageConfidence.Checked);
+                        Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, checkBoxGoldenComplemPairs.Checked, checkBoxCleavageConfidence.Checked, new List<(string, string)>());
                         Console.WriteLine(" Edited Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                     }
                     else //New map
                     {
-                        // List<string> _keys = Core.DictMaps.Keys.ToList();
-                        // if (_keys.Exists(a => a.Contains(studyCondition + "#" + fixedCondition1 + "#" + listBoxSelectedFixedCondition1.Items[0].ToString())))
-                        // {
-                        //     System.Windows.Forms.MessageBox.Show(
-                        //"Similar Map has already been created!",
-                        //"Warning",
-                        //MessageBoxButtons.OK,
-                        //MessageBoxIcon.Warning);
-
-                        //     #region Reset study fields
-                        //     ResetFields(null,
-                        //     null,
-                        //     null,
-                        //     null,
-                        //     null,
-                        //     null,
-                        //     listBoxAllStudyCondition,
-                        //     listBoxSelectedStudyCondition,
-                        //     null,
-                        //     null,
-                        //     null,
-                        //     comboBoxStudyCondition);
-                        //     #endregion
-
-                        //     return;
-                        // }
-
-                        Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, checkBoxGoldenComplemPairs.Checked, checkBoxCleavageConfidence.Checked));
+                        Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, checkBoxGoldenComplemPairs.Checked, checkBoxCleavageConfidence.Checked, new List<(string, string)>()));
                         Console.WriteLine(" Created Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                     }
 
+                    if (numberOfConditions-1 > Convert.ToInt32(numberOfCondition))
+                        addNewMap.Enabled = false;
+                    else
+                        addNewMap.Enabled = true;
                     #endregion
 
                     #region Enable golden complementary pairs checkbox
@@ -2658,7 +2638,6 @@ namespace TDFragMapper
                     #endregion
                 }
             }
-            addNewMap.Enabled = true;
         }
 
         private void buttonRemoveSelectedCondition_Click(object sender, EventArgs e)
@@ -3224,7 +3203,7 @@ namespace TDFragMapper
                     string fixedCondition3 = comboBoxCondition3.SelectedItem.ToString();
 
                     /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
-                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
+                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
 
                     string numberOfCondition = Regex.Split(addNewMap.Name, "_")[1];
                     string firstFixedCondition = string.Empty;
@@ -3247,12 +3226,12 @@ namespace TDFragMapper
                     string _key = studyCondition + "#" + fixedCondition1 + "#" + firstFixedCondition + "#" + numberOfCondition;
                     if (Core.DictMaps.TryGetValue(_key, out currentMap))
                     {
-                        Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, false, false);
+                        Core.DictMaps[_key] = (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, false, false, new List<(string, string)>());
                         Console.WriteLine(" Edited Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                     }
                     else //New map
                     {
-                        Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, false, false));
+                        Core.DictMaps.Add(_key, (fixedCondition1, fixedCondition2, fixedCondition3, allFragmentIonsAllConditions, false, false, new List<(string, string)>()));
                         Console.WriteLine(" Created Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                     }
                     #endregion
@@ -3317,10 +3296,10 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
-                            Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, ((CheckBox)sender).Checked, currentMap.Item6);
+                            Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, ((CheckBox)sender).Checked, currentMap.Item6, currentMap.Item7);
                             Console.WriteLine(" Edited Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                         }
                     }
@@ -3341,10 +3320,10 @@ namespace TDFragMapper
                     if (!String.IsNullOrEmpty(_key))
                     {
                         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
-                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool) currentMap;
+                        (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
                         if (Core.DictMaps.TryGetValue(_key, out currentMap))
                         {
-                            Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, currentMap.Item5, ((CheckBox)sender).Checked);
+                            Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, currentMap.Item5, ((CheckBox)sender).Checked, currentMap.Item7);
                             Console.WriteLine(" Edited Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                         }
                     }
@@ -3352,7 +3331,7 @@ namespace TDFragMapper
             }
         }
 
-        private void lstBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void listBoxSelectedStudyCondition_DrawItem(object sender, DrawItemEventArgs e)
         {
             try
             {
@@ -3386,7 +3365,65 @@ namespace TDFragMapper
                                 itemTextColorBrush.Dispose();
                                 backgroundColorBrush.Dispose();
                             }
+                            else
+                                hasColor = false;
                         }
+                    }
+
+                    if (!hasColor && Core != null && Core.DictMaps != null && Core.DictMaps.Count > 0)
+                    {
+                        int numberOfCondition = Convert.ToInt32(numberCaptured.Matches(((ListBox)sender).Name)[0].Value);
+
+                        List<string> keys = Core.DictMaps.Keys.ToList();
+                        string _key = keys.Where(a => a.EndsWith("#" + numberOfCondition)).FirstOrDefault();
+                        if (!String.IsNullOrEmpty(_key))
+                        {
+                            /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
+                            (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
+                            if (Core.DictMaps.TryGetValue(_key, out currentMap))
+                            {
+                                List<(string, string)> eachStudy_color_list = currentMap.Item7;
+                                if (eachStudy_color_list.Count > 0)
+                                {
+                                    (string, string) _currentStudy_color = eachStudy_color_list.Where(a => a.Item1.Equals(itemText)).FirstOrDefault();
+                                    if (_currentStudy_color.Item1 != null)
+                                    {
+                                        string[] color = Regex.Split(_currentStudy_color.Item2, "#");
+                                        Color currentColor = System.Drawing.Color.FromArgb(Convert.ToInt32(color[0]), Convert.ToInt32(color[1]), Convert.ToInt32(color[2]), Convert.ToInt32(color[3]));
+                                        // Background Color
+                                        SolidBrush backgroundColorBrush = new SolidBrush(currentColor);
+                                        // Set text color
+                                        SolidBrush itemTextColorBrush = new SolidBrush(Color.White);
+                                        hasColor = true;
+
+                                        g.FillRectangle(backgroundColorBrush, e.Bounds);
+                                        g.DrawString(itemText, e.Font, itemTextColorBrush, e.Bounds, StringFormat.GenericDefault);
+                                        // Clean up
+                                        itemTextColorBrush.Dispose();
+                                        backgroundColorBrush.Dispose();
+
+                                        int totalTagItems = ((object[])((ListBox)sender).Tag).Length;
+                                        List<string> oldItems = new List<string>(totalTagItems);
+                                        for (int i = 0; i < totalTagItems; i++)
+                                            oldItems.Add(((object[])((ListBox)sender).Tag)[i].ToString());
+                                        oldItems.RemoveAll(a => a.StartsWith(itemText));
+                                        ((ListBox)sender).Tag = new object[oldItems.Count + 1];
+
+                                        for (int i = 0; i < oldItems.Count; i++)
+                                            ((object[])((ListBox)sender).Tag)[i] = oldItems[i];
+
+                                        ((object[])((ListBox)sender).Tag)[oldItems.Count] = itemText + "#" + color[0] + "#" + color[1] + "#" + color[2] + "#" + color[3]; //keep the selected value
+
+                                    }
+                                    else
+                                        hasColor = false;
+                                }
+                                else
+                                    hasColor = false;
+                            }
+                        }
+                        else
+                            hasColor = false;
                     }
                     else
                     {
@@ -3401,7 +3438,8 @@ namespace TDFragMapper
                         SolidBrush itemTextColorBrush = null;
                         if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
                         {
-                            backgroundColorBrush = new SolidBrush(System.Drawing.Color.FromArgb(255, 50, 116, 215));
+                            backgroundColorBrush = new SolidBrush(Color.Transparent);
+                            //backgroundColorBrush = new SolidBrush(System.Drawing.Color.FromArgb(255, 50, 116, 215));
                             // Set text color
                             itemTextColorBrush = new SolidBrush(Color.White);
 
@@ -3434,9 +3472,9 @@ namespace TDFragMapper
             ColorDialog colorDlg = new ColorDialog(); //create colordialog instance
             colorDlg.AllowFullOpen = true;
             colorDlg.AnyColor = true;
-            if (((object[])listBoxSelectedStudyCondition0.Tag).Length > 1)
+            if (((object[])((ListBox)sender).Tag).Length > 1)
             {
-                foreach (object item in ((object[])listBoxSelectedStudyCondition0.Tag))
+                foreach (object item in ((object[])((ListBox)sender).Tag))
                 {
                     if (!item.ToString().StartsWith(((ListBox)sender).SelectedItem.ToString() + "#")) continue;
                     string[] color = Regex.Split(item.ToString(), "#");
@@ -3449,19 +3487,46 @@ namespace TDFragMapper
             // See if user pressed ok.
             if (result == DialogResult.OK)
             {
-                int totalTagItems = ((object[])listBoxSelectedStudyCondition0.Tag).Length;
+                int totalTagItems = ((object[])((ListBox)sender).Tag).Length;
                 List<string> oldItems = new List<string>(totalTagItems);
                 for (int i = 0; i < totalTagItems; i++)
-                    oldItems.Add(((object[])listBoxSelectedStudyCondition0.Tag)[i].ToString());
+                    oldItems.Add(((object[])((ListBox)sender).Tag)[i].ToString());
                 oldItems.RemoveAll(a => a.StartsWith(((ListBox)sender).SelectedItem.ToString()));
-                listBoxSelectedStudyCondition0.Tag = new object[oldItems.Count + 1];
+                ((ListBox)sender).Tag = new object[oldItems.Count + 1];
 
                 for (int i = 0; i < oldItems.Count; i++)
-                    ((object[])listBoxSelectedStudyCondition0.Tag)[i] = oldItems[i];
+                    ((object[])((ListBox)sender).Tag)[i] = oldItems[i];
 
-                ((object[])listBoxSelectedStudyCondition0.Tag)[oldItems.Count] = ((ListBox)sender).SelectedItem.ToString() + "#" + colorDlg.Color.A + "#" + colorDlg.Color.R + "#" + colorDlg.Color.G + "#" + colorDlg.Color.B; //keep the selected value
+                ((object[])((ListBox)sender).Tag)[oldItems.Count] = ((ListBox)sender).SelectedItem.ToString() + "#" + colorDlg.Color.A + "#" + colorDlg.Color.R + "#" + colorDlg.Color.G + "#" + colorDlg.Color.B; //keep the selected value
+
+                int numberOfCondition = Convert.ToInt32(numberCaptured.Matches(((ListBox)sender).Name)[0].Value);
+
+                List<string> keys = Core.DictMaps.Keys.ToList();
+                string _key = keys.Where(a => a.EndsWith("#" + numberOfCondition)).FirstOrDefault();
+                if (!String.IsNullOrEmpty(_key))
+                {
+                    /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
+                    (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>) currentMap;
+                    if (Core.DictMaps.TryGetValue(_key, out currentMap))
+                    {
+                        List<(string, string)> eachStudy_color_list = currentMap.Item7;
+                        if (eachStudy_color_list.Count == 0)
+                        {
+                            string _color = colorDlg.Color.A + "#" + colorDlg.Color.R + "#" + colorDlg.Color.G + "#" + colorDlg.Color.B;
+                            eachStudy_color_list.Add((((ListBox)sender).SelectedItem.ToString(), _color));
+                        }
+                        else
+                        {
+                            (string, string) _currentStudy_color = eachStudy_color_list.Where(a => a.Item1.Equals(((ListBox)sender).SelectedItem.ToString())).FirstOrDefault();
+                            eachStudy_color_list.Remove(_currentStudy_color);
+
+                            string _color = colorDlg.Color.A + "#" + colorDlg.Color.R + "#" + colorDlg.Color.G + "#" + colorDlg.Color.B;
+                            eachStudy_color_list.Add((((ListBox)sender).SelectedItem.ToString(), _color));
+                        }
+                        Core.DictMaps[_key] = (currentMap.Item1, currentMap.Item2, currentMap.Item3, currentMap.Item4, currentMap.Item5, currentMap.Item6, eachStudy_color_list);
+                    }
+                }
             }
-
         }
     }
 }

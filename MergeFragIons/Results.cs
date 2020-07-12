@@ -22,7 +22,7 @@ namespace TDFragMapper
         /// <summary>
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions)>
         /// </summary>
-        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> DictMapsWithoutMergeConditions { get; set; }
+        private Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> DictMapsWithoutMergeConditions { get; set; }
 
         public Results()
         {
@@ -123,7 +123,7 @@ namespace TDFragMapper
             Core.DiscriminativeMaps = new List<string>();
             /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
             /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, Theoretical Mass
-            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in Core.DictMaps)
+            foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> entry in Core.DictMaps)
             {
                 if (entry.Key.StartsWith("Merge")) continue;
 
@@ -327,7 +327,7 @@ namespace TDFragMapper
 
         private void buttonMerge_Click(object sender, EventArgs e)
         {
-            DictMapsWithoutMergeConditions = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)>(Core.DictMaps);
+            DictMapsWithoutMergeConditions = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)>(Core.DictMaps);
             List<(string, int, string, int, string, int, double, double)> allFragmentIonsAllConditions = new List<(string, int, string, int, string, int, double, double)>();
 
             foreach (StringBuilder item in listBoxSelectedMergeConditions.Items)
@@ -344,7 +344,7 @@ namespace TDFragMapper
 
                 /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions, isGoldenComplementaryPairs, isBondCleavageConfidence)>
                 /// List of All Fragment Ions: FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity, Theoretical Mass
-                foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool)> entry in Core.DictMaps)
+                foreach (KeyValuePair<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> entry in Core.DictMaps)
                 {
                     List<(string, int, string, int, string, int, double, double)> FragmentIons = null;
                     if (!entry.Key.StartsWith("Merge") && entry.Key.EndsWith("#" + map.ToString()))
@@ -521,7 +521,7 @@ namespace TDFragMapper
             #endregion
 
             string _key = "Merge#Merge#Merge#0";
-            Core.DictMaps.Add(_key, ("Merge", "Merge", "Merge", allFragmentIonsAllConditions, false, false));
+            Core.DictMaps.Add(_key, ("Merge", "Merge", "Merge", allFragmentIonsAllConditions, false, false, new List<(string, string)>()));
             Core.HasMergeMaps = true;
             Core.Has_And_LocalNormalization = true;
             Core.GlobalNormalization = true;
