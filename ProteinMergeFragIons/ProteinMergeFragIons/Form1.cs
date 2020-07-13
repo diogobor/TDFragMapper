@@ -30,8 +30,8 @@ namespace ProteinMergeFragIons
             Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> DictMaps = new Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)>();
 
             //string protein = "EVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKIEVQLVESGGGLVQPGGSLRLSCVASGFTLNNYDMHWVRQGIGKGLEWVSKI";
-            string protein = "QSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKSHRSYSCQVTHEGSTVEKTVAPRGGLVQPGGSLRLSCVASGFTL";
-
+            //string protein = "QSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKSHRSYSCQVTHEGSTVEKTVAPRGGLVQPGGSLRLSCVASGFTL";
+            string protein = "QSALTQPRSVSGSPGQSVTISCTGTSSDIGGYNFVSWYQQHPGKAPKLMIYDATKRPSGVPDRFSGSKSGNTASLTISGLQAEDEADYYCCSYAGDYTPGVVFGGGTKLTVLGQPKAAPSVTLFPPSSEELQANKATLVCLISDFYPGAVTVAWKADSSPVKAGVETTTPSKQSNNKYAASSYLSLTPEQWKSHRSYSCQVTHEGSTVEKTVAPTECS";
 
             /// <summary>
             /// List of Fragment Ions
@@ -43,74 +43,75 @@ namespace ProteinMergeFragIons
             List<(string, string, string, int, int)> inputFiles = new List<(string, string, string, int, int)>();
 
             #region files
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor11_Replicate01.xlsx", "CID", "25", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor17_Replicate01.xlsx", "CID", "25", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor22_Replicate01.xlsx", "CID", "25", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor25_Replicate01.xlsx", "CID", "25", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor11_Replicate01.xlsx", "CID", "27", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor17_Replicate01.xlsx", "CID", "27", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor22_Replicate01.xlsx", "CID", "27", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor25_Replicate01.xlsx", "CID", "27", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor11_Replicate01.xlsx", "CID", "30", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor17_Replicate01.xlsx", "CID", "30", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor22_Replicate01.xlsx", "CID", "30", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor25_Replicate01.xlsx", "CID", "30", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor11_Replicate01.xlsx", "EThcD", "5/5", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor17_Replicate01.xlsx", "EThcD", "5/5", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor22_Replicate01.xlsx", "EThcD", "5/5", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor25_Replicate01.xlsx", "EThcD", "5/5", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor11_Replicate01.xlsx", "EThcD", "10/8", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor17_Replicate01.xlsx", "EThcD", "10/8", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor22_Replicate01.xlsx", "EThcD", "10/8", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor25_Replicate01.xlsx", "EThcD", "10/8", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor11_Replicate01.xlsx", "EThcD", "10/10", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor17_Replicate01.xlsx", "EThcD", "10/10", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor22_Replicate01.xlsx", "EThcD", "10/10", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor25_Replicate01.xlsx", "EThcD", "10/10", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor11_Replicate01.xlsx", "EThcD", "15/8", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor17_Replicate01.xlsx", "EThcD", "15/8", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor22_Replicate01.xlsx", "EThcD", "15/8", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor25_Replicate01.xlsx", "EThcD", "15/8", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor11_Replicate01.xlsx", "EThcD", "15/10", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor17_Replicate01.xlsx", "EThcD", "15/10", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor22_Replicate01.xlsx", "EThcD", "15/10", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor25_Replicate01.xlsx", "EThcD", "15/10", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor11_Replicate01.xlsx", "HCD", "5", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor17_Replicate01.xlsx", "HCD", "5", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor22_Replicate01.xlsx", "HCD", "5", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor25_Replicate01.xlsx", "HCD", "5", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor11_Replicate01.xlsx", "HCD", "8", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor17_Replicate01.xlsx", "HCD", "8", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor22_Replicate01.xlsx", "HCD", "8", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor25_Replicate01.xlsx", "HCD", "8", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor17_Replicate01.xlsx", "HCD", "10", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor22_Replicate01.xlsx", "HCD", "10", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor25_Replicate01.xlsx", "HCD", "10", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor11_Replicate01.xlsx", "HCD", "12", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor11_Replicate01.xlsx", "HCD", "10", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor17_Replicate01.xlsx", "HCD", "12", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor22_Replicate01.xlsx", "HCD", "12", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor25_Replicate01.xlsx", "HCD", "12", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor11_Replicate01.xlsx", "UVPD", "35", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor17_Replicate01.xlsx", "UVPD", "35", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor22_Replicate01.xlsx", "UVPD", "35", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor25_Replicate01.xlsx", "UVPD", "35", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor11_Replicate01.xlsx", "UVPD", "40", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor17_Replicate01.xlsx", "UVPD", "40", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor22_Replicate01.xlsx", "UVPD", "40", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor25_Replicate01.xlsx", "UVPD", "40", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor11_Replicate01.xlsx", "UVPD", "45", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor17_Replicate01.xlsx", "UVPD", "45", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor22_Replicate01.xlsx", "UVPD", "45", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor25_Replicate01.xlsx", "UVPD", "45", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\pcml_files\\test2.xlsx", "CID", "20", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 2));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 2));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 2));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 2));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor11_Replicate01.xlsx", "CID", "25", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor17_Replicate01.xlsx", "CID", "25", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor22_Replicate01.xlsx", "CID", "25", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor25_Replicate01.xlsx", "CID", "25", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor11_Replicate01.xlsx", "CID", "27", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor17_Replicate01.xlsx", "CID", "27", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor22_Replicate01.xlsx", "CID", "27", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor25_Replicate01.xlsx", "CID", "27", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor11_Replicate01.xlsx", "CID", "30", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor17_Replicate01.xlsx", "CID", "30", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor22_Replicate01.xlsx", "CID", "30", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor25_Replicate01.xlsx", "CID", "30", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor11_Replicate01.xlsx", "EThcD", "5/5", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor17_Replicate01.xlsx", "EThcD", "5/5", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor22_Replicate01.xlsx", "EThcD", "5/5", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor25_Replicate01.xlsx", "EThcD", "5/5", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor11_Replicate01.xlsx", "EThcD", "10/8", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor17_Replicate01.xlsx", "EThcD", "10/8", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor22_Replicate01.xlsx", "EThcD", "10/8", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD8_Precursor25_Replicate01.xlsx", "EThcD", "10/8", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor11_Replicate01.xlsx", "EThcD", "10/10", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor17_Replicate01.xlsx", "EThcD", "10/10", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor22_Replicate01.xlsx", "EThcD", "10/10", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET10hcD10_Precursor25_Replicate01.xlsx", "EThcD", "10/10", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor11_Replicate01.xlsx", "EThcD", "15/8", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor17_Replicate01.xlsx", "EThcD", "15/8", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor22_Replicate01.xlsx", "EThcD", "15/8", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD8_Precursor25_Replicate01.xlsx", "EThcD", "15/8", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor11_Replicate01.xlsx", "EThcD", "15/10", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor17_Replicate01.xlsx", "EThcD", "15/10", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor22_Replicate01.xlsx", "EThcD", "15/10", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET15hcD10_Precursor25_Replicate01.xlsx", "EThcD", "15/10", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor11_Replicate01.xlsx", "HCD", "5", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor17_Replicate01.xlsx", "HCD", "5", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor22_Replicate01.xlsx", "HCD", "5", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD5_Precursor25_Replicate01.xlsx", "HCD", "5", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor11_Replicate01.xlsx", "HCD", "8", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor17_Replicate01.xlsx", "HCD", "8", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor22_Replicate01.xlsx", "HCD", "8", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD8_Precursor25_Replicate01.xlsx", "HCD", "8", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor17_Replicate01.xlsx", "HCD", "10", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor22_Replicate01.xlsx", "HCD", "10", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor25_Replicate01.xlsx", "HCD", "10", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor11_Replicate01.xlsx", "HCD", "12", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD10_Precursor11_Replicate01.xlsx", "HCD", "10", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor17_Replicate01.xlsx", "HCD", "12", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor22_Replicate01.xlsx", "HCD", "12", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\HCD\\LC_HCD12_Precursor25_Replicate01.xlsx", "HCD", "12", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor11_Replicate01.xlsx", "UVPD", "35", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor17_Replicate01.xlsx", "UVPD", "35", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor22_Replicate01.xlsx", "UVPD", "35", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD35_Precursor25_Replicate01.xlsx", "UVPD", "35", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor11_Replicate01.xlsx", "UVPD", "40", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor17_Replicate01.xlsx", "UVPD", "40", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor22_Replicate01.xlsx", "UVPD", "40", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD40_Precursor25_Replicate01.xlsx", "UVPD", "40", 25, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor11_Replicate01.xlsx", "UVPD", "45", 11, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor17_Replicate01.xlsx", "UVPD", "45", 17, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor22_Replicate01.xlsx", "UVPD", "45", 22, 1));
+            //inputFiles.Add(("Z:\\data\\Data_files\\UVPD\\LC_UVPD45_Precursor25_Replicate01.xlsx", "UVPD", "45", 25, 1));
             #endregion
 
             /// <summary>
@@ -286,11 +287,11 @@ namespace ProteinMergeFragIons
             //_key = "Precursor Charge State#Fragmentation Method#UVPD#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true));
 
-            colors.Add(("25", "255#255#0#0"));
-            colors.Add(("27", "255#0#255#0"));
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 25 && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("27"))).ToList();
+            colors.Add(("11", "255#255#0#0"));
+            //colors.Add(("27", "255#0#255#0"));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 11 && a.Item6 == 1 && (a.Item5.Equals("20") || a.Item5.Equals("27"))).ToList();
             _key = "Activation Level#Fragmentation Method#CID#0";
-            DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons, false, true, colors));
+            DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons, true, true, colors));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 17 || a.Item2 == 11) && a.Item6 == 1 /*&& (a.Item5.Equals("5/5") || a.Item5.Equals("10/8"))*/).ToList();
             //_key = "Activation Level#Fragmentation Method#EThcD#0";
@@ -308,12 +309,12 @@ namespace ProteinMergeFragIons
             //_key = "Activation Level#Fragmentation Method#EThcD#1";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons));
 
-            colors = new List<(string, string)>();
-            colors.Add(("CID", "255#255#0#0"));
-            colors.Add(("HCD", "255#0#255#0"));
-            currentFragIons = fragIons.Where(a => a.Item2 == 25 /*&& (a.Item1.Equals("CID") || a.Item1.Equals("HCD"))*/).ToList();
-            _key = "Fragmentation Method#Precursor Charge State#25#1";
-            DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons, true, true, colors));
+            //colors = new List<(string, string)>();
+            //colors.Add(("CID", "255#255#0#0"));
+            //colors.Add(("HCD", "255#0#255#0"));
+            //currentFragIons = fragIons.Where(a => a.Item2 == 25 /*&& (a.Item1.Equals("CID") || a.Item1.Equals("HCD"))*/).ToList();
+            //_key = "Fragmentation Method#Precursor Charge State#25#1";
+            //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons, true, true, colors));
 
             //currentFragIons = fragIons.Where(a => (a.Item2 == 25 || a.Item2 == 22) && (a.Item1.Equals("EThcD") || a.Item1.Equals("UVPD"))).ToList();
             //_key = "Fragmentation Method#Precursor Charge State#25&22#1";
@@ -344,7 +345,7 @@ namespace ProteinMergeFragIons
             //_key = "Merge#Merge#Merge#0";
             //DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false));
 
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", false, false, false, false);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", true, false, false, false);
 
             return;
 

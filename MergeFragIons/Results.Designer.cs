@@ -32,6 +32,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.summaryReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,9 +67,6 @@
             this.buttonMerge = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.summaryReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -106,21 +106,49 @@
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.saveToolStripMenuItem.Text = "Save Results";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imageToolStripMenuItem1,
+            this.summaryReportToolStripMenuItem});
+            this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // imageToolStripMenuItem1
+            // 
+            this.imageToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("imageToolStripMenuItem1.Image")));
+            this.imageToolStripMenuItem1.Name = "imageToolStripMenuItem1";
+            this.imageToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.imageToolStripMenuItem1.Size = new System.Drawing.Size(201, 22);
+            this.imageToolStripMenuItem1.Text = "Image";
+            this.imageToolStripMenuItem1.Click += new System.EventHandler(this.imageToolStripMenuItem1_Click);
+            // 
+            // summaryReportToolStripMenuItem
+            // 
+            this.summaryReportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("summaryReportToolStripMenuItem.Image")));
+            this.summaryReportToolStripMenuItem.Name = "summaryReportToolStripMenuItem";
+            this.summaryReportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.summaryReportToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.summaryReportToolStripMenuItem.Text = "Summary report";
+            this.summaryReportToolStripMenuItem.Click += new System.EventHandler(this.summaryReportToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.exitToolStripMenuItem.Text = "Close";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -139,20 +167,20 @@
             this.readMeToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("readMeToolStripMenuItem.Image")));
             this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
             this.readMeToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.readMeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.readMeToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.readMeToolStripMenuItem.Text = "Read Me";
             this.readMeToolStripMenuItem.Click += new System.EventHandler(this.readMeToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(136, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -225,7 +253,7 @@
             this.groupBoxMain.Controls.Add(this.buttonFilter);
             this.groupBoxMain.Location = new System.Drawing.Point(3, 6);
             this.groupBoxMain.Name = "groupBoxMain";
-            this.groupBoxMain.Size = new System.Drawing.Size(1177, 564);
+            this.groupBoxMain.Size = new System.Drawing.Size(1177, 547);
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
             // 
@@ -236,7 +264,7 @@
             this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
             this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 254);
             this.userControlFilterCondition1.TabIndex = 7;
             this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
             // 
@@ -353,9 +381,9 @@
             this.checkBoxAddCleavageFrequency.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAddCleavageFrequency.Location = new System.Drawing.Point(22, 165);
             this.checkBoxAddCleavageFrequency.Name = "checkBoxAddCleavageFrequency";
-            this.checkBoxAddCleavageFrequency.Size = new System.Drawing.Size(142, 17);
+            this.checkBoxAddCleavageFrequency.Size = new System.Drawing.Size(121, 17);
             this.checkBoxAddCleavageFrequency.TabIndex = 32;
-            this.checkBoxAddCleavageFrequency.Text = "Add cleavage frequency";
+            this.checkBoxAddCleavageFrequency.Text = "Cleavage frequency";
             this.checkBoxAddCleavageFrequency.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -448,34 +476,6 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 17);
             this.toolStripStatusLabel1.Text = "@2020 - All rights reserved®";
-            // 
-            // exportToolStripMenuItem
-            // 
-            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imageToolStripMenuItem1,
-            this.summaryReportToolStripMenuItem});
-            this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportToolStripMenuItem.Text = "Export";
-            // 
-            // imageToolStripMenuItem1
-            // 
-            this.imageToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("imageToolStripMenuItem1.Image")));
-            this.imageToolStripMenuItem1.Name = "imageToolStripMenuItem1";
-            this.imageToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.imageToolStripMenuItem1.Size = new System.Drawing.Size(201, 22);
-            this.imageToolStripMenuItem1.Text = "Image";
-            this.imageToolStripMenuItem1.Click += new System.EventHandler(this.imageToolStripMenuItem1_Click);
-            // 
-            // summaryReportToolStripMenuItem
-            // 
-            this.summaryReportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("summaryReportToolStripMenuItem.Image")));
-            this.summaryReportToolStripMenuItem.Name = "summaryReportToolStripMenuItem";
-            this.summaryReportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.summaryReportToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.summaryReportToolStripMenuItem.Text = "Summary report";
-            this.summaryReportToolStripMenuItem.Click += new System.EventHandler(this.summaryReportToolStripMenuItem_Click);
             // 
             // Results
             // 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBoxMap_0 = new System.Windows.Forms.GroupBox();
             this.checkBoxCleavageConfidence0 = new System.Windows.Forms.CheckBox();
             this.checkBoxGoldenComplemPairs0 = new System.Windows.Forms.CheckBox();
@@ -58,6 +59,7 @@
             this.listBoxSelectedFixedCondition1 = new System.Windows.Forms.ListBox();
             this.listBoxAllFixedCondition1 = new System.Windows.Forms.ListBox();
             this.buttonAddMap_0 = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBoxMap_0.SuspendLayout();
             this.groupBoxStudyCondition1.SuspendLayout();
             this.groupBoxFixedCondition1.SuspendLayout();
@@ -140,6 +142,7 @@
             this.label6.Size = new System.Drawing.Size(80, 13);
             this.label6.TabIndex = 25;
             this.label6.Text = "Selected Items:";
+            this.toolTip1.SetToolTip(this.label6, "Select a color for each item by double-clicking it.");
             // 
             // buttonRemoveStudyCondition
             // 
@@ -171,6 +174,7 @@
             this.listBoxSelectedStudyCondition0.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxSelectedStudyCondition0.Size = new System.Drawing.Size(77, 108);
             this.listBoxSelectedStudyCondition0.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.listBoxSelectedStudyCondition0, "Select a color for each item by double-clicking it.");
             this.listBoxSelectedStudyCondition0.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelectedStudyCondition_MouseDoubleClick);
             // 
             // listBoxAllStudyCondition
@@ -470,5 +474,6 @@
         private System.Windows.Forms.ComboBox comboBoxCondition1_0;
         private System.Windows.Forms.CheckBox checkBoxCleavageConfidence0;
         private System.Windows.Forms.CheckBox checkBoxGoldenComplemPairs0;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

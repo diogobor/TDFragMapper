@@ -360,15 +360,15 @@ namespace TDFragMapper
             {
                 try
                 {
-                    mainProgramGUI = new Program();
-                    mainProgramGUI.mainCore = new Controller.Core();
-                    mainProgramGUI.mainCore = mainProgramGUI.mainCore.DeserializeResults(dlg.FileName);
-                    this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore, false);
                     Console.WriteLine("##################################################################################################################");
                     Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
                     Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
                     Console.WriteLine("##################################################################################################################");
+                    mainProgramGUI = new Program();
+                    mainProgramGUI.mainCore = new Controller.Core();
+                    mainProgramGUI.mainCore = mainProgramGUI.mainCore.DeserializeResults(dlg.FileName);
                     Console.WriteLine(" File has been loaded successfully!");
+                    this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore, false);
                     buttonDisplay_Click(null, null);
                 }
                 catch (Exception ex)
