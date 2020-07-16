@@ -35,6 +35,7 @@ namespace TDFragMapper
 
         /// string,int,string,int -> FragmentationMethod: UVPD, EThcD, CID, HCD, SID, ECD, ETD; PrecursorChargeState, IonType: A,B,C,X,Y,Z, Aminoacid Position, Activation Level, Replicate, Intensity
         private List<(string, int, string, int, string, int, double, double)> FragIonsWithIntensities { get; set; }
+        private Regex stringCaptured = new Regex("[A-Z|a-z]+", RegexOptions.Compiled);
         public Core mainCore { get; set; }
         public bool FinishProcessing { get; set; }
         public ProgramParams programParams { get; set; }
@@ -252,7 +253,7 @@ namespace TDFragMapper
                             foreach (DataRow dataRow in dataTableCollection[0].Rows)
                             {
                                 var values = dataRow.ItemArray;
-                                ionType = values[1].ToString();
+                                ionType = stringCaptured.Matches(values[1].ToString())[0].Value;
                                 aminoacidPos = Convert.ToInt32(values[2]);
                                 theoreticalMass = Convert.ToDouble(values[3]);
                                 observedMass = Convert.ToDouble(values[4]);
@@ -273,10 +274,7 @@ namespace TDFragMapper
                 countFile++;
             }
 
-            //mainCore.FragmentIons = FragIons.Distinct().ToList();
-
             FragIons = FragIons.Distinct().ToList();
-
         }
 
         private void ReadIntensities()

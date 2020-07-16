@@ -592,6 +592,28 @@ namespace ProteinMergeFragIons
                 int maximumBondCleavageConfidence = 0;
                 Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition = null;
 
+                #region Print title map
+                if (!HasMergeConditions)
+                {
+                    SolidColorBrush labelBrush_title_map = new SolidColorBrush(Colors.Black);
+                    Label Title_map_label = new Label();
+                    TextBlock txtBlock_title_map = new TextBlock();
+                    txtBlock_title_map.TextDecorations = TextDecorations.Underline;
+                    txtBlock_title_map.Text = "Map " + (countCurrentFragMethod + 1);
+                    Title_map_label.FontFamily = new FontFamily("Courier New");
+                    Title_map_label.FontWeight = FontWeights.Bold;
+                    Title_map_label.FontSize = FONTSIZE_PROTEINSEQUENCE - 12;
+                    Title_map_label.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                    Title_map_label.Content = txtBlock_title_map;
+                    Title_map_label.Foreground = labelBrush_title_map;
+                    Title_map_label.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                    MyCanvas.Children.Add(Title_map_label);
+                    Canvas.SetLeft(Title_map_label, 12);
+                    Canvas.SetTop(Title_map_label, initialYLine + offSetY);
+                    offSetY += 50;
+                }
+                #endregion
+
                 if (fragMethod.Equals("Merge"))
                 {
                     #region Merge conditions
@@ -704,15 +726,12 @@ namespace ProteinMergeFragIons
                     if (isBondCleavageConfidence)
                         ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
 
-                    if (isGoldenComplementaryPairs)
+                    //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                    ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                    for (int i = 1; i < 4; i++)
                     {
-                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
-                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
-                        for (int i = 1; i < 4; i++)
-                        {
-                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
-                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
-                        }
+                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
                     }
                     #endregion
                     #endregion
@@ -827,8 +846,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    if (isGoldenComplementaryPairs)
-                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -874,15 +892,12 @@ namespace ProteinMergeFragIons
                     if (isBondCleavageConfidence)
                         ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
 
-                    if (isGoldenComplementaryPairs)
+                    //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                    ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                    for (int i = 2; i < 4; i++)
                     {
-                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
-                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
-                        for (int i = 2; i < 4; i++)
-                        {
-                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
-                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
-                        }
+                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
                     }
                     #endregion
                     #endregion
@@ -967,8 +982,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    if (isGoldenComplementaryPairs)
-                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1022,13 +1036,10 @@ namespace ProteinMergeFragIons
                     if (isBondCleavageConfidence)
                         ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
 
-                    if (isGoldenComplementaryPairs)
-                    {
-                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
-                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
-                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
-                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 2));
-                    }
+                    //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                    ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                    foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                        ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 2));
                     #endregion
 
                     #endregion
@@ -1081,8 +1092,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    if (isGoldenComplementaryPairs)
-                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1131,13 +1141,10 @@ namespace ProteinMergeFragIons
                     if (isBondCleavageConfidence)
                         ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
 
-                    if (isGoldenComplementaryPairs)
-                    {
-                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
-                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
-                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
-                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 3));
-                    }
+                    //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                    ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                    foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                        ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], 3));
                     #endregion
                     #endregion
 
@@ -1190,8 +1197,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    if (isGoldenComplementaryPairs)
-                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1245,15 +1251,12 @@ namespace ProteinMergeFragIons
                     if (isBondCleavageConfidence)
                         ProteinBondCleavageConfidenceCountAA = new int[PtnCharPositions.Count];
 
-                    if (isGoldenComplementaryPairs)
+                    //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
+                    ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
+                    for (int i = 1; i < 4; i++)
                     {
-                        //List<(precursorChargesStates/ActivationLeves/Replicates, protein sequence array, # couple of series (a/x: 1, b/y:2, c/z:3)>
-                        ProteinGoldenComplementaryPairs = new List<(string, int[], int)>();
-                        for (int i = 1; i < 4; i++)
-                        {
-                            foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
-                                ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
-                        }
+                        foreach (string item in PrecursorChargesOrActivationLevelsOrReplicates)
+                            ProteinGoldenComplementaryPairs.Add((item, new int[PtnCharPositions.Count], i));
                     }
                     #endregion
                     #endregion
@@ -1375,8 +1378,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    if (isGoldenComplementaryPairs)
-                        PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1435,7 +1437,7 @@ namespace ProteinMergeFragIons
 
                 #region Plot Residue cleavages table
                 if (!IsGlobalIntensityMap)
-                    CreateResidueCleavagesTable(PrecursorChargesOrActivationLevelsOrReplicates, currentFragmentIons, TotalNumberOfGoldenComplementaryPairsPerCondition, ref offSetY, out GridWidth, !printIntensity, maximumBondCleavageConfidence, numberOfMap);
+                    CreateResidueCleavagesTable(PrecursorChargesOrActivationLevelsOrReplicates, currentFragmentIons, TotalNumberOfGoldenComplementaryPairsPerCondition, ref offSetY, out GridWidth, !printIntensity, maximumBondCleavageConfidence, numberOfMap, fragMethod);
                 #endregion
 
                 if (this.HasMergeConditions)
@@ -1630,26 +1632,30 @@ namespace ProteinMergeFragIons
                     {
                         if (match.Item2[_index_countMatch] == 2)
                         {
-                            Label starLabel = new Label();
-                            starLabel.FontFamily = new FontFamily("Courier New");
-                            starLabel.FontWeight = FontWeights.Bold;
-                            starLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
-                            starLabel.Content = "*";
-                            starLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
-                            // Fill rectangle with color 
-                            string _key = match.Item1 + "#" + numberOfMap;
-                            if (FRAGMENT_ION_LINE_COLORS_DICT.ContainsKey(_key))
-                                starLabel.Foreground = FRAGMENT_ION_LINE_COLORS_DICT[_key];
-                            else
+                            if (isGoldenComplementaryPairs)
                             {
-                                int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsOrReplicatesColors, a => a.Equals(match.Item1));
-                                starLabel.Foreground = FRAGMENT_ION_LINE_COLORS[_index];
+                                Label starLabel = new Label();
+                                starLabel.FontFamily = new FontFamily("Courier New");
+                                starLabel.FontWeight = FontWeights.Bold;
+                                starLabel.FontSize = FONTSIZE_PROTEINSEQUENCE;
+                                starLabel.Content = "*";
+                                starLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                                // Fill rectangle with color 
+                                string _key = match.Item1 + "#" + numberOfMap;
+                                if (FRAGMENT_ION_LINE_COLORS_DICT.ContainsKey(_key))
+                                    starLabel.Foreground = FRAGMENT_ION_LINE_COLORS_DICT[_key];
+                                else
+                                {
+                                    int _index = Array.FindIndex(PrecursorChargeStatesOrActivationLevelsOrReplicatesColors, a => a.Equals(match.Item1));
+                                    starLabel.Foreground = FRAGMENT_ION_LINE_COLORS[_index];
+                                }
+                                starLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                                double starCharPosX = Canvas.GetLeft(proteinCharsAndSpaces[_index_countMatch]) + 16;
+                                MyCanvas.Children.Add(starLabel);
+                                Canvas.SetLeft(starLabel, starCharPosX);
+                                Canvas.SetTop(starLabel, posYrow1Start);
                             }
-                            starLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                            double starCharPosX = Canvas.GetLeft(proteinCharsAndSpaces[_index_countMatch]) + 16;
-                            MyCanvas.Children.Add(starLabel);
-                            Canvas.SetLeft(starLabel, starCharPosX);
-                            Canvas.SetTop(starLabel, posYrow1Start);
+
                             if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(match.Item1))
                             {
                                 TotalNumberOfGoldenComplementaryPairsPerCondition[match.Item1].Add(_index_countMatch);
@@ -1692,9 +1698,9 @@ namespace ProteinMergeFragIons
             return accumulativeGridWidth;
         }
 
-        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double, double)> currentFragmentIons, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0, int numberOfMap = -1)
+        private void CreateResidueCleavagesTable(List<string> PrecursorChargesOrActivationLevels, List<(string, string, string, int, double, double)> currentFragmentIons, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, ref int offsetY, out double GridWidth, bool printRectangleColor = true, int maximumBondCleavageConfidence = 0, int numberOfMap = -1, string fragMethod = "")
         {
-            //List<(label: precursorChargeState/Activation Level / Replicate, percentage, Total Number of Golden Complementary Pairs Per Condition, total number of matching fragments )>
+            //List<(label: precursorChargeState/Activation Level / Replicate, residue cleavages (%), Total Number of Golden Complementary Pairs Per Condition, total number of matching fragments )>
             List<(string, double, int, int)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double, int, int)>();
 
             foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevels)
@@ -1706,16 +1712,32 @@ namespace ProteinMergeFragIons
                 else
                     currentPrecursorCharge = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
 
-                List<int> positions = currentPrecursorCharge.Select(a => a.Item4).Distinct().ToList();
-                if (isGoldenComplementaryPairs)
-                {
-                    if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(precursorChargeOrActivationLevel))
-                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, TotalNumberOfGoldenComplementaryPairsPerCondition[precursorChargeOrActivationLevel].Count, currentPrecursorCharge.Count));
-                    else
-                        precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0, currentPrecursorCharge.Count));
-                }
-                else
-                    precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, ((double)positions.Count / (double)ProteinSequence.Length) * 100, 0, currentPrecursorCharge.Count));
+                List<(string, string, string, int, double, double)> NTermFragIons = currentPrecursorCharge.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
+                List<(string, string, string, int, double, double)> CTermFragIons = currentPrecursorCharge.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+
+                int numberOfNseries = NTermFragIons.Select(a => a.Item3).Distinct().Count();
+                int numberOfCseries = CTermFragIons.Select(a => a.Item3).Distinct().Count();
+                var newgroupedListPosFragIons_Nterm = (from eachEntry in NTermFragIons
+                                                       group eachEntry by eachEntry.Item4).ToList();
+                var newgroupedListPosFragIons_Cterm = (from eachEntry in CTermFragIons
+                                                       group eachEntry by eachEntry.Item4).ToList();
+
+                int numberOfRedundantFrag = newgroupedListPosFragIons_Nterm.Where(a => numberOfNseries > 1 && a.ToList().Count == numberOfNseries).Count();
+                numberOfRedundantFrag += newgroupedListPosFragIons_Cterm.Where(a => numberOfCseries > 1 && a.ToList().Count == numberOfCseries).Count();
+
+                int totalNumberGoldenPairs = 0;
+                if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(precursorChargeOrActivationLevel))
+                    totalNumberGoldenPairs = TotalNumberOfGoldenComplementaryPairsPerCondition[precursorChargeOrActivationLevel].Count;
+
+                double residueCleavages_percentage = 0;
+                if (fragMethod.Equals("CID") || fragMethod.Equals("SID") || fragMethod.Equals("HCD") ||
+                    precursorChargeOrActivationLevel.Equals("CID") || precursorChargeOrActivationLevel.Equals("SID") || precursorChargeOrActivationLevel.Equals("HCD"))
+                    residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs) / (double)(ProteinSequence.Length - 1);
+                else if (fragMethod.Equals("ETD") || fragMethod.Equals("ECD") || fragMethod.Equals("EThcD") || fragMethod.Equals("UVPD") ||
+                    precursorChargeOrActivationLevel.Equals("ETD") || precursorChargeOrActivationLevel.Equals("ECD") || precursorChargeOrActivationLevel.Equals("EThcD") || precursorChargeOrActivationLevel.Equals("UVPD"))
+                    residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs - numberOfRedundantFrag) / (double)(ProteinSequence.Length - 1);
+
+                precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, residueCleavages_percentage * 100, totalNumberGoldenPairs, currentPrecursorCharge.Count));
 
             }
 
@@ -2045,7 +2067,7 @@ namespace ProteinMergeFragIons
 
             for (int i = 0; i < precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count; i++)
             {
-                #region condition
+                #region Residue cleavages
                 //Background color and borders
                 Rectangle rectRowColor = new Rectangle();
                 rectRowColor.StrokeThickness = 1;
@@ -2057,7 +2079,7 @@ namespace ProteinMergeFragIons
 
                 // Add row text
                 TextBlock txtBlock = new TextBlock();
-                txtBlock.Text = precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates[i].Item2.ToString("0.0");
+                txtBlock.Text = precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates[i].Item2.ToString("0");
                 txtBlock.FontFamily = new FontFamily("Courier New");
                 txtBlock.FontSize = FONTSIZE_PROTEINSEQUENCE;
                 txtBlock.FontWeight = FontWeights.Bold;
@@ -2273,21 +2295,18 @@ namespace ProteinMergeFragIons
                     #endregion
 
                     #region Update protein golden complementary pairs
-                    if (isGoldenComplementaryPairs)
+                    if (ProteinGoldenComplementaryPairs != null)
                     {
-                        if (ProteinGoldenComplementaryPairs != null)
+                        (string, int[], int) currentPtnGoldenComplPairs = ProteinGoldenComplementaryPairs.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel) && a.Item3 == representativeSeries).FirstOrDefault();
+                        foreach ((string, string, string, int, double, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
                         {
-                            (string, int[], int) currentPtnGoldenComplPairs = ProteinGoldenComplementaryPairs.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel) && a.Item3 == representativeSeries).FirstOrDefault();
-                            foreach ((string, string, string, int, double, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
+                            if (isNterm)
+                                currentPtnGoldenComplPairs.Item2[frag.Item4 - 1]++;
+                            else
                             {
-                                if (isNterm)
-                                    currentPtnGoldenComplPairs.Item2[frag.Item4 - 1]++;
-                                else
+                                if (frag.Item4 - 2 > 0)
                                 {
-                                    if (frag.Item4 - 2 > 0)
-                                    {
-                                        currentPtnGoldenComplPairs.Item2[frag.Item4 - 2]++;
-                                    }
+                                    currentPtnGoldenComplPairs.Item2[frag.Item4 - 2]++;
                                 }
                             }
                         }
