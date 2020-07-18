@@ -63,26 +63,26 @@ namespace ProteinMergeFragIons
             inputFiles.Add(("Z:\\data\\Data_files 3\\ProSightLite_files\\EThcD\\C4_rNIST_Lc_ET10hcD10_23_R01.xlsx", "EThcD", "10% / 10 ms", 23, 1));
             inputFiles.Add(("Z:\\data\\Data_files 3\\ProSightLite_files\\EThcD\\C4_rNIST_Lc_ET10hcD10_27_R01.xlsx", "EThcD", "10% / 10 ms", 27, 1));
 
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20", 11, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20", 17, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20", 22, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20", 25, 2));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor11_Replicate01.xlsx", "CID", "25", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor17_Replicate01.xlsx", "CID", "25", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor22_Replicate01.xlsx", "CID", "25", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor25_Replicate01.xlsx", "CID", "25", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor11_Replicate01.xlsx", "CID", "27", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor17_Replicate01.xlsx", "CID", "27", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor22_Replicate01.xlsx", "CID", "27", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor25_Replicate01.xlsx", "CID", "27", 25, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor11_Replicate01.xlsx", "CID", "30", 11, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor17_Replicate01.xlsx", "CID", "30", 17, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor22_Replicate01.xlsx", "CID", "30", 22, 1));
-            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor25_Replicate01.xlsx", "CID", "30", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20%", 11, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20%", 17, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20%", 22, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20%", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor11_Replicate01.xlsx", "CID", "20%", 11, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor17_Replicate01.xlsx", "CID", "20%", 17, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor22_Replicate01.xlsx", "CID", "20%", 22, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID20_Precursor25_Replicate01.xlsx", "CID", "20%", 25, 2));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor11_Replicate01.xlsx", "CID", "25%", 11, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor17_Replicate01.xlsx", "CID", "25%", 17, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor22_Replicate01.xlsx", "CID", "25%", 22, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID25_Precursor25_Replicate01.xlsx", "CID", "25%", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor11_Replicate01.xlsx", "CID", "27%", 11, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor17_Replicate01.xlsx", "CID", "27%", 17, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor22_Replicate01.xlsx", "CID", "27%", 22, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID27_Precursor25_Replicate01.xlsx", "CID", "27%", 25, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor11_Replicate01.xlsx", "CID", "30%", 11, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor17_Replicate01.xlsx", "CID", "30%", 17, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor22_Replicate01.xlsx", "CID", "30%", 22, 1));
+            inputFiles.Add(("Z:\\data\\Data_files\\CID\\LC_CID30_Precursor25_Replicate01.xlsx", "CID", "30%", 25, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor11_Replicate01.xlsx", "EThcD", "5/5", 11, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor17_Replicate01.xlsx", "EThcD", "5/5", 17, 1));
             inputFiles.Add(("Z:\\data\\Data_files\\EThcD\\LC_ET5hcD5_Precursor22_Replicate01.xlsx", "EThcD", "5/5", 22, 1));
@@ -271,25 +271,25 @@ namespace ProteinMergeFragIons
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
             //colors.Add(("22", "255#255#0#0"));
             //colors.Add(("17", "255#0#255#0"));
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 /*&& (a.Item2 == 22 || a.Item2 == 17) && (a.Item5.Equals("20") || a.Item5.Equals("25"))*/).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#CID#0";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, false, false, colors));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 /*&& (a.Item2 == 22 || a.Item2 == 17) && (a.Item5.Equals("20") || a.Item5.Equals("25"))*/).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#CID#0";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, colors));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && a.Item6 == 1 /*&& (a.Item2 == 22 || a.Item2 == 17) && (a.Item5.Equals("20") || a.Item5.Equals("25"))*/).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#EThcD#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, false, false, colors));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#UVPD#11&17&22&25#1";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("UVPD") && a.Item6 == 1 && (a.Item5.Equals("35") || a.Item5.Equals("40"))).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#UVPD#1";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 11 || a.Item2 == 22)).ToList();
-            //_key = "Precursor Charge State#Fragmentation Method#EThcD#1";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("EThcD") && (a.Item2 == 25 || a.Item2 == 11 || a.Item2 == 22)).ToList();
+            _key = "Precursor Charge State#Fragmentation Method#EThcD#2";
+            DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
 
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") && (a.Item2 == 17)).ToList();
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") /*&& (a.Item2 == 17)*/).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#HCD#17#1";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, false, false));
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string,string)>()));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22)).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#CID#22#2";
@@ -312,7 +312,7 @@ namespace ProteinMergeFragIons
 
             //colors.Add(("22", "255#255#0#0"));
             ////colors.Add(("27", "255#0#255#0"));
-            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 22 && a.Item6 == 1 && (a.Item5.Equals("20") || a.Item5.Equals("27"))).ToList();
+            //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item2 == 22 && a.Item6 == 1 && (a.Item5.Equals("20%") || a.Item5.Equals("27%"))).ToList();
             //_key = "Activation Level#Fragmentation Method#CID#0";
             //DictMaps.Add(_key, ("Fragmentation Method", "Precursor Charge State", "Replicates", currentFragIons, true, true, colors));
 
@@ -338,9 +338,9 @@ namespace ProteinMergeFragIons
             //_key = "Fragmentation Method#Precursor Charge State#25#1";
             //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons, true, true, colors));
 
-            currentFragIons = fragIons.Where(a => (a.Item2 == 25 || a.Item2 == 22) && (a.Item1.Equals("EThcD") || a.Item1.Equals("UVPD"))).ToList();
-            _key = "Fragmentation Method#Precursor Charge State#25&22#1";
-            DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
+            //currentFragIons = fragIons.Where(a => (a.Item2 == 25 || a.Item2 == 22) && (a.Item1.Equals("EThcD") || a.Item1.Equals("UVPD"))).ToList();
+            //_key = "Fragmentation Method#Precursor Charge State#25&22#1";
+            //DictMaps.Add(_key, ("Precursor Charge State", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
 
             currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22 || a.Item2 == 17)).ToList();
 

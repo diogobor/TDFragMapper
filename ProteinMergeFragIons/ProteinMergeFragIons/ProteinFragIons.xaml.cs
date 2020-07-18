@@ -195,6 +195,7 @@ namespace ProteinMergeFragIons
                             }
                         }
                         fragmentIons = fragmentIons.Distinct().OrderByDescending(a => a.Item2).ToList();
+
                         isPrecursorChargeState = true;
 
                         #region Get all Precursor ChargeStates to create color
@@ -250,15 +251,22 @@ namespace ProteinMergeFragIons
                         List<(string, string)> _colors = entry.Value.Item7;
                         foreach (string repl in activationLevelList)
                         {
-                            (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(repl)).FirstOrDefault();
-                            if (hasTupleColor.Item1 == null)
+                            if (_colors == null)
+                            {
                                 allActivatonLevelList.Add(repl);
+                            }
                             else
                             {
-                                string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
-                                Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
+                                (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(repl)).FirstOrDefault();
+                                if (hasTupleColor.Item1 == null)
+                                    allActivatonLevelList.Add(repl);
+                                else
+                                {
+                                    string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
+                                    Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
 
-                                FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                    FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                }
                             }
                         }
                         #endregion
@@ -290,15 +298,22 @@ namespace ProteinMergeFragIons
                         List<(string, string)> _colors = entry.Value.Item7;
                         foreach (string repl in replicatesList)
                         {
-                            (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(repl)).FirstOrDefault();
-                            if (hasTupleColor.Item1 == null)
+                            if (_colors == null)
+                            {
                                 allRepicatesList.Add(int.Parse(repl));
+                            }
                             else
                             {
-                                string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
-                                Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
+                                (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(repl)).FirstOrDefault();
+                                if (hasTupleColor.Item1 == null)
+                                    allRepicatesList.Add(int.Parse(repl));
+                                else
+                                {
+                                    string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
+                                    Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
 
-                                FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                    FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                }
                             }
                         }
                         #endregion
@@ -350,15 +365,22 @@ namespace ProteinMergeFragIons
                         List<(string, string)> _colors = entry.Value.Item7;
                         foreach (string fragMet in fragmentationMethodList)
                         {
-                            (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(fragMet)).FirstOrDefault();
-                            if (hasTupleColor.Item1 == null)
+                            if (_colors == null)
+                            {
                                 allFragmentationMethodList.Add(fragMet);
+                            }
                             else
                             {
-                                string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
-                                Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
+                                (string, string) hasTupleColor = _colors.Where(a => a.Item1.Equals(fragMet)).FirstOrDefault();
+                                if (hasTupleColor.Item1 == null)
+                                    allFragmentationMethodList.Add(fragMet);
+                                else
+                                {
+                                    string[] cols_colors = Regex.Split(hasTupleColor.Item2, "#");
+                                    Color currentColor = Color.FromArgb(Convert.ToByte(cols_colors[0]), Convert.ToByte(cols_colors[1]), Convert.ToByte(cols_colors[2]), Convert.ToByte(cols_colors[3]));
 
-                                FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                    FRAGMENT_ION_LINE_COLORS_DICT.Add(hasTupleColor.Item1 + "#" + cols[3], new SolidColorBrush(currentColor));
+                                }
                             }
                         }
                         #endregion
@@ -707,8 +729,6 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectA = 0;
                     HeightRectB_Nterm = 0;
@@ -789,7 +809,7 @@ namespace ProteinMergeFragIons
                         MyCanvas.Children.Add(proteinCharsAndSpaces[i]);
                         Canvas.SetTop(proteinCharsAndSpaces[i], offSetY);
                     }
-                    double posYrow1Start = initialYLine + offSetY + 50;
+                    double posYrow1Start = initialYLine + offSetY;
                     if (isGoldenComplementaryPairs)
                     {
                         offSetY += 60;
@@ -852,7 +872,15 @@ namespace ProteinMergeFragIons
                     #region Update protein Bond Cleavage Confidence color
                     if (isBondCleavageConfidence)
                     {
-                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, 6);
+                        int totalSeries = 0;
+                        if (currentAFragmentIons.Count > 0) totalSeries++;
+                        if (currentBFragmentIons.Count > 0) totalSeries++;
+                        if (currentCFragmentIons.Count > 0) totalSeries++;
+                        if (currentXFragmentIons.Count > 0) totalSeries++;
+                        if (currentYFragmentIons.Count > 0) totalSeries++;
+                        if (currentZFragmentIons.Count > 0) totalSeries++;
+                        maximumBondCleavageConfidence = totalSeries * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, totalSeries);
                     }
 
                     #endregion
@@ -875,9 +903,7 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 4 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
-
+                    
                     HeightRectB_Nterm = 0;
                     HeightRectC = 0;
                     HeightRectY = 0;
@@ -988,7 +1014,13 @@ namespace ProteinMergeFragIons
                     #region Update protein Bond Cleavage Confidence color
                     if (isBondCleavageConfidence)
                     {
-                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, 4);
+                        int totalSeries = 0;
+                        if (currentBFragmentIons.Count > 0) totalSeries++;
+                        if (currentCFragmentIons.Count > 0) totalSeries++;
+                        if (currentYFragmentIons.Count > 0) totalSeries++;
+                        if (currentZFragmentIons.Count > 0) totalSeries++;
+                        maximumBondCleavageConfidence = totalSeries * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, totalSeries);
                     }
 
                     #endregion
@@ -1020,8 +1052,6 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     HeightRectB_Nterm = 0;
                     HeightRectY = 0;
@@ -1098,7 +1128,11 @@ namespace ProteinMergeFragIons
                     #region Update protein Bond Cleavage Confidence color
                     if (isBondCleavageConfidence)
                     {
-                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, 2);
+                        int totalSeries = 0;
+                        if (currentBFragmentIons.Count > 0) totalSeries++;
+                        if (currentYFragmentIons.Count > 0) totalSeries++;
+                        maximumBondCleavageConfidence = totalSeries * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, totalSeries);
                     }
 
                     #endregion
@@ -1126,9 +1160,7 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 2 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
-
+                    
                     HeightRectC = 0;
                     HeightRectZ = 0;
                     SPACER_Y = 0;
@@ -1203,7 +1235,11 @@ namespace ProteinMergeFragIons
                     #region Update protein Bond Cleavage Confidence color
                     if (isBondCleavageConfidence)
                     {
-                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, 2);
+                        int totalSeries = 0;
+                        if (currentCFragmentIons.Count > 0) totalSeries++;
+                        if (currentZFragmentIons.Count > 0) totalSeries++;
+                        maximumBondCleavageConfidence = totalSeries * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, totalSeries);
                     }
 
                     #endregion
@@ -1230,8 +1266,6 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    if (isBondCleavageConfidence)
-                        maximumBondCleavageConfidence = 6 * PrecursorChargesOrActivationLevelsOrReplicates.Count;
 
                     List<string> precursorChargeStatesOrActivationLevelsOrReplicates = currentFragmentIons.Select(a => a.Item2).Distinct().ToList();
 
@@ -1384,7 +1418,15 @@ namespace ProteinMergeFragIons
                     #region Update protein Bond Cleavage Confidence color
                     if (isBondCleavageConfidence)
                     {
-                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, 6);
+                        int totalSeries = 0;
+                        if (currentAFragmentIons.Count > 0) totalSeries++;
+                        if (currentBFragmentIons.Count > 0) totalSeries++;
+                        if (currentCFragmentIons.Count > 0) totalSeries++;
+                        if (currentXFragmentIons.Count > 0) totalSeries++;
+                        if (currentYFragmentIons.Count > 0) totalSeries++;
+                        if (currentZFragmentIons.Count > 0) totalSeries++;
+                        maximumBondCleavageConfidence = totalSeries * PrecursorChargesOrActivationLevelsOrReplicates.Count;
+                        UpdateBondCleavageConfidenceColor(ProteinBondCleavageConfidenceCountAA, PrecursorChargesOrActivationLevelsOrReplicates, proteinCharsAndSpaces, totalSeries);
                     }
 
                     #endregion
@@ -1593,24 +1635,22 @@ namespace ProteinMergeFragIons
 
         private void UpdateBondCleavageConfidenceColor(int[] ProteinBondCleavageConfidenceCountAA, List<string> PrecursorChargesOrActivationLevelsOrReplicates, List<Label> proteinCharsAndSpaces, int seriesFactor)
         {
-            double _opacity = 0;
+            double _opacity_start = 0;
             for (int i = 0; i < ProteinSequence.Length; i++)
             {
-                SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                _opacity = (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * seriesFactor);
+                _opacity_start = (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * seriesFactor);
+                Color startColor = Colors.DarkGreen;
+                Color endColor = Colors.Red;
 
-                if (_opacity < 0.10)
-                    currentColor.Opacity = 0.1;
-                if (_opacity < 0.20)
-                    currentColor.Opacity = 0.2;
-                else if (_opacity < 0.40)
-                    currentColor.Opacity = 0.4;
-                else if (_opacity < 0.60)
-                    currentColor.Opacity = 0.6;
-                else if (_opacity < 0.80)
-                    currentColor.Opacity = 0.8;
-                else
-                    currentColor.Opacity = 1;
+                double r = _opacity_start;
+                double nr = 1.0 - r;
+                double A = (nr * startColor.A) + (r * endColor.A);
+                double R = (nr * startColor.R) + (r * endColor.R);
+                double G = (nr * startColor.G) + (r * endColor.G);
+                double B = (nr * startColor.B) + (r * endColor.B);
+
+                Color interpolate_color = Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
+                SolidColorBrush currentColor = new SolidColorBrush(interpolate_color);
                 proteinCharsAndSpaces[i].Foreground = currentColor;
                 proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
             }
@@ -1715,15 +1755,13 @@ namespace ProteinMergeFragIons
                 List<(string, string, string, int, double, double)> NTermFragIons = currentPrecursorCharge.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
                 List<(string, string, string, int, double, double)> CTermFragIons = currentPrecursorCharge.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
 
-                int numberOfNseries = NTermFragIons.Select(a => a.Item3).Distinct().Count();
-                int numberOfCseries = CTermFragIons.Select(a => a.Item3).Distinct().Count();
                 var newgroupedListPosFragIons_Nterm = (from eachEntry in NTermFragIons
                                                        group eachEntry by eachEntry.Item4).ToList();
                 var newgroupedListPosFragIons_Cterm = (from eachEntry in CTermFragIons
                                                        group eachEntry by eachEntry.Item4).ToList();
 
-                int numberOfRedundantFrag = newgroupedListPosFragIons_Nterm.Where(a => numberOfNseries > 1 && a.ToList().Count == numberOfNseries).Count();
-                numberOfRedundantFrag += newgroupedListPosFragIons_Cterm.Where(a => numberOfCseries > 1 && a.ToList().Count == numberOfCseries).Count();
+                int numberOfRedundantFrag = newgroupedListPosFragIons_Nterm.Where(a => a.ToList().Count > 1).Count();
+                numberOfRedundantFrag += newgroupedListPosFragIons_Cterm.Where(a => a.ToList().Count > 1).Count();
 
                 int totalNumberGoldenPairs = 0;
                 if (TotalNumberOfGoldenComplementaryPairsPerCondition.ContainsKey(precursorChargeOrActivationLevel))
@@ -1998,25 +2036,42 @@ namespace ProteinMergeFragIons
                 Grid.SetColumnSpan(rectRowColor, precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count);
                 DynamicGrid.Children.Add(rectRowColor);
 
-                double currentGridWith = (maxWidth * ROWWIDTH_TABLE * precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count - 10) / 5;
+                int STEPS_COLOR = precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count * 2;
+                double totalWidth = (maxWidth * ROWWIDTH_TABLE * precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count - 10);
+                double currentGridWidth = totalWidth / STEPS_COLOR;
                 double accumulativeGridWidth = 0;
-                for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                for (double countGradient = 0; countGradient < 1; countGradient += ((double)1 / (double)STEPS_COLOR))
                 {
+                    if (precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Count % 2 != 0 && accumulativeGridWidth + currentGridWidth >= totalWidth - currentGridWidth) break;
                     // Create a Rectangle
                     Rectangle RetangleColorRange = new Rectangle();
                     RetangleColorRange.HorizontalAlignment = HorizontalAlignment.Left;
                     RetangleColorRange.Height = 20;
-                    RetangleColorRange.Width = currentGridWith;
+                    RetangleColorRange.Width = currentGridWidth;
                     RetangleColorRange.StrokeThickness = 2;
                     RetangleColorRange.Stroke = new SolidColorBrush(Colors.LightGray);
-                    // Set Rectangle's width and color  
-                    SolidColorBrush currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                    currentColor.Opacity = countGradient;
-                    RetangleColorRange.Fill = currentColor;
+                    // Set Rectangle's width and color 
 
-                    if (countGradient > 0.1)
-                        accumulativeGridWidth += currentGridWith;
+                    #region interpolate color
+                    Color startColor = Colors.DarkGreen;
+                    Color endColor = Colors.Red;
+
+                    double r = countGradient;
+                    double nr = 1.0 - r;
+                    double A = (nr * startColor.A) + (r * endColor.A);
+                    double R = (nr * startColor.R) + (r * endColor.R);
+                    double G = (nr * startColor.G) + (r * endColor.G);
+                    double B = (nr * startColor.B) + (r * endColor.B);
+
+                    Color interpolate_color = Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
+                    SolidColorBrush currentColor = new SolidColorBrush(interpolate_color);
+                    RetangleColorRange.Fill = currentColor;
+                    #endregion
+
+                    if (countGradient > 0)
+                        accumulativeGridWidth += currentGridWidth;
                     RetangleColorRange.Margin = new Thickness(5 + accumulativeGridWidth, 10, 0, 0);
+
                     if (isGoldenComplementaryPairs)
                         Grid.SetRow(RetangleColorRange, 4);
                     else
@@ -2053,7 +2108,7 @@ namespace ProteinMergeFragIons
                 EndIntensityLabelBondCleavage.Content = maximumBondCleavageConfidence;
                 EndIntensityLabelBondCleavage.Foreground = labelBrush_PTN;
                 EndIntensityLabelBondCleavage.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-                EndIntensityLabelBondCleavage.Margin = new Thickness(accumulativeGridWidth + currentGridWith - 5 - (10 * maximumBondCleavageConfidence.ToString().Length), -5, 0, 0);
+                EndIntensityLabelBondCleavage.Margin = new Thickness(accumulativeGridWidth + currentGridWidth - 5 - (10 * maximumBondCleavageConfidence.ToString().Length), -5, 0, 0);
                 if (isGoldenComplementaryPairs)
                     Grid.SetRow(EndIntensityLabelBondCleavage, 4);
                 else
