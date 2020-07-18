@@ -365,9 +365,9 @@ namespace ProteinMergeFragIons
             #endregion
 
             //_key = "Merge#Merge#Merge#0";
-            //DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false));
+            //DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false, new List<(string, string)>()));
 
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", false, false, false, false);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", true, true, false, false);
 
             return;
 

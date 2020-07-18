@@ -682,7 +682,7 @@ namespace ProteinMergeFragIons
                     }
 
                     double posYrow1Start = initialYLine + proteinY + offSetY + 50;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         proteinY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -810,7 +810,7 @@ namespace ProteinMergeFragIons
                         Canvas.SetTop(proteinCharsAndSpaces[i], offSetY);
                     }
                     double posYrow1Start = initialYLine + offSetY;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         offSetY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -866,7 +866,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -903,7 +903,7 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    
+
                     HeightRectB_Nterm = 0;
                     HeightRectC = 0;
                     HeightRectY = 0;
@@ -968,7 +968,7 @@ namespace ProteinMergeFragIons
                     }
 
                     double posYrow1Start = initialYLine + proteinY + offSetY + 50;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         proteinY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -1008,7 +1008,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1032,7 +1032,7 @@ namespace ProteinMergeFragIons
                     else
                         height_rect = (HeightRectB_Nterm + HeightRectC + HeightRectY + HeightRectZ + 130);
 
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                         height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
 
                     double font_pos_condition = HeightRectB_Nterm + HeightRectC + 130;
@@ -1097,7 +1097,7 @@ namespace ProteinMergeFragIons
                     }
 
                     double posYrow1Start = initialYLine + proteinY + offSetY + 50;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         proteinY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -1122,7 +1122,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1139,7 +1139,7 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = HeightRectB_Nterm + HeightRectY + 100;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                         height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectB_Nterm + 90;
                     if (fragMethod.Equals("CID"))
@@ -1160,7 +1160,7 @@ namespace ProteinMergeFragIons
                         intensity_normalization = global_intensity_normalization_factor;
                     else if (hasIntensityperMap)
                         intensity_normalization = currentFragmentIons.Max(a => a.Item5);
-                    
+
                     HeightRectC = 0;
                     HeightRectZ = 0;
                     SPACER_Y = 0;
@@ -1204,7 +1204,7 @@ namespace ProteinMergeFragIons
                     }
 
                     double posYrow1Start = initialYLine + proteinY + offSetY + 50;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         proteinY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -1229,7 +1229,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1246,7 +1246,7 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = HeightRectC + HeightRectZ + 100;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                         height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectC + 90;
                     if (fragMethod.Equals("ECD"))
@@ -1357,7 +1357,7 @@ namespace ProteinMergeFragIons
                     }
 
                     double posYrow1Start = initialYLine + proteinY + offSetY + 50;
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                     {
                         proteinY += 60;
                         PlotRectangleGoldenComplementaryPairs(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE, PrecursorChargesOrActivationLevelsOrReplicates.Count);
@@ -1412,7 +1412,7 @@ namespace ProteinMergeFragIons
 
                     #region Plot stars for Golden complementary pairs
                     TotalNumberOfGoldenComplementaryPairsPerCondition = new Dictionary<string, List<int>>();
-                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap);
+                    PlotStartsGoldenComplementaryPairs(ProteinGoldenComplementaryPairs, TotalNumberOfGoldenComplementaryPairsPerCondition, proteinCharsAndSpaces, posYrow1Start, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein Bond Cleavage Confidence color
@@ -1433,7 +1433,7 @@ namespace ProteinMergeFragIons
 
                     #region rectangle FragMethod
                     double height_rect = (HeightRectA + HeightRectB_Nterm + HeightRectC + HeightRectX + HeightRectY + HeightRectZ + 175);
-                    if (isGoldenComplementaryPairs)
+                    if (isGoldenComplementaryPairs && !hasIntensityperMap)
                         height_rect += (PrecursorChargesOrActivationLevelsOrReplicates.Count * 30) + 10;
                     double font_pos_condition = HeightRectA + HeightRectB_Nterm + HeightRectC + 130;
                     if (showPrecursorChargeState)
@@ -1448,6 +1448,7 @@ namespace ProteinMergeFragIons
                 }
 
                 #region Plot Legend Study condition -> labels
+                offSetY += 20;
                 SolidColorBrush labelBrush_PrecursorChargeState = new SolidColorBrush(Colors.Black);
                 Label StudyConditionLabel = new Label();
                 StudyConditionLabel.FontFamily = new FontFamily("Courier New");
@@ -1505,9 +1506,10 @@ namespace ProteinMergeFragIons
                         Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
                         #endregion
 
-                        GridWidth /= 5;
+                        GridWidth /= 10;
+                        GridWidth += 20;
                         double accumulativeGridWidth = 0;
-                        for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                        for (double countGradient = 0; countGradient <= 1; countGradient += 0.10)
                             accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
 
                         #region End Intensity Label
@@ -1523,12 +1525,14 @@ namespace ProteinMergeFragIons
                         EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
                         EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(EndIntensityLabel);
-                        Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 6) - (27 * EndIntensityLabel.Content.ToString().Length));
+                        Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 11) - (27 * EndIntensityLabel.Content.ToString().Length));
                         Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
                         #endregion
 
                         #endregion
                     }
+                    else
+                        offSetY -= 70;
 
                     #region Residue Cleavages label
 
@@ -1573,9 +1577,10 @@ namespace ProteinMergeFragIons
                     Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
                     #endregion
 
-                    GridWidth /= 5;
+                    GridWidth /= 10;
+                    GridWidth += 20;
                     double accumulativeGridWidth = 0;
-                    for (double countGradient = 0.1; countGradient < 1; countGradient += 0.20)
+                    for (double countGradient = 0; countGradient <= 1; countGradient += 0.10)
                         accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
 
                     #region End Intensity Label
@@ -1588,7 +1593,7 @@ namespace ProteinMergeFragIons
                     EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
                     EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                     MyCanvas.Children.Add(EndIntensityLabel);
-                    Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 5));
+                    Canvas.SetLeft(EndIntensityLabel, 20 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 10));
                     Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
                     #endregion
                     offSetY += 20;
@@ -1641,22 +1646,27 @@ namespace ProteinMergeFragIons
                 _opacity_start = (double)ProteinBondCleavageConfidenceCountAA[i] / (double)(PrecursorChargesOrActivationLevelsOrReplicates.Count * seriesFactor);
                 Color startColor = Colors.DarkGreen;
                 Color endColor = Colors.Red;
-
-                double r = _opacity_start;
-                double nr = 1.0 - r;
-                double A = (nr * startColor.A) + (r * endColor.A);
-                double R = (nr * startColor.R) + (r * endColor.R);
-                double G = (nr * startColor.G) + (r * endColor.G);
-                double B = (nr * startColor.B) + (r * endColor.B);
-
-                Color interpolate_color = Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
+                Color interpolate_color = InterpolateColors(_opacity_start, startColor, endColor);
                 SolidColorBrush currentColor = new SolidColorBrush(interpolate_color);
                 proteinCharsAndSpaces[i].Foreground = currentColor;
                 proteinCharsAndSpaces[i].ToolTip = "Bond Cleavage Confidence: " + ProteinBondCleavageConfidenceCountAA[i];
             }
         }
 
-        private void PlotStartsGoldenComplementaryPairs(List<(string, int[], int)> ProteinGoldenComplementaryPairs, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, List<Label> proteinCharsAndSpaces, double posYrow1Start, int numberOfMap = -1)
+        private Color InterpolateColors(double _opacity_start, Color startColor, Color endColor)
+        {
+            double r = _opacity_start;
+            double nr = 1.0 - r;
+            double A = (nr * startColor.A) + (r * endColor.A);
+            double R = (nr * startColor.R) + (r * endColor.R);
+            double G = (nr * startColor.G) + (r * endColor.G);
+            double B = (nr * startColor.B) + (r * endColor.B);
+
+            Color interpolate_color = Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
+            return interpolate_color;
+        }
+
+        private void PlotStartsGoldenComplementaryPairs(List<(string, int[], int)> ProteinGoldenComplementaryPairs, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, List<Label> proteinCharsAndSpaces, double posYrow1Start, int numberOfMap = -1, bool hasIntensityMap = false)
         {
             double restartPosYrow1Start = posYrow1Start;
             ProteinGoldenComplementaryPairs.Sort((a, b) => a.Item3.CompareTo(b.Item3));
@@ -1672,7 +1682,7 @@ namespace ProteinMergeFragIons
                     {
                         if (match.Item2[_index_countMatch] == 2)
                         {
-                            if (isGoldenComplementaryPairs)
+                            if (isGoldenComplementaryPairs && !hasIntensityMap)
                             {
                                 Label starLabel = new Label();
                                 starLabel.FontFamily = new FontFamily("Courier New");
@@ -1720,13 +1730,16 @@ namespace ProteinMergeFragIons
             PrecursorChargeRetangle.Width = GridWidth;
             PrecursorChargeRetangle.StrokeThickness = 2;
             PrecursorChargeRetangle.Stroke = new SolidColorBrush(Colors.LightGray);
-            // Set Rectangle's width and color  
-            SolidColorBrush currentColor = null;
-            if (IsGlobalIntensityMap)
-                currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-            else
-                currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[countCurrentFragMethod].Color);
-            currentColor.Opacity = countGradient;
+            Color startColor = FRAGMENT_ION_LINE_COLORS[0].Color;
+            Color endColor = FRAGMENT_ION_LINE_COLORS[1].Color;
+            double _opacity_start = countGradient;
+            if (!IsGlobalIntensityMap && countCurrentFragMethod + 1 < FRAGMENT_ION_LINE_COLORS.Length)
+            {
+                startColor = FRAGMENT_ION_LINE_COLORS[countCurrentFragMethod].Color;
+                endColor = FRAGMENT_ION_LINE_COLORS[countCurrentFragMethod + 1].Color;
+            }
+            Color interpolate_color = InterpolateColors(_opacity_start, startColor, endColor);
+            SolidColorBrush currentColor = new SolidColorBrush(interpolate_color);
             PrecursorChargeRetangle.Fill = currentColor;
 
             if (countGradient > 0.1)
@@ -2376,7 +2389,7 @@ namespace ProteinMergeFragIons
             }
         }
 
-        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityperMap, double local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double, double)> currentPrecursorCharge, bool isNterm, int numberOfMap = -1)
+        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityPerMap, double local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double, double)> currentPrecursorCharge, bool isNterm, int numberOfMap = -1)
         {
             for (int count = 0; count < currentPrecursorCharge.Count; count++)
             {
@@ -2398,17 +2411,22 @@ namespace ProteinMergeFragIons
                 else
                     currentPrecursorChargeStateOrActivationLevel = currentPrecursorCharge[count].Item2;
 
-                if (hasIntensityperMap)
+                if (HasMergeConditions && !AddCleavageFrequency)//Merge conditions and NOT add cleavage frequency
                 {
-                    SolidColorBrush currentColor = null;
-                    if (IsGlobalIntensityMap)
-                        currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[0].Color);
-                    else
-                        currentColor = new SolidColorBrush(FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color);
-
-                    currentColor.Opacity = currentPrecursorCharge[count].Item5 / local_intensity_normalization;
-                    if (this.HasMergeConditions && !this.AddCleavageFrequency)
-                        currentColor.Opacity = 1;
+                    l.Stroke = FRAGMENT_ION_LINE_COLORS[0];
+                }
+                else if (hasIntensityPerMap)
+                {
+                    Color startColor = FRAGMENT_ION_LINE_COLORS[0].Color;
+                    Color endColor = FRAGMENT_ION_LINE_COLORS[1].Color;
+                    double _opacity_start = currentPrecursorCharge[count].Item5 / local_intensity_normalization;
+                    if (!IsGlobalIntensityMap && intensityColorsMap_index + 1 < FRAGMENT_ION_LINE_COLORS.Length)
+                    {
+                        startColor = FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color;
+                        endColor = FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index + 1].Color;
+                    }
+                    Color interpolate_color = InterpolateColors(_opacity_start, startColor, endColor);
+                    SolidColorBrush currentColor = new SolidColorBrush(interpolate_color);
                     l.Stroke = currentColor;
                 }
                 else
