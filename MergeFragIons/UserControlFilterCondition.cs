@@ -2615,7 +2615,7 @@ namespace TDFragMapper
                         Console.WriteLine(" Created Map {0}.", (Convert.ToInt32(numberOfCondition) + 1));
                     }
 
-                    if (numberOfConditions-1 > Convert.ToInt32(numberOfCondition))
+                    if (numberOfConditions - 1 > Convert.ToInt32(numberOfCondition))
                         addNewMap.Enabled = false;
                     else
                         addNewMap.Enabled = true;
@@ -3383,7 +3383,7 @@ namespace TDFragMapper
                             if (Core.DictMaps.TryGetValue(_key, out currentMap))
                             {
                                 List<(string, string)> eachStudy_color_list = currentMap.Item7;
-                                if (eachStudy_color_list.Count > 0)
+                                if (eachStudy_color_list != null && eachStudy_color_list.Count > 0)
                                 {
                                     (string, string) _currentStudy_color = eachStudy_color_list.Where(a => a.Item1.Equals(itemText)).FirstOrDefault();
                                     if (_currentStudy_color.Item1 != null)

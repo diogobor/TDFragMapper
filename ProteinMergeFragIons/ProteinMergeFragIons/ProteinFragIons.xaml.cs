@@ -1577,8 +1577,8 @@ namespace ProteinMergeFragIons
                     Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
                     #endregion
 
+                    GridWidth -= StudyConditionLabel.Content.ToString().Length * 27;
                     GridWidth /= 10;
-                    GridWidth += 20;
                     double accumulativeGridWidth = 0;
                     for (double countGradient = 0; countGradient <= 1; countGradient += 0.10)
                         accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
@@ -2224,8 +2224,8 @@ namespace ProteinMergeFragIons
             if (isBondCleavageConfidence)
                 offsetY += 40;
 
-            double _width = 170;
-            for (int count = 1; count < DynamicGrid.ColumnDefinitions.Count; count++)
+            double _width = 0;
+            for (int count = 0; count < DynamicGrid.ColumnDefinitions.Count; count++)
                 _width += DynamicGrid.ColumnDefinitions[count].Width.Value;
 
             GridWidth = _width;
