@@ -72,6 +72,8 @@ namespace TDFragMapper
             {
                 this.checkBoxIntensityPerMap.Checked = mainProgramGUI.mainCore.Has_And_LocalNormalization;
                 this.checkBoxIntensityGlobal.Checked = mainProgramGUI.mainCore.GlobalNormalization;
+                this.radioButtonAbsInten.Checked = !mainProgramGUI.mainCore.IsRelativeIntensity;
+                this.radioButtonRelInten.Checked = mainProgramGUI.mainCore.IsRelativeIntensity;
             }
         }
 
@@ -729,6 +731,18 @@ namespace TDFragMapper
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PasteDataToDataGridView();
+        }
+
+        private void radioButtonRelInten_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
+                mainProgramGUI.mainCore.IsRelativeIntensity = radioButtonRelInten.Checked;
+        }
+
+        private void radioButtonAbsInten_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
+                mainProgramGUI.mainCore.IsRelativeIntensity = !radioButtonAbsInten.Checked;
         }
     }
 

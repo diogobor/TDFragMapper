@@ -46,7 +46,8 @@ namespace TDFragMapper.Controller
 
         [ProtoMember(10)]
         public List<string> DiscriminativeMaps { get; set; }
-
+        [ProtoMember(11)]
+        public bool IsRelativeIntensity { get; set; } = true;
 
 
         /// <summary>

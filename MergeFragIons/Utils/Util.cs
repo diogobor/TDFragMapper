@@ -413,4 +413,34 @@ namespace TDFragMapper.Utils
             }
         }
     }
+
+    public class StructureComparer : IEqualityComparer<(string, int, string, int, string, int, double, double)>
+    {
+        public bool Equals((string, int, string, int, string, int, double, double) x, (string, int, string, int, string, int, double, double) y)
+        {
+            //Check if the compared objects reference has same data.
+            if (Object.ReferenceEquals(x, y)) return true;
+
+            //Check if any of the compared objects is null.
+            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+                return false;
+
+            //Check if the items' properties are equal.
+            if (x.Item1.Equals(y.Item1) &&
+                x.Item2 == y.Item2 &&
+                x.Item3.Equals(y.Item3) &&
+                x.Item4 == y.Item4 &&
+                x.Item5.Equals(y.Item5) &&
+                x.Item6 == y.Item6 &&
+                x.Item7 == y.Item7)
+                return true;
+            else
+                return false;
+        }
+
+        public int GetHashCode((string, int, string, int, string, int, double, double) obj)
+        {
+            return (int)(obj.Item1.GetHashCode() + obj.Item3.GetHashCode());
+        }
+    }
 }

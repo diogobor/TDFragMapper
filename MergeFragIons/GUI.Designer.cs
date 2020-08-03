@@ -75,6 +75,8 @@
             this.buttonDisplay = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.radioButtonRelInten = new System.Windows.Forms.RadioButton();
+            this.radioButtonAbsInten = new System.Windows.Forms.RadioButton();
             this.buttonIntensity = new System.Windows.Forms.Button();
             this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
@@ -403,11 +405,29 @@
             // groupBoxIntensityNorm
             // 
             resources.ApplyResources(this.groupBoxIntensityNorm, "groupBoxIntensityNorm");
+            this.groupBoxIntensityNorm.Controls.Add(this.radioButtonRelInten);
+            this.groupBoxIntensityNorm.Controls.Add(this.radioButtonAbsInten);
             this.groupBoxIntensityNorm.Controls.Add(this.buttonIntensity);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
             this.groupBoxIntensityNorm.Name = "groupBoxIntensityNorm";
             this.groupBoxIntensityNorm.TabStop = false;
+            // 
+            // radioButtonRelInten
+            // 
+            resources.ApplyResources(this.radioButtonRelInten, "radioButtonRelInten");
+            this.radioButtonRelInten.Checked = true;
+            this.radioButtonRelInten.Name = "radioButtonRelInten";
+            this.radioButtonRelInten.TabStop = true;
+            this.radioButtonRelInten.UseVisualStyleBackColor = true;
+            this.radioButtonRelInten.CheckedChanged += new System.EventHandler(this.radioButtonRelInten_CheckedChanged);
+            // 
+            // radioButtonAbsInten
+            // 
+            resources.ApplyResources(this.radioButtonAbsInten, "radioButtonAbsInten");
+            this.radioButtonAbsInten.Name = "radioButtonAbsInten";
+            this.radioButtonAbsInten.UseVisualStyleBackColor = true;
+            this.radioButtonAbsInten.CheckedChanged += new System.EventHandler(this.radioButtonAbsInten_CheckedChanged);
             // 
             // buttonIntensity
             // 
@@ -516,6 +536,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DeconvSpectra;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPasteValues;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+        private System.Windows.Forms.RadioButton radioButtonRelInten;
+        private System.Windows.Forms.RadioButton radioButtonAbsInten;
     }
 }
 

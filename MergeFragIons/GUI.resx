@@ -8202,13 +8202,13 @@
     <value>Ctrl+V</value>
   </data>
   <data name="pasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>143, 22</value>
   </data>
   <data name="pasteToolStripMenuItem.Text" xml:space="preserve">
     <value>Paste</value>
   </data>
   <data name="contextMenuStripPasteValues.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 48</value>
+    <value>144, 26</value>
   </data>
   <data name="&gt;&gt;contextMenuStripPasteValues.Name" xml:space="preserve">
     <value>contextMenuStripPasteValues</value>
@@ -8525,6 +8525,63 @@
   <data name="groupBoxIntensityNorm.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="radioButtonRelInten.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="radioButtonRelInten.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="radioButtonRelInten.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 63</value>
+  </data>
+  <data name="radioButtonRelInten.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 17</value>
+  </data>
+  <data name="radioButtonRelInten.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="radioButtonRelInten.Text" xml:space="preserve">
+    <value>Relative Intensity</value>
+  </data>
+  <data name="&gt;&gt;radioButtonRelInten.Name" xml:space="preserve">
+    <value>radioButtonRelInten</value>
+  </data>
+  <data name="&gt;&gt;radioButtonRelInten.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radioButtonRelInten.Parent" xml:space="preserve">
+    <value>groupBoxIntensityNorm</value>
+  </data>
+  <data name="&gt;&gt;radioButtonRelInten.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="radioButtonAbsInten.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="radioButtonAbsInten.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 63</value>
+  </data>
+  <data name="radioButtonAbsInten.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 17</value>
+  </data>
+  <data name="radioButtonAbsInten.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="radioButtonAbsInten.Text" xml:space="preserve">
+    <value>Absolute Intensity</value>
+  </data>
+  <data name="&gt;&gt;radioButtonAbsInten.Name" xml:space="preserve">
+    <value>radioButtonAbsInten</value>
+  </data>
+  <data name="&gt;&gt;radioButtonAbsInten.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radioButtonAbsInten.Parent" xml:space="preserve">
+    <value>groupBoxIntensityNorm</value>
+  </data>
+  <data name="&gt;&gt;radioButtonAbsInten.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="buttonIntensity.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -8560,7 +8617,7 @@
     <value>135, 23</value>
   </data>
   <data name="buttonIntensity.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="buttonIntensity.Text" xml:space="preserve">
     <value>Display</value>
@@ -8581,7 +8638,7 @@
     <value>groupBoxIntensityNorm</value>
   </data>
   <data name="&gt;&gt;buttonIntensity.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="checkBoxIntensityGlobal.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -8590,7 +8647,7 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxIntensityGlobal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 62</value>
+    <value>129, 30</value>
   </data>
   <data name="checkBoxIntensityGlobal.Size" type="System.Drawing.Size, System.Drawing">
     <value>127, 17</value>
@@ -8611,7 +8668,7 @@
     <value>groupBoxIntensityNorm</value>
   </data>
   <data name="&gt;&gt;checkBoxIntensityGlobal.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="checkBoxIntensityPerMap.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -8641,7 +8698,7 @@
     <value>groupBoxIntensityNorm</value>
   </data>
   <data name="&gt;&gt;checkBoxIntensityPerMap.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="groupBoxIntensityNorm.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>

@@ -39,7 +39,7 @@ namespace TDFragMapper
         {
             MyGui = _gui;
             Core = core;
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization, false, false, core.IsRelativeIntensity);
             this.userControlFilterCondition1.Setup(Core, false);
             this.UpdateIntensities();
             this.FillListBoxMergeConditions();
@@ -58,6 +58,11 @@ namespace TDFragMapper
                 bool _tmp_GlobalNormalization = Core.GlobalNormalization;
                 checkBoxIntensityPerMap.Checked = _tmp_Has_And_LocalNormalization;
                 checkBoxIntensityGlobal.Checked = _tmp_GlobalNormalization;
+
+                bool _tmp_IsRelativeIntensity = Core.IsRelativeIntensity;
+                radioButtonAbsInten.Checked = !_tmp_IsRelativeIntensity;
+                radioButtonRelInten.Checked = _tmp_IsRelativeIntensity;
+
             }
             else
                 groupBoxIntensityNorm.Enabled = false;
@@ -112,7 +117,7 @@ namespace TDFragMapper
                 Core.HasMergeMaps = false;
             }
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, false, Core.IsRelativeIntensity);
             this.tabControl1.SelectedIndex = 0;
         }
 
@@ -497,22 +502,12 @@ namespace TDFragMapper
 
             #region creating merged fragIons 
 
-            //List<(fragmentationMethod, precursorCharge,IonType, aaPosition,activation level,replicate, intensity, theoretical mass)>
-            List<(string, int, string, int, string, int, double, double)> currentNtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
-            List<(string, int, string, int, string, int, double, double)> currentCtermFragIons = allFragmentIonsAllConditions.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
-
-            var groupedNtermFragIons = currentNtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentNtermFragIons = new List<(string, int, string, int, string, int, double, double)>();
-            foreach (var nTermFragIon in groupedNtermFragIons)
-                currentNtermFragIons.Add(("", 0, "B", nTermFragIon[0].Item4, "", 1, nTermFragIon.Count, 0));
-
-            var groupedCtermFragIons = currentCtermFragIons.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
-            currentCtermFragIons = new List<(string, int, string, int, string, int, double, double)>();
-            foreach (var cTermFragIon in groupedCtermFragIons)
-                currentCtermFragIons.Add(("", 0, "Y", cTermFragIon[0].Item4, "", 1, cTermFragIon.Count, 0));
-
-
-            allFragmentIonsAllConditions = currentNtermFragIons.Concat(currentCtermFragIons).ToList();
+            allFragmentIonsAllConditions = allFragmentIonsAllConditions.Distinct(new Utils.StructureComparer()).ToList();
+            List<(string, int, string, int, string, int, double, double)> newFragIons = new List<(string, int, string, int, string, int, double, double)>();
+            foreach (var frag in allFragmentIonsAllConditions)
+                newFragIons.Add(("", frag.Item2, frag.Item3, frag.Item4, frag.Item5, frag.Item6, frag.Item7, frag.Item8));
+            allFragmentIonsAllConditions = newFragIons;
+            newFragIons = null;
             if (allFragmentIonsAllConditions.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show("There is no condition to merge!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -604,6 +599,18 @@ namespace TDFragMapper
         private void userControlFilterCondition1_Resize(object sender, EventArgs e)
         {
             Results_ResizeEnd(sender, e);
+        }
+
+        private void radioButtonRelInten_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Core != null)
+                Core.IsRelativeIntensity = radioButtonRelInten.Checked;
+        }
+
+        private void radioButtonAbsInten_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Core != null)
+                Core.IsRelativeIntensity = !radioButtonAbsInten.Checked;
         }
     }
 }

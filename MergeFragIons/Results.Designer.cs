@@ -67,6 +67,8 @@
             this.buttonMerge = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.radioButtonRelInten = new System.Windows.Forms.RadioButton();
+            this.radioButtonAbsInten = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -253,7 +255,7 @@
             this.groupBoxMain.Controls.Add(this.buttonFilter);
             this.groupBoxMain.Location = new System.Drawing.Point(3, 6);
             this.groupBoxMain.Name = "groupBoxMain";
-            this.groupBoxMain.Size = new System.Drawing.Size(1177, 547);
+            this.groupBoxMain.Size = new System.Drawing.Size(1177, 530);
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
             // 
@@ -295,6 +297,8 @@
             this.groupBoxIntensityNorm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxIntensityNorm.Controls.Add(this.radioButtonRelInten);
+            this.groupBoxIntensityNorm.Controls.Add(this.radioButtonAbsInten);
             this.groupBoxIntensityNorm.Controls.Add(this.buttonIntensity);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityGlobal);
             this.groupBoxIntensityNorm.Controls.Add(this.checkBoxIntensityPerMap);
@@ -325,7 +329,7 @@
             // 
             this.checkBoxIntensityGlobal.AutoSize = true;
             this.checkBoxIntensityGlobal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.checkBoxIntensityGlobal.Location = new System.Drawing.Point(19, 62);
+            this.checkBoxIntensityGlobal.Location = new System.Drawing.Point(129, 30);
             this.checkBoxIntensityGlobal.Name = "checkBoxIntensityGlobal";
             this.checkBoxIntensityGlobal.Size = new System.Drawing.Size(127, 17);
             this.checkBoxIntensityGlobal.TabIndex = 1;
@@ -477,6 +481,32 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 17);
             this.toolStripStatusLabel1.Text = "@2020 - All rights reserved®";
             // 
+            // radioButtonRelInten
+            // 
+            this.radioButtonRelInten.AutoSize = true;
+            this.radioButtonRelInten.Checked = true;
+            this.radioButtonRelInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.radioButtonRelInten.Location = new System.Drawing.Point(19, 62);
+            this.radioButtonRelInten.Name = "radioButtonRelInten";
+            this.radioButtonRelInten.Size = new System.Drawing.Size(106, 17);
+            this.radioButtonRelInten.TabIndex = 4;
+            this.radioButtonRelInten.TabStop = true;
+            this.radioButtonRelInten.Text = "Relative Intensity";
+            this.radioButtonRelInten.UseVisualStyleBackColor = true;
+            this.radioButtonRelInten.CheckedChanged += new System.EventHandler(this.radioButtonRelInten_CheckedChanged);
+            // 
+            // radioButtonAbsInten
+            // 
+            this.radioButtonAbsInten.AutoSize = true;
+            this.radioButtonAbsInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.radioButtonAbsInten.Location = new System.Drawing.Point(129, 62);
+            this.radioButtonAbsInten.Name = "radioButtonAbsInten";
+            this.radioButtonAbsInten.Size = new System.Drawing.Size(108, 17);
+            this.radioButtonAbsInten.TabIndex = 5;
+            this.radioButtonAbsInten.Text = "Absolute Intensity";
+            this.radioButtonAbsInten.UseVisualStyleBackColor = true;
+            this.radioButtonAbsInten.CheckedChanged += new System.EventHandler(this.radioButtonAbsInten_CheckedChanged);
+            // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -553,5 +583,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem summaryReportToolStripMenuItem;
+        private System.Windows.Forms.RadioButton radioButtonRelInten;
+        private System.Windows.Forms.RadioButton radioButtonAbsInten;
     }
 }
