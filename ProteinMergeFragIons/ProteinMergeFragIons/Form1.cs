@@ -364,10 +364,10 @@ namespace ProteinMergeFragIons
             currentFragIons = currentNtermFragIons.Concat(currentCtermFragIons).ToList();
             #endregion
 
-            //_key = "Merge#Merge#Merge#0";
-            //DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false, new List<(string, string)>()));
+            _key = "Merge#Merge#Merge#0";
+            DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false, new List<(string, string)>()));
 
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", false, false, false, false);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", true, true, true, true);
 
             return;
 

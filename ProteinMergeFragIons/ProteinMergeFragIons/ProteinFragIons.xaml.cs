@@ -662,16 +662,17 @@ namespace ProteinMergeFragIons
                     var groupedNtermFragIons = fragmentIonsNterm.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
                     fragmentIonsNterm = new List<(string, string, string, int, double, double)>();
                     foreach (var nTermFragIon in groupedNtermFragIons)
-                        fragmentIonsNterm.Add((nTermFragIon[0].Item1, nTermFragIon[0].Item2, nTermFragIon[0].Item3, nTermFragIon[0].Item4, nTermFragIon.Count, 0));
+                        fragmentIonsNterm.Add((nTermFragIon[0].Item1, nTermFragIon[0].Item2, String.Join("|", nTermFragIon.SelectMany(a => a.Item3).Distinct()), nTermFragIon[0].Item4, nTermFragIon.SelectMany(a => a.Item3).Distinct().Count(), 0));
 
                     List<(string, string, string, int, double, double)> fragmentIonsCterm = currentXFragmentIons.Concat(currentYFragmentIons).Concat(currentZFragmentIons).ToList();
                     var groupedCtermFragIons = fragmentIonsCterm.GroupBy(a => a.Item4).Select(grp => grp.ToList()).ToList();
                     fragmentIonsCterm = new List<(string, string, string, int, double, double)>();
                     foreach (var cTermFragIon in groupedCtermFragIons)
-                        fragmentIonsCterm.Add((cTermFragIon[0].Item1, cTermFragIon[0].Item2, cTermFragIon[0].Item3, cTermFragIon[0].Item4, cTermFragIon.Count, 0));
+                        fragmentIonsCterm.Add((cTermFragIon[0].Item1, cTermFragIon[0].Item2, String.Join("|", cTermFragIon.SelectMany(a => a.Item3).Distinct()), cTermFragIon[0].Item4, cTermFragIon.SelectMany(a => a.Item3).Distinct().Count(), 0));
 
                     #endregion
-                    intensity_normalization = fragmentIonsNterm.Concat(fragmentIonsCterm).ToList().Max(a => a.Item5);
+                    currentFragmentIons = fragmentIonsNterm.Concat(fragmentIonsCterm).ToList();
+                    intensity_normalization = currentFragmentIons.Max(a => a.Item5);
 
                     HeightRectB_Nterm = 0;
                     HeightRectY = 0;
@@ -1503,7 +1504,7 @@ namespace ProteinMergeFragIons
                     printIntensity = true;
 
                 double ColorsTop = offSetY;
-                double GridWidth = 900;
+                double GridWidth = 1200;
 
                 #region Plot Residue cleavages table
                 if (!IsGlobalIntensityMap)
@@ -1533,8 +1534,8 @@ namespace ProteinMergeFragIons
                         Canvas.SetTop(StartIntensityLabel, ColorsTop - 10);
                         #endregion
 
+                        GridWidth -= StudyConditionLabel.Content.ToString().Length * 27;
                         GridWidth /= 10;
-                        GridWidth += 20;
                         double accumulativeGridWidth = 0;
                         for (double countGradient = 0; countGradient <= 1; countGradient += 0.10)
                             accumulativeGridWidth = CreateIntensityBox(countCurrentFragMethod, StudyConditionLabel, ColorsTop, GridWidth, accumulativeGridWidth, countGradient);
@@ -1546,14 +1547,10 @@ namespace ProteinMergeFragIons
                         EndIntensityLabel.FontSize = 20;
                         EndIntensityLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
                         EndIntensityLabel.Content = "High";
-                        //if (this.HasMergeConditions)
-                        //    EndIntensityLabel.Content = intensity_normalization.ToString();
-                        //else
-                        //    EndIntensityLabel.Content = intensity_normalization.ToString("0.0e+0");
                         EndIntensityLabel.Foreground = labelBrush_IntensityLabel;
                         EndIntensityLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
                         MyCanvas.Children.Add(EndIntensityLabel);
-                        Canvas.SetLeft(EndIntensityLabel, 44 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 11) - (27 * EndIntensityLabel.Content.ToString().Length));
+                        Canvas.SetLeft(EndIntensityLabel, 80 + 27 * (StudyConditionLabel.Content.ToString().Length) + (GridWidth * 11) - (27 * EndIntensityLabel.Content.ToString().Length));
                         Canvas.SetTop(EndIntensityLabel, ColorsTop - 10);
                         #endregion
 
@@ -1575,18 +1572,16 @@ namespace ProteinMergeFragIons
                     //List<(label: precursorChargeState/Activation Level / Replicate, residue cleavages (%), Total Number of Golden Complementary Pairs Per Condition, total number of matching fragments )>
                     List<(string, double, int, int)> precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates = new List<(string, double, int, int)>();
 
-                    List<(string, string, string, int, double, double)> NTermFragIons = currentFragmentIons.Where(a => a.Item3.Equals("A") || a.Item3.Equals("B") || a.Item3.Equals("C")).ToList();
-                    List<(string, string, string, int, double, double)> CTermFragIons = currentFragmentIons.Where(a => a.Item3.Equals("X") || a.Item3.Equals("Y") || a.Item3.Equals("Z")).ToList();
+                    List<(string, string, string, int, double, double)> NTermFragIons = currentFragmentIons.Where(a => a.Item3.Contains("A") || a.Item3.Contains("B") || a.Item3.Contains("C")).ToList();
+                    List<(string, string, string, int, double, double)> CTermFragIons = currentFragmentIons.Where(a => a.Item3.Contains("X") || a.Item3.Contains("Y") || a.Item3.Contains("Z")).ToList();
 
-                    var newgroupedListPosFragIons_Nterm = (from eachEntry in NTermFragIons
-                                                           group eachEntry by eachEntry.Item4).ToList();
-                    var newgroupedListPosFragIons_Cterm = (from eachEntry in CTermFragIons
-                                                           group eachEntry by eachEntry.Item4).ToList();
+                    var redundantMoreThanTwoList = currentFragmentIons.Where(a => a.Item5 > 2).ToList();
+                    int redundantMoreThanTwo = 0;
+                    foreach (var eachItem in redundantMoreThanTwoList)
+                        redundantMoreThanTwo += (int)eachItem.Item5 - 2;
 
-                    int numberOfRedundantFrag = newgroupedListPosFragIons_Nterm.Where(a => a.ToList().Count > 1).Count();
-                    numberOfRedundantFrag += newgroupedListPosFragIons_Cterm.Where(a => a.ToList().Count > 1).Count();
                     double residueCleavages_percentage = 0;
-                    residueCleavages_percentage = (double)(currentFragmentIons.Count - totalNumberGoldenPairs - numberOfRedundantFrag) / (double)(ProteinSequence.Length - 1);
+                    residueCleavages_percentage = (double)(currentFragmentIons.Count - totalNumberGoldenPairs + redundantMoreThanTwo /*- numberOfRedundantFrag*/) / (double)((ProteinSequence.Length - 1) /** item2_factor*/);
                     _content.Append((residueCleavages_percentage * 100).ToString("0"));
                     _content.Append("%");
 
@@ -2449,11 +2444,11 @@ namespace ProteinMergeFragIons
                     for (int mergeRepresentative = 1; mergeRepresentative < 4; mergeRepresentative++)
                     {
                         if (mergeRepresentative == 1)//a/x series
-                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Equals("A") || a.Item3.Equals("X")).ToList();
+                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Contains("A") || a.Item3.Contains("X")).ToList();
                         else if (mergeRepresentative == 2)//b/y series
-                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Equals("B") || a.Item3.Equals("Y")).ToList();
+                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Contains("B") || a.Item3.Contains("Y")).ToList();
                         else if (mergeRepresentative == 3)//c/z series
-                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Equals("C") || a.Item3.Equals("Z")).ToList();
+                            currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item3.Contains("C") || a.Item3.Contains("Z")).ToList();
 
                         (string, int[], int) currentPtnGoldenComplPairs = ProteinGoldenComplementaryPairs.Where(a => a.Item3 == mergeRepresentative).FirstOrDefault();
                         foreach ((string, string, string, int, double, double) frag in currentPrecursorChargeOrActivationLevelOrReplicate)
@@ -2546,10 +2541,13 @@ namespace ProteinMergeFragIons
 
                 if (hasIntensityPerMap)
                 {
-                    if(IsRelativeIntensity)
-                        l.ToolTip = l.ToolTip + "\nRelative Intensity: " + (_opacity_start * 100).ToString("0") + "%";
-                    else
-                        l.ToolTip = l.ToolTip + "\nAbsolute Intensity: " + currentPrecursorCharge[count].Item5.ToString("0.0");
+                    if (!l.ToolTip.ToString().StartsWith("Cleavage"))
+                    {
+                        if (IsRelativeIntensity)
+                            l.ToolTip = l.ToolTip + "\nRelative Intensity: " + (_opacity_start * 100).ToString("0") + "%";
+                        else
+                            l.ToolTip = l.ToolTip + "\nAbsolute Intensity: " + currentPrecursorCharge[count].Item5.ToString("0.0");
+                    }
                 }
 
                 MyCanvas.Children.Add(l);
