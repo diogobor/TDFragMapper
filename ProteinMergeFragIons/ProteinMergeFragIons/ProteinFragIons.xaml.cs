@@ -2533,6 +2533,8 @@ namespace ProteinMergeFragIons
                     Color endColor = FRAGMENT_ION_LINE_COLORS[1].Color;
                     //Normalization = (current - minimum)/(max - min)
                     _opacity_start = (Math.Log10(currentPrecursorCharge[count].Item5) - Math.Log10(local_intensity_normalization.Item1)) / (Math.Log10(local_intensity_normalization.Item2) - Math.Log10(local_intensity_normalization.Item1));
+                    _opacity_start = Double.IsNaN(_opacity_start) ? 1 : _opacity_start;
+                    _opacity_start = _opacity_start == 0 ? 0.01 : _opacity_start;
 
                     if (!IsGlobalIntensityMap && intensityColorsMap_index + 1 < FRAGMENT_ION_LINE_COLORS.Length)
                     {
