@@ -1255,7 +1255,8 @@ namespace TDFragMapper
             groupBoxMainMap.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
 
             this.Controls.Add(groupBoxMainMap);
-            this.Height += 53;
+            this.Height += 23;
+            this.Parent.Height += 43;
             numberOfConditions++;
             btn_remove_map.Focus();
         }
@@ -3238,13 +3239,17 @@ namespace TDFragMapper
                 }
             }
 
-            //if (EnableAddNewMapBtn(comboBoxCondition1, comboBoxCondition2, comboBoxCondition3, comboBoxStudyCondition))
-            //{
-            //    if (listBoxSelectedStudyCondition.Items.Count == 0)
-            //        addNewMap.Enabled = false;
-            //    else
-            //        addNewMap.Enabled = true;
-            //}
+            checkBoxGoldenComplemPairs.Checked = false;
+            if (listBoxSelectedFixedCondition1.Items.Count == 1 &&
+                listBoxSelectedFixedCondition2.Items.Count == 1 &&
+                listBoxSelectedFixedCondition3.Items.Count == 1)
+            {
+                checkBoxGoldenComplemPairs.Enabled = true;
+            }
+            else
+            {
+                checkBoxGoldenComplemPairs.Enabled = false;
+            }
         }
 
         private void buttonAddMap_Click(object sender, EventArgs e)

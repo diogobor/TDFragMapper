@@ -48,10 +48,11 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.tabPageFilter = new System.Windows.Forms.TabPage();
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
-            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
+            this.radioButtonRelInten = new System.Windows.Forms.RadioButton();
+            this.radioButtonAbsInten = new System.Windows.Forms.RadioButton();
             this.buttonIntensity = new System.Windows.Forms.Button();
             this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
@@ -67,8 +68,7 @@
             this.buttonMerge = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.radioButtonRelInten = new System.Windows.Forms.RadioButton();
-            this.radioButtonAbsInten = new System.Windows.Forms.RadioButton();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -254,21 +254,13 @@
             this.groupBoxMain.Controls.Add(this.userControlFilterCondition1);
             this.groupBoxMain.Controls.Add(this.buttonFilter);
             this.groupBoxMain.Location = new System.Drawing.Point(3, 6);
+            this.groupBoxMain.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.groupBoxMain.MinimumSize = new System.Drawing.Size(1177, 479);
             this.groupBoxMain.Name = "groupBoxMain";
-            this.groupBoxMain.Size = new System.Drawing.Size(1177, 530);
+            this.groupBoxMain.Padding = new System.Windows.Forms.Padding(3, 3, 3, 30);
+            this.groupBoxMain.Size = new System.Drawing.Size(1177, 479);
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
-            // 
-            // userControlFilterCondition1
-            // 
-            this.userControlFilterCondition1.AutoScroll = true;
-            this.userControlFilterCondition1.AutoSize = true;
-            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
-            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 254);
-            this.userControlFilterCondition1.TabIndex = 7;
-            this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
             // 
             // buttonFilter
             // 
@@ -310,6 +302,32 @@
             this.groupBoxIntensityNorm.TabStop = false;
             this.groupBoxIntensityNorm.Text = "Intensity normalization";
             // 
+            // radioButtonRelInten
+            // 
+            this.radioButtonRelInten.AutoSize = true;
+            this.radioButtonRelInten.Checked = true;
+            this.radioButtonRelInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.radioButtonRelInten.Location = new System.Drawing.Point(19, 62);
+            this.radioButtonRelInten.Name = "radioButtonRelInten";
+            this.radioButtonRelInten.Size = new System.Drawing.Size(106, 17);
+            this.radioButtonRelInten.TabIndex = 4;
+            this.radioButtonRelInten.TabStop = true;
+            this.radioButtonRelInten.Text = "Relative Intensity";
+            this.radioButtonRelInten.UseVisualStyleBackColor = true;
+            this.radioButtonRelInten.CheckedChanged += new System.EventHandler(this.radioButtonRelInten_CheckedChanged);
+            // 
+            // radioButtonAbsInten
+            // 
+            this.radioButtonAbsInten.AutoSize = true;
+            this.radioButtonAbsInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.radioButtonAbsInten.Location = new System.Drawing.Point(129, 62);
+            this.radioButtonAbsInten.Name = "radioButtonAbsInten";
+            this.radioButtonAbsInten.Size = new System.Drawing.Size(108, 17);
+            this.radioButtonAbsInten.TabIndex = 5;
+            this.radioButtonAbsInten.Text = "Absolute Intensity";
+            this.radioButtonAbsInten.UseVisualStyleBackColor = true;
+            this.radioButtonAbsInten.CheckedChanged += new System.EventHandler(this.radioButtonAbsInten_CheckedChanged);
+            // 
             // buttonIntensity
             // 
             this.buttonIntensity.Image = ((System.Drawing.Image)(resources.GetObject("buttonIntensity.Image")));
@@ -335,6 +353,7 @@
             this.checkBoxIntensityGlobal.TabIndex = 1;
             this.checkBoxIntensityGlobal.Text = "Across all study maps";
             this.checkBoxIntensityGlobal.UseVisualStyleBackColor = true;
+            this.checkBoxIntensityGlobal.Visible = false;
             this.checkBoxIntensityGlobal.CheckedChanged += new System.EventHandler(this.checkBoxIntensityGlobal_CheckedChanged);
             // 
             // checkBoxIntensityPerMap
@@ -479,33 +498,18 @@
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 17);
-            this.toolStripStatusLabel1.Text = "@2020 - All rights reserved®";
+            this.toolStripStatusLabel1.Text = "@2021 - All rights reserved®";
             // 
-            // radioButtonRelInten
+            // userControlFilterCondition1
             // 
-            this.radioButtonRelInten.AutoSize = true;
-            this.radioButtonRelInten.Checked = true;
-            this.radioButtonRelInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.radioButtonRelInten.Location = new System.Drawing.Point(19, 62);
-            this.radioButtonRelInten.Name = "radioButtonRelInten";
-            this.radioButtonRelInten.Size = new System.Drawing.Size(106, 17);
-            this.radioButtonRelInten.TabIndex = 4;
-            this.radioButtonRelInten.TabStop = true;
-            this.radioButtonRelInten.Text = "Relative Intensity";
-            this.radioButtonRelInten.UseVisualStyleBackColor = true;
-            this.radioButtonRelInten.CheckedChanged += new System.EventHandler(this.radioButtonRelInten_CheckedChanged);
-            // 
-            // radioButtonAbsInten
-            // 
-            this.radioButtonAbsInten.AutoSize = true;
-            this.radioButtonAbsInten.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.radioButtonAbsInten.Location = new System.Drawing.Point(129, 62);
-            this.radioButtonAbsInten.Name = "radioButtonAbsInten";
-            this.radioButtonAbsInten.Size = new System.Drawing.Size(108, 17);
-            this.radioButtonAbsInten.TabIndex = 5;
-            this.radioButtonAbsInten.Text = "Absolute Intensity";
-            this.radioButtonAbsInten.UseVisualStyleBackColor = true;
-            this.radioButtonAbsInten.CheckedChanged += new System.EventHandler(this.radioButtonAbsInten_CheckedChanged);
+            this.userControlFilterCondition1.AutoScroll = true;
+            this.userControlFilterCondition1.AutoSize = true;
+            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
+            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
+            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 254);
+            this.userControlFilterCondition1.TabIndex = 7;
+            this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
             // 
             // Results
             // 

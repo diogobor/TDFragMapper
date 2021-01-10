@@ -398,9 +398,9 @@ namespace TDFragMapper
             #region open automatically a tdfm file
             try
             {
-                string[] myAppData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+                string[] myAppData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData;
 
-                Console.WriteLine(" Loading file: " + myAppData[0]);
+                Console.WriteLine(" Loading file: " + myAppData?[0]);
 
                 //ResultsForm window = new ResultsForm();
                 //if (window.LoadResultsFromScreen(myAppData[0]))
