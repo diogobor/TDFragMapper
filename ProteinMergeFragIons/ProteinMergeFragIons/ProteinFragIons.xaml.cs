@@ -653,8 +653,8 @@ namespace ProteinMergeFragIons
 
                 #region Compute the most intensity peak for each study
 
-                //(study, most intensity peak)
-                List<(string, double)> mostIntensityPeakPerStudy = new List<(string, double)>();
+                //(study, lowest intensity peak, highest intensity peak)
+                List<(string, double, double)> mostIntensityPeakPerStudy = new List<(string, double, double)>();
                 if (hasIntensityperMap && !fragMethod.Equals("Merge"))
                 {
                     foreach (string precursorChargeOrActivationLevel in PrecursorChargesOrActivationLevelsOrReplicates)
@@ -662,11 +662,15 @@ namespace ProteinMergeFragIons
                         List<(string, string, string, int, double, double)> currentPrecursorChargeOrActivationLevelOrReplicate = null;
 
                         if (isFragmentationMethod && (showPrecursorChargeState || showActivationLevel || showReplicates))
+                        {
                             currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).ToList();
+                            mostIntensityPeakPerStudy.Add((currentPrecursorChargeOrActivationLevelOrReplicate[0].Item1, currentPrecursorChargeOrActivationLevelOrReplicate.Min(a => a.Item5), currentPrecursorChargeOrActivationLevelOrReplicate.Max(a => a.Item5)));
+                        }
                         else
+                        {
                             currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
-
-                        mostIntensityPeakPerStudy.Add((currentPrecursorChargeOrActivationLevelOrReplicate[0].Item2, currentPrecursorChargeOrActivationLevelOrReplicate.Max(a => a.Item5)));
+                            mostIntensityPeakPerStudy.Add((currentPrecursorChargeOrActivationLevelOrReplicate[0].Item2, currentPrecursorChargeOrActivationLevelOrReplicate.Min(a => a.Item5), currentPrecursorChargeOrActivationLevelOrReplicate.Max(a => a.Item5)));
+                        }
                     }
                 }
 
@@ -693,7 +697,7 @@ namespace ProteinMergeFragIons
 
                     #endregion
                     currentFragmentIons = fragmentIonsNterm.Concat(fragmentIonsCterm).ToList();
-                    mostIntensityPeakPerStudy.Add(("", currentFragmentIons.Max(a => a.Item5)));
+                    mostIntensityPeakPerStudy.Add(("", currentFragmentIons.Min(a => a.Item5), currentFragmentIons.Max(a => a.Item5)));
 
                     HeightRectB_Nterm = 0;
                     HeightRectY = 0;
@@ -2404,9 +2408,10 @@ namespace ProteinMergeFragIons
             #endregion
         }
 
-        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref List<string>[] ProteinBondCleavageConfidenceCountAA, ref List<(string, int[], int)> ProteinGoldenComplementaryPairs, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, List<(string, double)> mostIntensityPeakPerStudy = null, bool isBondCleavageConfidence = false, bool isGoldenComplementaryPairs = false, int representativeSeries = 0, bool isNterm = true, int numberOfMap = -1)
+        private void PlotFragmentIons(double initialYLine, int offSetY, List<string> PrecursorChargesOrActivationLevelOrFragMethods, List<(string, string, string, int, double, double)> currentFragmentIons, List<Label> proteinCharsAndSpaces, ref int countPrecursorChargeState, ref List<string>[] ProteinBondCleavageConfidenceCountAA, ref List<(string, int[], int)> ProteinGoldenComplementaryPairs, int intensityColorsMap_index = 0, bool hasIntensityperMap = false, List<(string, double, double)> mostIntensityPeakPerStudy = null, bool isBondCleavageConfidence = false, bool isGoldenComplementaryPairs = false, int representativeSeries = 0, bool isNterm = true, int numberOfMap = -1)
         {
-            double local_intensity_normalization = 1;
+            //(minimum,maximum)
+            (double, double) local_intensity_normalization = (0, 1);
 
             if (!this.HasMergeConditions)
             {
@@ -2419,7 +2424,8 @@ namespace ProteinMergeFragIons
                     else
                         currentPrecursorChargeOrActivationLevelOrReplicate = currentFragmentIons.Where(a => a.Item2.Equals(precursorChargeOrActivationLevel)).ToList();
 
-                    local_intensity_normalization = mostIntensityPeakPerStudy.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).FirstOrDefault().Item2;
+                    (string, double, double) normsMinMax = mostIntensityPeakPerStudy.Where(a => a.Item1.Equals(precursorChargeOrActivationLevel)).FirstOrDefault();
+                    local_intensity_normalization = (normsMinMax.Item2, normsMinMax.Item3);
 
                     #region Update protein bond cleavage confidence
                     if (isBondCleavageConfidence)
@@ -2460,7 +2466,7 @@ namespace ProteinMergeFragIons
             }
             else
             {
-                local_intensity_normalization = mostIntensityPeakPerStudy.FirstOrDefault().Item2;
+                local_intensity_normalization = (mostIntensityPeakPerStudy.FirstOrDefault().Item2, mostIntensityPeakPerStudy.FirstOrDefault().Item3);
                 #region Update protein golden complementary pairs
                 if (ProteinGoldenComplementaryPairs != null)
                 {
@@ -2494,7 +2500,7 @@ namespace ProteinMergeFragIons
             }
         }
 
-        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityPerMap, double local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double, double)> currentPrecursorCharge, bool isNterm, int numberOfMap = -1)
+        private int PlotBarsFragIons(double initialYLine, int offSetY, List<Label> proteinCharsAndSpaces, int countPrecursorChargeState, int intensityColorsMap_index, bool hasIntensityPerMap, (double, double) local_intensity_normalization, string precursorChargeOrActivationLevelOrReplicate, List<(string, string, string, int, double, double)> currentPrecursorCharge, bool isNterm, int numberOfMap = -1)
         {
             for (int count = 0; count < currentPrecursorCharge.Count; count++)
             {
@@ -2525,7 +2531,9 @@ namespace ProteinMergeFragIons
                 {
                     Color startColor = FRAGMENT_ION_LINE_COLORS[0].Color;
                     Color endColor = FRAGMENT_ION_LINE_COLORS[1].Color;
-                    _opacity_start = currentPrecursorCharge[count].Item5 / local_intensity_normalization;
+                    //Normalization = (current - minimum)/(max - min)
+                    _opacity_start = (Math.Log10(currentPrecursorCharge[count].Item5) - Math.Log10(local_intensity_normalization.Item1)) / (Math.Log10(local_intensity_normalization.Item2) - Math.Log10(local_intensity_normalization.Item1));
+
                     if (!IsGlobalIntensityMap && intensityColorsMap_index + 1 < FRAGMENT_ION_LINE_COLORS.Length)
                     {
                         startColor = FRAGMENT_ION_LINE_COLORS[intensityColorsMap_index].Color;

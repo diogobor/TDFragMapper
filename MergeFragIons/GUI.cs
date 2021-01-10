@@ -256,7 +256,7 @@ namespace TDFragMapper
                     (GridRow.Cells[2].Value != null && !String.IsNullOrEmpty(GridRow.Cells[2].Value.ToString())) &&
                     (GridRow.Cells[3].Value != null && !String.IsNullOrEmpty(GridRow.Cells[3].Value.ToString())) &&
                     (GridRow.Cells[4].Value != null && !String.IsNullOrEmpty(GridRow.Cells[4].Value.ToString()))) /*&&*/
-                                                                                                                  //(GridRow.Cells[6].Value != null && !String.IsNullOrEmpty(GridRow.Cells[6].Value.ToString())))
+                //(GridRow.Cells[6].Value != null && !String.IsNullOrEmpty(GridRow.Cells[6].Value.ToString())))
                 {
                     int replicate = Convert.ToInt32(numberCaptured.Matches(GridRow.Cells[3].Value.ToString())[0].Value);
                     if (GridRow.Cells[0].Value.ToString().ToLower().Equals("etchd"))
@@ -400,7 +400,8 @@ namespace TDFragMapper
             {
                 string[] myAppData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData;
 
-                Console.WriteLine(" Loading file: " + myAppData?[0]);
+                if (myAppData != null)
+                    Console.WriteLine(" Loading file: " + myAppData?[0]);
 
                 //ResultsForm window = new ResultsForm();
                 //if (window.LoadResultsFromScreen(myAppData[0]))
