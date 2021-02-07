@@ -506,7 +506,8 @@ namespace TDFragMapper
             if (dataGridViewInputFiles.CurrentCell.ColumnIndex == 0) //Frag Method col
             {
                 TextBox tb = e.Control as TextBox;
-                tb.CharacterCasing = CharacterCasing.Upper;
+                tb.CharacterCasing = CharacterCasing.Normal;
+                //tb.CharacterCasing = CharacterCasing.Upper;
 
                 if (tb != null)
                 {

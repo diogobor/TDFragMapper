@@ -1,9 +1,12 @@
 ﻿using Ionic.Zip;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
+using PdfSharp.Pdf;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +35,7 @@ namespace TDFragMapper.Controller
         /// Main dictionary will all maps: <key: Study condition#FixedCondition1, value: (fixedCond1, fixedCond2, fixedCond3, allFragmentIonsAllConditions), isGoldenComplementaryPairs, isBondCleavageConfidence, List<eachStudyItem,color>>
         /// </summary>
         [ProtoMember(4)]
-        public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string,string)>)> DictMaps { get; set; }
+        public Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> DictMaps { get; set; }
         [ProtoMember(5)]
         public bool Has_And_LocalNormalization { get; set; }
         [ProtoMember(6)]
@@ -48,7 +51,6 @@ namespace TDFragMapper.Controller
         public List<string> DiscriminativeMaps { get; set; }
         [ProtoMember(11)]
         public bool IsRelativeIntensity { get; set; } = true;
-
 
         /// <summary>
         /// Empty constructor
@@ -132,260 +134,319 @@ namespace TDFragMapper.Controller
             }
         }
 
+
         public byte ExportResultsToPDF(string fileName)
         {
-            byte returnOK = 2;//0 -> ok, 1 -> failed, 2 -> cancel
+            byte returnOK = 0;//0 -> ok, 1 -> failed, 2 -> cancel
 
-            Document doc = new Document(PageSize.A4, 30f, 20f, 150f, 40);
+            // Create a new PDF document
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "TDFragmapper Summary report";
+            document.Info.Author = "TDFragmapper";
 
-            try
+            // Create an empty page
+            PdfPage page = document.AddPage();
+            page.Size = PdfSharp.PageSize.A4;
+
+            // Get an XGraphics object for drawing
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            XSize size = gfx.PageSize;
+            size.Height -= 10;
+            size.Width -= 40;
+            XRect rect = new XRect(new XPoint(), size);
+            rect.Inflate(-5, -15);
+
+            double offsetY = 100;
+            // Create a format
+            XStringFormat format = new XStringFormat();
+
+            // Create a font
+            XFont font = new XFont("Arial", 10, XFontStyle.Bold);
+
+            format.Alignment = XStringAlignment.Near;//Left
+
+            #region header
+            // Draw the text
+            rect.Offset(25, offsetY);
+            gfx.DrawString("TDFragMapper - Results", font, XBrushes.Black, rect, format);
+
+            // If you're going to read from the stream, you may need to reset the position to the start
+
+            Bitmap _icon = TDFragMapper.Properties.Resources.iconTDFragMapperShadow;
+            MemoryStream msIcon = new MemoryStream();
+            msIcon.Position = 0;
+            _icon.Save(msIcon, System.Drawing.Imaging.ImageFormat.Png);
+            XImage image = XImage.FromStream(msIcon);
+
+            // Left position in point
+            double center_x = (size.Width - 60) / 2 + 25;
+            gfx.DrawImage(image, center_x, 50, 60, 60);
+
+            string strDate = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToShortTimeString();
+            // Draw the text
+            format.Alignment = XStringAlignment.Far;//Right
+            gfx.DrawString(strDate, font, XBrushes.Black, rect, format);
+
+            font = new XFont("Arial", 14, XFontStyle.Bold);
+            format.Alignment = XStringAlignment.Near;//Left
+            #endregion
+
+            #region title
+
+            offsetY = 50;
+            rect.Offset(0, offsetY);
+            gfx.DrawString("Summary report", font, XBrushes.Black, rect, format);
+
+            offsetY = 25;
+            rect.Offset(0, offsetY);
+            XTextFormatter tf = new XTextFormatter(gfx);
+            tf.Alignment = XParagraphAlignment.Justify;
+            font = new XFont("Arial", 10, XFontStyle.Regular);
+            string text = "This file contains summary information for all files processed in TDFragMapper, including the used parameters and the contents of input files.";
+            tf.DrawString(text, font, XBrushes.Black, rect, XStringFormats.TopLeft);
+            #endregion
+
+            #region content
+
+            //page structure options
+            int el_height = 30;
+            int rect_height = 17;
+            double dist_Y = 20;
+            int row_number = 1;
+
+            XPen borderPen = new XPen(XColors.Black);
+            borderPen.Width = 0.5;
+
+            #region Header
+            font = new XFont("Arial", 10, XFontStyle.Bold);
+
+            (dist_Y, row_number) = this.createRowTable("Name", "Description", row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Rows
+
+            font = new XFont("Arial", 10, XFontStyle.Regular);
+
+            #region Protein sequence file
+
+            (dist_Y, row_number) = this.createRowTable("Protein sequence file:", programParams.ProteinSequenceFile, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Protein sequence
+
+            StringBuilder sb_proteinSeq = new StringBuilder();
+            int str_limit = 39;
+            int i = 0;
+
+            int row_seq = 1;
+            for (i = 0; i < ProteinSequence.Length; i += str_limit, row_seq++)
             {
-                PdfWriter writer = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create));
-                writer.PageEvent = new HeaderFooter();
-                doc.Open();
-
-                iTextSharp.text.Font customFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL);
-                customFont = FontFactory.GetFont(FontFactory.HELVETICA, 14, iTextSharp.text.Font.BOLD);
-                iTextSharp.text.Paragraph summary = new iTextSharp.text.Paragraph("Summary report", customFont);
-                doc.Add(summary);
-
-                customFont = FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL);
-                iTextSharp.text.Paragraph summary_text = new iTextSharp.text.Paragraph("This file contains summary information for all files processed in TDFragMapper, including the used parameters and the contents of input files.", customFont);
-                summary_text.SpacingBefore = 5;
-                summary_text.SpacingAfter = 15;
-                summary_text.Alignment = Element.ALIGN_JUSTIFIED;
-                doc.Add(summary_text);
-
-                PdfPTable table = new PdfPTable(2);
-                table.WidthPercentage = 100f;
-                PdfPCell cell_title = new PdfPCell(new Phrase("Name",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
-                );
-
-                table.AddCell(cell_title);
-                cell_title = new PdfPCell(new Phrase("Description",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
-                );
-                table.AddCell(cell_title);
-
-                PdfPCell cell_content = new PdfPCell(new Phrase("Protein sequence file:",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-
-                table.AddCell(cell_content);
-                cell_content = new PdfPCell(new Phrase(programParams.ProteinSequenceFile,
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Protein sequence:",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                table.AddCell(cell_content);
-                cell_content = new PdfPCell(new Phrase(this.ProteinSequence,
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Sequence information:",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                table.AddCell(cell_content);
-                if (!String.IsNullOrEmpty(programParams.SequenceInformation))
-                {
-                    cell_content = new PdfPCell(new Phrase(programParams.SequenceInformation,
-                        FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                    );
-                }
+                if (i + str_limit < ProteinSequence.Length)
+                    sb_proteinSeq.Append(ProteinSequence.Substring(i, str_limit) + " ");
                 else
-                {
-                    cell_content = new PdfPCell(new Phrase("none",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                }
-                table.AddCell(cell_content);
+                    sb_proteinSeq.Append(ProteinSequence.Substring(i, ProteinSequence.Length - i) + " ");
+            }
 
-                cell_content = new PdfPCell(new Phrase("Intensity normalization:",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                );
-                table.AddCell(cell_content);
+            row_seq--;
 
-                if (this.Has_And_LocalNormalization)
+            (dist_Y, row_number) = createRowTable("Protein sequence:", sb_proteinSeq.ToString(), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height, row_seq);
+
+            int lineHeight = 17;
+            double error_offsetY;
+            if (row_seq < 9)
+                error_offsetY = (0.73 * lineHeight * (row_seq - 1));
+            else
+                error_offsetY = (0.79 * lineHeight * (row_seq - 1));
+            dist_Y += error_offsetY;
+
+            #endregion
+
+            #region Sequence information
+
+            String info = "";
+
+            if (!String.IsNullOrEmpty(programParams.SequenceInformation))
+            {
+                StringBuilder sb_SeqInfo = new StringBuilder();
+                str_limit = 39;
+                i = 0;
+
+                row_seq = 1;
+                for (i = 0; i < ProteinSequence.Length; i += str_limit, row_seq++)
                 {
-                    if (this.GlobalNormalization)
-                    {
-                        cell_content = new PdfPCell(new Phrase("Across all study maps",
-                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
-                    }
+                    if (i + str_limit < ProteinSequence.Length)
+                        sb_SeqInfo.Append(ProteinSequence.Substring(i, str_limit) + " ");
                     else
-                    {
-                        cell_content = new PdfPCell(new Phrase("Per study map",
-                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
-                    }
+                        sb_SeqInfo.Append(ProteinSequence.Substring(i, ProteinSequence.Length - i) + " ");
                 }
+
+                row_seq--;
+
+                info = sb_SeqInfo.ToString();
+                (dist_Y, row_number) = createRowTable("Sequence information:", info, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height, row_seq);
+                lineHeight = 20;
+                row_number += (row_seq - 2);
+                dist_Y = lineHeight * (row_number + 0.3);
+            }
+            else
+            {
+                info = "none";
+                (dist_Y, row_number) = createRowTable("Sequence information:", info, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+            }
+
+            #endregion
+
+            #region Intensity normalization
+
+            info = "";
+
+            if (this.Has_And_LocalNormalization)
+            {
+                if (this.GlobalNormalization)
+                    info = "Across all study maps";
                 else
-                    cell_content = new PdfPCell(new Phrase("none",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Total number of MS/MS data files:",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                int numberOfDataFiles = programParams.InputFileList.Count;
-                cell_content = new PdfPCell(new Phrase(String.Join(", ", numberOfDataFiles),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                if (programParams.HasIntensities)
-                {
-                    cell_content = new PdfPCell(new Phrase("Total number of deconvoluted spectra files:",
-                            FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL)));
-                    table.AddCell(cell_content);
-
-                    int numberOfDeconvSpecFiles = programParams.InputFileList.Where(a => !String.IsNullOrEmpty(a.Item6)).ToList().Count;
-                    cell_content = new PdfPCell(new Phrase(String.Join(", ", numberOfDeconvSpecFiles),
-                       FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-                   );
-                    table.AddCell(cell_content);
-                }
-
-                cell_content = new PdfPCell(new Phrase("Fragmentation method(s):",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                List<string> fragments = FragmentIons.Select(a => a.Item1).Distinct().ToList();
-                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Activation level(s):",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                List<(string, string)> actLevels = (from item in FragmentIons
-                                                    select (item.Item1, item.Item5)).Distinct().ToList();
-                cell_content = new PdfPCell(new Phrase(Regex.Replace(String.Join("\n", actLevels), "[(|)|,]", ""),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Precursor charge state(s):",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                fragments = FragmentIons.OrderBy(a => a.Item2).Select(a => a.Item2.ToString()).Distinct().ToList();
-                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Replicate(s):",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                fragments = FragmentIons.OrderBy(a => a.Item6).Select(a => a.Item6.ToString()).Distinct().ToList();
-                cell_content = new PdfPCell(new Phrase(String.Join(", ", fragments),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Total number of maps:",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase(DictMaps.Count.ToString(),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase("Discriminative map(s):",
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                cell_content = new PdfPCell(new Phrase(String.Join("\n", DiscriminativeMaps),
-                   FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.NORMAL))
-               );
-                table.AddCell(cell_content);
-
-                doc.Add(table);
-
-                returnOK = 0;//0 -> ok, 1 -> failed, 2 -> cancel
+                    info = "Per study map";
             }
-            catch (Exception)
+            else
+                info = "none";
+
+            (dist_Y, row_number) = createRowTable("Intensity normalization:", info, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Total number of MS/MS data files
+
+            (dist_Y, row_number) = createRowTable("Total number of MS/MS data files:", programParams.InputFileList.Count.ToString(), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Total number of deconvoluted spectra files
+
+            if (programParams.HasIntensities)
             {
-                returnOK = 1;//0 -> ok, 1 -> failed, 2 -> cancel
+                int numberOfDeconvSpecFiles = programParams.InputFileList.Where(a => !String.IsNullOrEmpty(a.Item6)).ToList().Count;
+                (dist_Y, row_number) = createRowTable("Total number of deconvoluted spectra files:", numberOfDeconvSpecFiles.ToString(), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
             }
-            finally
-            {
-                doc.Close();
-            }
+
+            #endregion
+
+            #region Fragmentation method(s)
+
+            List<string> fragments = FragmentIons.Select(a => a.Item1).Distinct().ToList();
+            (dist_Y, row_number) = createRowTable("Fragmentation method(s):", String.Join(", ", fragments), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Activation level(s)
+
+            List<(string, string)> actLevels = (from item in FragmentIons
+                                                select (item.Item1, item.Item5)).Distinct().ToList();
+            info = Regex.Replace(String.Join("\n", actLevels), "[(|)|,]", "");
+            row_seq = info.Count(f => (f == '\n'));
+            
+            (dist_Y, row_number) = createRowTable("Activation level(s):", info, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height, row_seq);
+            lineHeight = 17;
+            if(row_seq < 9)
+                error_offsetY = (0.73 * lineHeight * (row_seq - 1));
+            else
+                error_offsetY = (0.79 * lineHeight * (row_seq - 1));
+            dist_Y += error_offsetY;
+
+            #endregion
+
+            #region Precursor charge state(s)
+
+            fragments = FragmentIons.OrderBy(a => a.Item2).Select(a => a.Item2.ToString()).Distinct().ToList();
+            (dist_Y, row_number) = createRowTable("Precursor charge state(s):", String.Join(", ", fragments), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Replicate(s)
+
+            fragments = FragmentIons.OrderBy(a => a.Item6).Select(a => a.Item6.ToString()).Distinct().ToList();
+            (dist_Y, row_number) = createRowTable("Replicate(s):", String.Join(", ", fragments), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Total number of maps
+
+            (dist_Y, row_number) = createRowTable("Total number of maps:", DictMaps.Count.ToString(), row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height);
+
+            #endregion
+
+            #region Discriminative map(s)
+
+            info = String.Join("", DiscriminativeMaps);
+            row_seq = info.Count(f => (f == '\n'));
+            (dist_Y, row_number) = createRowTable("Discriminative map(s):", info, row_number, gfx, tf, font, format, borderPen, size, dist_Y, rect_height, el_height, row_seq);
+
+            #endregion
+
+            #endregion
+
+            #endregion
+
+            #region footer 
+            font = new XFont("Arial", 11, XFontStyle.Bold);
+            format.Alignment = XStringAlignment.Far;
+            format.LineAlignment = XLineAlignment.Far;
+            rect.Offset(0, -175);
+            gfx.DrawString("Page: " + document.PageCount.ToString(), font, XBrushes.Black, rect, format);
+            #endregion
+
+            document.Save(fileName);
 
             return returnOK;
         }
-    }
 
-    class HeaderFooter : PdfPageEventHelper
-    {
-        public override void OnEndPage(PdfWriter writer, Document doc)
+        private (double, int) createRowTable(string name, string description, int row_number, XGraphics gfx, XTextFormatter tf, XFont font, XStringFormat format, XPen borderPen, XSize size, double dist_Y2, int rect_height, int el_height, double row_seq = 1.5)
         {
-            //base.OnEndPage(writer, document);
+            double lineHeight = 20;
+            int marginLeft = 30;
+            int marginTop = 210;
 
-            PdfPTable tbHeader = new PdfPTable(3);
-            tbHeader.TotalWidth = doc.PageSize.Width - doc.LeftMargin - doc.RightMargin;
-            tbHeader.DefaultCell.Border = 0;
+            int el1_width = Convert.ToInt32(size.Width / 2) - 5;
+            int el2_width = Convert.ToInt32(size.Width / 2) - 5;
 
-            tbHeader.AddCell(new Paragraph());
-            #region TDFragMapper logo
-            iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(TDFragMapper.Properties.Resources.iconTDFragMapperShadow, System.Drawing.Imaging.ImageFormat.Bmp);
-            img.ScaleAbsolute(60f, 60f);
-            img.Alignment = Element.ALIGN_CENTER;
-            PdfPCell imgCell = new PdfPCell(img);
-            imgCell.HorizontalAlignment = Element.ALIGN_CENTER;
-            imgCell.Border = 0;
-            tbHeader.AddCell(imgCell);
-            #endregion
-            tbHeader.AddCell(new Paragraph());
+            int offSetX_1 = el1_width;
 
-            PdfPCell cell_title = new PdfPCell(new Phrase("TDFragMapper - Results",
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
-                );
-            cell_title.Border = 0;
-            cell_title.HorizontalAlignment = Element.ALIGN_LEFT;
-            tbHeader.AddCell(cell_title);
+            int interLine_X_1 = 5;
+            int interLine_Y = 3;
+            double error_offsetY = 0;
+            if (row_seq == 1.5)
+                row_seq -= 0.5;
+            else if (row_seq < 9)
+                error_offsetY = 0.7 * row_seq;
+            else 
+                error_offsetY = 0.3 * row_seq;
 
-            tbHeader.AddCell(new Paragraph());
+            //Name
 
-            string strDate = DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToShortTimeString();
-            cell_title = new PdfPCell(new Phrase(strDate,
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
-                );
-            cell_title.Border = 0;
-            cell_title.HorizontalAlignment = Element.ALIGN_RIGHT;
-            tbHeader.AddCell(cell_title);
-            tbHeader.WriteSelectedRows(0, -1, doc.LeftMargin, writer.PageSize.GetTop(doc.TopMargin) + 100, writer.DirectContent);
+            gfx.DrawRectangle(borderPen, marginLeft, marginTop + dist_Y2, el1_width, (rect_height - error_offsetY) * row_seq);
+            tf.DrawString(
 
-            PdfPTable tbFooter = new PdfPTable(3);
-            tbFooter.TotalWidth = doc.PageSize.Width - doc.LeftMargin - doc.RightMargin;
-            tbFooter.DefaultCell.Border = 0;
-            tbFooter.AddCell(new Paragraph());
-            tbFooter.AddCell(new Paragraph());
-            cell_title = new PdfPCell(new Phrase("Page: " + writer.PageNumber,
-                    FontFactory.GetFont(FontFactory.HELVETICA, 10, iTextSharp.text.Font.BOLD))
-                );
-            cell_title.Border = 0;
-            cell_title.HorizontalAlignment = Element.ALIGN_RIGHT;
-            tbFooter.AddCell(cell_title);
-            tbFooter.WriteSelectedRows(0, -1, doc.LeftMargin, writer.PageSize.GetBottom(doc.BottomMargin) - 5, writer.DirectContent);
+                name,
+                font,
+                XBrushes.Black,
+                new XRect(marginLeft + interLine_X_1, marginTop + dist_Y2 + interLine_Y, el1_width, el_height * row_seq),
+                format);
+
+            //Description
+
+            gfx.DrawRectangle(borderPen, marginLeft + offSetX_1, marginTop + dist_Y2, el2_width, (rect_height - error_offsetY) * row_seq);
+            tf.DrawString(
+                description,
+                font,
+                XBrushes.Black,
+                new XRect(marginLeft + offSetX_1 + interLine_X_1, marginTop + dist_Y2 + interLine_Y, el2_width, el_height * row_seq),
+                format);
+
+            row_number++;
+            return (dist_Y2 + lineHeight, row_number);
+
         }
     }
 }
