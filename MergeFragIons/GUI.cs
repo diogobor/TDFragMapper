@@ -363,7 +363,7 @@ namespace TDFragMapper
                 try
                 {
                     Console.WriteLine("##################################################################################################################");
-                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
+                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString() + "\n");
                     Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
                     Console.WriteLine("##################################################################################################################");
                     mainProgramGUI = new Program();
@@ -376,7 +376,7 @@ namespace TDFragMapper
                 catch (Exception ex)
                 {
                     Console.WriteLine("##################################################################################################################");
-                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
+                    Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString() + "\n");
                     Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
                     Console.WriteLine("##################################################################################################################");
                     Console.WriteLine(" ERROR: Failed to load file!");
@@ -398,38 +398,51 @@ namespace TDFragMapper
             #region open automatically a tdfm file
             try
             {
-                string[] myAppData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData;
+                string[] myAppData = AppDomain.CurrentDomain?.SetupInformation?.ActivationArguments?.ActivationData;
 
+                if (myAppData == null)
+                {
+                    if (args != null && args.Length > 0)
+                    {
+                        myAppData = args;
+                    }
+                }
                 if (myAppData != null)
-                    Console.WriteLine(" Loading file: " + myAppData?[0]);
-
-                //ResultsForm window = new ResultsForm();
-                //if (window.LoadResultsFromScreen(myAppData[0]))
-                //    window.ShowDialog();
-                //else
-                //    MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                {
+                    try
+                    {
+                        Console.WriteLine("##################################################################################################################");
+                        Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString() + "\n");
+                        Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
+                        Console.WriteLine("##################################################################################################################");
+                        mainProgramGUI = new Program();
+                        mainProgramGUI.mainCore = new Controller.Core();
+                        mainProgramGUI.mainCore = mainProgramGUI.mainCore.DeserializeResults(myAppData[0]);
+                        Console.WriteLine(" File has been loaded successfully!");
+                        this.userControlFilterCondition1.Setup(mainProgramGUI.mainCore, false);
+                        buttonDisplay_Click(null, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("##################################################################################################################");
+                        Console.WriteLine("                                                                                                                              TDFragMapper - v. " + Assembly.GetExecutingAssembly().GetName()?.Version?.ToString() + "\n");
+                        Console.WriteLine("                                                                                            Engineered by Diogo Borges Lima and MSBio - Institut Pasteur             \n");
+                        Console.WriteLine("##################################################################################################################");
+                        Console.WriteLine(" ERROR: Failed to load file!");
+                        System.Windows.Forms.MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        mainProgramGUI = null;
+                    }
+                }
             }
-            catch (Exception) { }
+            catch (Exception)
+            { }
 
-            if (args != null && args.Length > 0)
-            {
-                string[] myAppData = args;
-
-                Console.WriteLine(" Loading file: " + myAppData[0]);
-
-                //ResultsForm window = new ResultsForm();
-                //if (window.LoadResultsFromScreen(myAppData[0]))
-                //    window.ShowDialog();
-                //else
-                //    MessageBox.Show("Failed to load file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             #endregion
 
             #region Load software version
             try
             {
-                versionNumberLabel.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                versionNumberLabel.Text = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
             }
             catch (Exception exception)
             {
