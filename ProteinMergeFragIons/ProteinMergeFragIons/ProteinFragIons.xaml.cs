@@ -1597,7 +1597,19 @@ namespace ProteinMergeFragIons
                         redundantMoreThanTwo += (int)eachItem.Item5 - 2;
 
                     double residueCleavages_percentage = 0;
-                    residueCleavages_percentage = (double)(currentFragmentIons.Count - totalNumberGoldenPairs + redundantMoreThanTwo /*- numberOfRedundantFrag*/) / (double)((ProteinSequence.Length - 1) /** item2_factor*/);
+
+                    if (ContainsCCBond)//Contains CC bond
+                    {
+                        for (int i = 0; i < CTermFragIons.Count; i++)
+                            CTermFragIons[i] = (CTermFragIons[i].Item1, CTermFragIons[i].Item2, CTermFragIons[i].Item3, CTermFragIons[i].Item4 - 1, CTermFragIons[i].Item5, CTermFragIons[i].Item6);
+
+                        CTermFragIons.AddRange(NTermFragIons);
+                        var totalNumberOfResiduesCleavage = (from eachEntry in CTermFragIons
+                                                             group eachEntry by eachEntry.Item4).ToList();
+                        residueCleavages_percentage = (double)(totalNumberOfResiduesCleavage.Count) / (double)(ProteinSequence.Length - 1);
+                    }
+                    else
+                        residueCleavages_percentage = (double)(currentFragmentIons.Count - totalNumberGoldenPairs + redundantMoreThanTwo /*- numberOfRedundantFrag*/) / (double)((ProteinSequence.Length - 1) /** item2_factor*/);
                     _content.Append((residueCleavages_percentage * 100).ToString("0"));
                     _content.Append("%");
 
