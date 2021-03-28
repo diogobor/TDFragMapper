@@ -36,6 +36,7 @@ namespace ProteinMergeFragIons
         private const int WIDTH_LINE = 12;
 
         private string ProteinSequence { get; set; }
+        private bool ContainsCCBond { get { return ProteinSequence.Contains("C"); } }
         private string ProteinSequenceInformation { get; set; }
 
         /// <summary>
@@ -1848,13 +1849,25 @@ namespace ProteinMergeFragIons
                 //int freqC = ProteinSequence.Count(a => (a == 'C'));
 
                 double residueCleavages_percentage = 0;
-                if (fragMethod.Equals("CID") || fragMethod.Equals("SID") || fragMethod.Equals("HCD") ||
-                    precursorChargeOrActivationLevel.Equals("CID") || precursorChargeOrActivationLevel.Equals("SID") || precursorChargeOrActivationLevel.Equals("HCD"))
-                    residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs /*- freqC*/) / (double)(ProteinSequence.Length - 1);
-                else if (fragMethod.Equals("ETD") || fragMethod.Equals("ECD") || fragMethod.Equals("EThcD") || fragMethod.Equals("UVPD") ||
-                    precursorChargeOrActivationLevel.Equals("ETD") || precursorChargeOrActivationLevel.Equals("ECD") || precursorChargeOrActivationLevel.Equals("EThcD") || precursorChargeOrActivationLevel.Equals("UVPD"))
-                    residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs - numberOfRedundantFrag /*- freqC*/) / (double)(ProteinSequence.Length - 1);
+                if (ContainsCCBond)//Contains CC bond
+                {
+                    for (int i = 0; i < CTermFragIons.Count; i++)
+                        CTermFragIons[i] = (CTermFragIons[i].Item1, CTermFragIons[i].Item2, CTermFragIons[i].Item3, CTermFragIons[i].Item4 - 1, CTermFragIons[i].Item5, CTermFragIons[i].Item6);
 
+                    CTermFragIons.AddRange(NTermFragIons);
+                    var totalNumberOfResiduesCleavage = (from eachEntry in CTermFragIons
+                                                         group eachEntry by eachEntry.Item4).ToList();
+                    residueCleavages_percentage = (double)(totalNumberOfResiduesCleavage.Count) / (double)(ProteinSequence.Length - 1);
+                }
+                else
+                {
+                    if (fragMethod.Equals("CID") || fragMethod.Equals("SID") || fragMethod.Equals("HCD") ||
+                        precursorChargeOrActivationLevel.Equals("CID") || precursorChargeOrActivationLevel.Equals("SID") || precursorChargeOrActivationLevel.Equals("HCD"))
+                        residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs /*- freqC*/) / (double)(ProteinSequence.Length - 1);
+                    else if (fragMethod.Equals("ETD") || fragMethod.Equals("ECD") || fragMethod.Equals("EThcD") || fragMethod.Equals("UVPD") ||
+                        precursorChargeOrActivationLevel.Equals("ETD") || precursorChargeOrActivationLevel.Equals("ECD") || precursorChargeOrActivationLevel.Equals("EThcD") || precursorChargeOrActivationLevel.Equals("UVPD"))
+                        residueCleavages_percentage = (double)(currentPrecursorCharge.Count - totalNumberGoldenPairs - numberOfRedundantFrag /*- freqC*/) / (double)(ProteinSequence.Length - 1);
+                }
                 precursorChargeStatesOrActivationLevelsOrFragMethodsOrReplicates.Add((precursorChargeOrActivationLevel, residueCleavages_percentage * 100, totalNumberGoldenPairs, currentPrecursorCharge.Count));
 
             }
