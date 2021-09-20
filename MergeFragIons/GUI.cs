@@ -389,9 +389,8 @@ namespace TDFragMapper
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("Coming soon!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //HelpForm help = new HelpForm();
-            //help.ShowDialog();
+            string manuscript_url = "https://protocolexchange.researchsquare.com/article/pex-1051/v1";
+            System.Diagnostics.Process.Start(manuscript_url);
         }
 
         private void GUI_Load(object sender, EventArgs e)

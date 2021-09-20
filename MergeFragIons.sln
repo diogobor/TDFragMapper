@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDFragMapper", "MergeFragIo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProteinMergeFragIons", "ProteinMergeFragIons\ProteinMergeFragIons\ProteinMergeFragIons.csproj", "{9D62272A-554B-4230-B24F-F0027F89CAE5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{E56730E6-2D3A-4B10-B9F4-231EF297919E}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\Template_Deconvoluted_Spectra.xlsx = Templates\Template_Deconvoluted_Spectra.xlsx
+		Templates\Template_MSMS_Data.xlsx = Templates\Template_MSMS_Data.xlsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
