@@ -123,6 +123,16 @@ namespace TDFragMapper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap excelIcon {
+            get {
+                object obj = ResourceManager.GetObject("excelIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Expand {
             get {
                 object obj = ResourceManager.GetObject("Expand", resourceCulture);

@@ -32,13 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.readMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
@@ -48,16 +44,15 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.versionNumberLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBoxLog = new System.Windows.Forms.GroupBox();
             this.listBoxConsole = new System.Windows.Forms.ListBox();
             this.groupBoxInputFiles = new System.Windows.Forms.GroupBox();
-            this.buttonOK = new System.Windows.Forms.Button();
+            this.textBoxModSites = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.textBoxSeqInfo = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.buttonAddInputFile = new System.Windows.Forms.Button();
             this.dataGridViewInputFiles = new System.Windows.Forms.DataGridView();
             this.FragMethodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ActivationLevelCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,30 +61,35 @@
             this.MSMSData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeconvSpectra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStripPasteValues = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
             this.textBoxProteinSeq = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
-            this.buttonDisplay = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
             this.radioButtonRelInten = new System.Windows.Forms.RadioButton();
             this.radioButtonAbsInten = new System.Windows.Forms.RadioButton();
-            this.buttonIntensity = new System.Windows.Forms.Button();
             this.checkBoxIntensityGlobal = new System.Windows.Forms.CheckBox();
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.textBoxModSites = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.buttonOK = new System.Windows.Forms.Button();
+            this.buttonAddInputFile = new System.Windows.Forms.Button();
+            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonBrowseProteinSequence = new System.Windows.Forms.Button();
+            this.buttonDisplay = new System.Windows.Forms.Button();
+            this.buttonIntensity = new System.Windows.Forms.Button();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxLogo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBoxLog.SuspendLayout();
             this.groupBoxInputFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInputFiles)).BeginInit();
@@ -97,6 +97,7 @@
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBoxIntensityNorm.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -116,48 +117,25 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
-            // openToolStripMenuItem
-            // 
-            resources.ApplyResources(this.openToolStripMenuItem, "openToolStripMenuItem");
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
-            // exitToolStripMenuItem
-            // 
-            resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.readMeToolStripMenuItem,
+            this.downloadTemplatesToolStripMenuItem,
             this.toolStripSeparator2,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
             // 
-            // readMeToolStripMenuItem
-            // 
-            resources.ApplyResources(this.readMeToolStripMenuItem, "readMeToolStripMenuItem");
-            this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
-            this.readMeToolStripMenuItem.Click += new System.EventHandler(this.readMeToolStripMenuItem_Click);
-            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
-            // 
-            // aboutToolStripMenuItem
-            // 
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
             // 
             // statusStrip1
             // 
@@ -220,12 +198,6 @@
             resources.ApplyResources(this.label5, "label5");
             this.label5.Name = "label5";
             // 
-            // pictureBox1
-            // 
-            resources.ApplyResources(this.pictureBox1, "pictureBox1");
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.TabStop = false;
-            // 
             // versionNumberLabel
             // 
             resources.ApplyResources(this.versionNumberLabel, "versionNumberLabel");
@@ -265,12 +237,17 @@
             this.groupBoxInputFiles.Name = "groupBoxInputFiles";
             this.groupBoxInputFiles.TabStop = false;
             // 
-            // buttonOK
+            // textBoxModSites
             // 
-            resources.ApplyResources(this.buttonOK, "buttonOK");
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            resources.ApplyResources(this.textBoxModSites, "textBoxModSites");
+            this.textBoxModSites.Name = "textBoxModSites";
+            this.toolTips.SetToolTip(this.textBoxModSites, resources.GetString("textBoxModSites.ToolTip"));
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.Name = "label7";
+            this.toolTips.SetToolTip(this.label7, resources.GetString("label7.ToolTip"));
             // 
             // textBoxSeqInfo
             // 
@@ -283,14 +260,6 @@
             resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
             this.toolTips.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
-            // 
-            // buttonAddInputFile
-            // 
-            resources.ApplyResources(this.buttonAddInputFile, "buttonAddInputFile");
-            this.buttonAddInputFile.Image = global::TDFragMapper.Properties.Resources.addButton;
-            this.buttonAddInputFile.Name = "buttonAddInputFile";
-            this.buttonAddInputFile.UseVisualStyleBackColor = true;
-            this.buttonAddInputFile.Click += new System.EventHandler(this.buttonAddInputFile_Click);
             // 
             // dataGridViewInputFiles
             // 
@@ -353,20 +322,6 @@
             this.contextMenuStripPasteValues.Name = "contextMenuStripPasteValues";
             resources.ApplyResources(this.contextMenuStripPasteValues, "contextMenuStripPasteValues");
             // 
-            // pasteToolStripMenuItem
-            // 
-            resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
-            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
-            // 
-            // buttonBrowseProteinSequence
-            // 
-            resources.ApplyResources(this.buttonBrowseProteinSequence, "buttonBrowseProteinSequence");
-            this.buttonBrowseProteinSequence.Name = "buttonBrowseProteinSequence";
-            this.toolTips.SetToolTip(this.buttonBrowseProteinSequence, resources.GetString("buttonBrowseProteinSequence.ToolTip"));
-            this.buttonBrowseProteinSequence.UseVisualStyleBackColor = true;
-            this.buttonBrowseProteinSequence.Click += new System.EventHandler(this.buttonBottomUpResults_Click);
-            // 
             // textBoxProteinSeq
             // 
             resources.ApplyResources(this.textBoxProteinSeq, "textBoxProteinSeq");
@@ -391,13 +346,6 @@
             // 
             resources.ApplyResources(this.userControlFilterCondition1, "userControlFilterCondition1");
             this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            // 
-            // buttonDisplay
-            // 
-            resources.ApplyResources(this.buttonDisplay, "buttonDisplay");
-            this.buttonDisplay.Name = "buttonDisplay";
-            this.buttonDisplay.UseVisualStyleBackColor = true;
-            this.buttonDisplay.Click += new System.EventHandler(this.buttonDisplay_Click);
             // 
             // tabPage3
             // 
@@ -433,13 +381,6 @@
             this.radioButtonAbsInten.UseVisualStyleBackColor = true;
             this.radioButtonAbsInten.CheckedChanged += new System.EventHandler(this.radioButtonAbsInten_CheckedChanged);
             // 
-            // buttonIntensity
-            // 
-            resources.ApplyResources(this.buttonIntensity, "buttonIntensity");
-            this.buttonIntensity.Name = "buttonIntensity";
-            this.buttonIntensity.UseVisualStyleBackColor = true;
-            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
-            // 
             // checkBoxIntensityGlobal
             // 
             resources.ApplyResources(this.checkBoxIntensityGlobal, "checkBoxIntensityGlobal");
@@ -454,17 +395,85 @@
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
-            // textBoxModSites
+            // pictureBox1
             // 
-            resources.ApplyResources(this.textBoxModSites, "textBoxModSites");
-            this.textBoxModSites.Name = "textBoxModSites";
-            this.toolTips.SetToolTip(this.textBoxModSites, resources.GetString("textBoxModSites.ToolTip"));
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.TabStop = false;
             // 
-            // label7
+            // buttonOK
             // 
-            resources.ApplyResources(this.label7, "label7");
-            this.label7.Name = "label7";
-            this.toolTips.SetToolTip(this.label7, resources.GetString("label7.ToolTip"));
+            resources.ApplyResources(this.buttonOK, "buttonOK");
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            // 
+            // buttonAddInputFile
+            // 
+            resources.ApplyResources(this.buttonAddInputFile, "buttonAddInputFile");
+            this.buttonAddInputFile.Image = global::TDFragMapper.Properties.Resources.addButton;
+            this.buttonAddInputFile.Name = "buttonAddInputFile";
+            this.buttonAddInputFile.UseVisualStyleBackColor = true;
+            this.buttonAddInputFile.Click += new System.EventHandler(this.buttonAddInputFile_Click);
+            // 
+            // pasteToolStripMenuItem
+            // 
+            resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
+            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // buttonBrowseProteinSequence
+            // 
+            resources.ApplyResources(this.buttonBrowseProteinSequence, "buttonBrowseProteinSequence");
+            this.buttonBrowseProteinSequence.Name = "buttonBrowseProteinSequence";
+            this.toolTips.SetToolTip(this.buttonBrowseProteinSequence, resources.GetString("buttonBrowseProteinSequence.ToolTip"));
+            this.buttonBrowseProteinSequence.UseVisualStyleBackColor = true;
+            this.buttonBrowseProteinSequence.Click += new System.EventHandler(this.buttonBottomUpResults_Click);
+            // 
+            // buttonDisplay
+            // 
+            resources.ApplyResources(this.buttonDisplay, "buttonDisplay");
+            this.buttonDisplay.Name = "buttonDisplay";
+            this.buttonDisplay.UseVisualStyleBackColor = true;
+            this.buttonDisplay.Click += new System.EventHandler(this.buttonDisplay_Click);
+            // 
+            // buttonIntensity
+            // 
+            resources.ApplyResources(this.buttonIntensity, "buttonIntensity");
+            this.buttonIntensity.Name = "buttonIntensity";
+            this.buttonIntensity.UseVisualStyleBackColor = true;
+            this.buttonIntensity.Click += new System.EventHandler(this.buttonIntensity_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            resources.ApplyResources(this.openToolStripMenuItem, "openToolStripMenuItem");
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // readMeToolStripMenuItem
+            // 
+            resources.ApplyResources(this.readMeToolStripMenuItem, "readMeToolStripMenuItem");
+            this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
+            this.readMeToolStripMenuItem.Click += new System.EventHandler(this.readMeToolStripMenuItem_Click);
+            // 
+            // downloadTemplatesToolStripMenuItem
+            // 
+            this.downloadTemplatesToolStripMenuItem.Image = global::TDFragMapper.Properties.Resources.excelIcon;
+            this.downloadTemplatesToolStripMenuItem.Name = "downloadTemplatesToolStripMenuItem";
+            resources.ApplyResources(this.downloadTemplatesToolStripMenuItem, "downloadTemplatesToolStripMenuItem");
+            this.downloadTemplatesToolStripMenuItem.Click += new System.EventHandler(this.downloadTemplatesToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
             // 
             // GUI
             // 
@@ -485,7 +494,6 @@
             this.tabPage1.ResumeLayout(false);
             this.groupBoxLogo.ResumeLayout(false);
             this.groupBoxLogo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBoxLog.ResumeLayout(false);
             this.groupBoxInputFiles.ResumeLayout(false);
             this.groupBoxInputFiles.PerformLayout();
@@ -496,6 +504,7 @@
             this.tabPage3.ResumeLayout(false);
             this.groupBoxIntensityNorm.ResumeLayout(false);
             this.groupBoxIntensityNorm.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -556,6 +565,7 @@
         private System.Windows.Forms.RadioButton radioButtonAbsInten;
         private System.Windows.Forms.TextBox textBoxModSites;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ToolStripMenuItem downloadTemplatesToolStripMenuItem;
     }
 }
 

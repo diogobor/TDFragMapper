@@ -48,6 +48,7 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.tabPageFilter = new System.Windows.Forms.TabPage();
             this.groupBoxMain = new System.Windows.Forms.GroupBox();
+            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
             this.buttonFilter = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBoxIntensityNorm = new System.Windows.Forms.GroupBox();
@@ -68,7 +69,7 @@
             this.buttonMerge = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.userControlFilterCondition1 = new TDFragMapper.UserControlFilterCondition();
+            this.templateFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -158,6 +159,7 @@
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.readMeToolStripMenuItem,
+            this.templateFilesToolStripMenuItem,
             this.toolStripSeparator2,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -169,20 +171,20 @@
             this.readMeToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("readMeToolStripMenuItem.Image")));
             this.readMeToolStripMenuItem.Name = "readMeToolStripMenuItem";
             this.readMeToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.readMeToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.readMeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.readMeToolStripMenuItem.Text = "Read Me";
             this.readMeToolStripMenuItem.Click += new System.EventHandler(this.readMeToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(136, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -261,6 +263,17 @@
             this.groupBoxMain.Size = new System.Drawing.Size(1177, 479);
             this.groupBoxMain.TabIndex = 0;
             this.groupBoxMain.TabStop = false;
+            // 
+            // userControlFilterCondition1
+            // 
+            this.userControlFilterCondition1.AutoScroll = true;
+            this.userControlFilterCondition1.AutoSize = true;
+            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
+            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
+            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
+            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 254);
+            this.userControlFilterCondition1.TabIndex = 7;
+            this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
             // 
             // buttonFilter
             // 
@@ -500,16 +513,13 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 17);
             this.toolStripStatusLabel1.Text = "@2021 - All rights reserved®";
             // 
-            // userControlFilterCondition1
+            // templateFilesToolStripMenuItem
             // 
-            this.userControlFilterCondition1.AutoScroll = true;
-            this.userControlFilterCondition1.AutoSize = true;
-            this.userControlFilterCondition1.Location = new System.Drawing.Point(6, 68);
-            this.userControlFilterCondition1.MinimumSize = new System.Drawing.Size(1170, 244);
-            this.userControlFilterCondition1.Name = "userControlFilterCondition1";
-            this.userControlFilterCondition1.Size = new System.Drawing.Size(1170, 254);
-            this.userControlFilterCondition1.TabIndex = 7;
-            this.userControlFilterCondition1.Resize += new System.EventHandler(this.userControlFilterCondition1_Resize);
+            this.templateFilesToolStripMenuItem.Image = global::TDFragMapper.Properties.Resources.excelIcon;
+            this.templateFilesToolStripMenuItem.Name = "templateFilesToolStripMenuItem";
+            this.templateFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.templateFilesToolStripMenuItem.Text = "Template files";
+            this.templateFilesToolStripMenuItem.Click += new System.EventHandler(this.templateFilesToolStripMenuItem_Click);
             // 
             // Results
             // 
@@ -589,5 +599,6 @@
         private System.Windows.Forms.ToolStripMenuItem summaryReportToolStripMenuItem;
         private System.Windows.Forms.RadioButton radioButtonRelInten;
         private System.Windows.Forms.RadioButton radioButtonAbsInten;
+        private System.Windows.Forms.ToolStripMenuItem templateFilesToolStripMenuItem;
     }
 }

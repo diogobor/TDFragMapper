@@ -246,6 +246,7 @@
     <None Include="icons\iconTDFragMapper.png" />
     <None Include="icons\iconTDFragMapperShadow.png" />
     <Content Include="icons\document_save.ico" />
+    <None Include="icons\excelIcon.png" />
     <Content Include="icons\exit.ico" />
     <Content Include="icons\export.ico" />
     <Content Include="icons\iconTDFragMapper.ico" />

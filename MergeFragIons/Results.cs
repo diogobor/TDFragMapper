@@ -80,7 +80,8 @@ namespace TDFragMapper
 
         private void readMeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Coming soon!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string manuscript_url = "https://protocolexchange.researchsquare.com/article/pex-1051/v1";
+            System.Diagnostics.Process.Start(manuscript_url);
         }
 
         private void buttonFilter_Click(object sender, EventArgs e)
@@ -611,6 +612,12 @@ namespace TDFragMapper
         {
             if (Core != null)
                 Core.IsRelativeIntensity = !radioButtonAbsInten.Checked;
+        }
+
+        private void templateFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string template_url = "https://github.com/diogobor/TDFragMapper/tree/master/Templates";
+            System.Diagnostics.Process.Start(template_url);
         }
     }
 }

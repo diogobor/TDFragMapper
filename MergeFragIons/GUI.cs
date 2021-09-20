@@ -759,6 +759,12 @@ namespace TDFragMapper
             if (mainProgramGUI != null && mainProgramGUI.mainCore != null)
                 mainProgramGUI.mainCore.IsRelativeIntensity = !radioButtonAbsInten.Checked;
         }
+
+        private void downloadTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string template_url = "https://github.com/diogobor/TDFragMapper/tree/master/Templates";
+            System.Diagnostics.Process.Start(template_url);
+        }
     }
 
 

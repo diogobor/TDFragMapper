@@ -1797,6 +1797,8 @@ namespace ProteinMergeFragIons
 
         private void PlotModificationSites(List<Label> proteinCharsAndSpaces, double posYrow1Start, int numberOfMap = -1, bool hasIntensityMap = false)
         {
+            if (ModificationsSitesList == null || ModificationsSitesList.Count == 0) return;
+
             foreach ((int position, string description) modification in ModificationsSitesList)
             {
                 Label modLabel = new Label();
