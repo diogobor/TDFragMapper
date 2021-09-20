@@ -82,6 +82,8 @@
             this.checkBoxIntensityPerMap = new System.Windows.Forms.CheckBox();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.textBoxModSites = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControlMainWindow.SuspendLayout();
@@ -250,6 +252,8 @@
             // groupBoxInputFiles
             // 
             resources.ApplyResources(this.groupBoxInputFiles, "groupBoxInputFiles");
+            this.groupBoxInputFiles.Controls.Add(this.textBoxModSites);
+            this.groupBoxInputFiles.Controls.Add(this.label7);
             this.groupBoxInputFiles.Controls.Add(this.buttonOK);
             this.groupBoxInputFiles.Controls.Add(this.textBoxSeqInfo);
             this.groupBoxInputFiles.Controls.Add(this.label2);
@@ -450,6 +454,18 @@
             this.checkBoxIntensityPerMap.UseVisualStyleBackColor = true;
             this.checkBoxIntensityPerMap.CheckedChanged += new System.EventHandler(this.checkBoxIntensityPerMap_CheckedChanged);
             // 
+            // textBoxModSites
+            // 
+            resources.ApplyResources(this.textBoxModSites, "textBoxModSites");
+            this.textBoxModSites.Name = "textBoxModSites";
+            this.toolTips.SetToolTip(this.textBoxModSites, resources.GetString("textBoxModSites.ToolTip"));
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.Name = "label7";
+            this.toolTips.SetToolTip(this.label7, resources.GetString("label7.ToolTip"));
+            // 
             // GUI
             // 
             resources.ApplyResources(this, "$this");
@@ -538,6 +554,8 @@
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.RadioButton radioButtonRelInten;
         private System.Windows.Forms.RadioButton radioButtonAbsInten;
+        private System.Windows.Forms.TextBox textBoxModSites;
+        private System.Windows.Forms.Label label7;
     }
 }
 

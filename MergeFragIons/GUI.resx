@@ -1252,7 +1252,7 @@
     <value>0, 0</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1194, 24</value>
+    <value>1224, 24</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
@@ -1286,7 +1286,7 @@
     <value>0, 451</value>
   </data>
   <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1194, 22</value>
+    <value>1224, 22</value>
   </data>
   <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -5034,7 +5034,7 @@
     <value>5</value>
   </data>
   <data name="groupBoxLogo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>840, 221</value>
+    <value>849, 221</value>
   </data>
   <data name="groupBoxLogo.Size" type="System.Drawing.Size, System.Drawing">
     <value>342, 168</value>
@@ -5070,7 +5070,7 @@
     <value>True</value>
   </data>
   <data name="listBoxConsole.Size" type="System.Drawing.Size, System.Drawing">
-    <value>816, 134</value>
+    <value>825, 134</value>
   </data>
   <data name="listBoxConsole.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -5091,7 +5091,7 @@
     <value>6, 221</value>
   </data>
   <data name="groupBoxLog.Size" type="System.Drawing.Size, System.Drawing">
-    <value>828, 168</value>
+    <value>837, 168</value>
   </data>
   <data name="groupBoxLog.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -5113,6 +5113,69 @@
   </data>
   <data name="groupBoxInputFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="textBoxModSites.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="textBoxModSites.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1074, 15</value>
+  </data>
+  <data name="textBoxModSites.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 20</value>
+  </data>
+  <data name="textBoxModSites.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>362, 17</value>
+  </metadata>
+  <data name="textBoxModSites.ToolTip" xml:space="preserve">
+    <value>Add PTM(s) that will be displayed over the protein sequence. For more information, access the Read Me on Help menu.</value>
+  </data>
+  <data name="&gt;&gt;textBoxModSites.Name" xml:space="preserve">
+    <value>textBoxModSites</value>
+  </data>
+  <data name="&gt;&gt;textBoxModSites.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxModSites.Parent" xml:space="preserve">
+    <value>groupBoxInputFiles</value>
+  </data>
+  <data name="&gt;&gt;textBoxModSites.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
+    <value>969, 18</value>
+  </data>
+  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 13</value>
+  </data>
+  <data name="label7.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Modification Site(s):</value>
+  </data>
+  <data name="label7.ToolTip" xml:space="preserve">
+    <value>Add an aditional information for the protein sequence. For more information, access the Read Me on Help menu.</value>
+  </data>
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+    <value>label7</value>
+  </data>
+  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+    <value>groupBoxInputFiles</value>
+  </data>
+  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="buttonOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -5170,7 +5233,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="textBoxSeqInfo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -5179,14 +5242,11 @@
     <value>877, 15</value>
   </data>
   <data name="textBoxSeqInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>287, 20</value>
+    <value>86, 20</value>
   </data>
   <data name="textBoxSeqInfo.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>362, 17</value>
-  </metadata>
   <data name="textBoxSeqInfo.ToolTip" xml:space="preserve">
     <value>Add an aditional information for the protein sequence. For more information, access the Read Me on Help menu.</value>
   </data>
@@ -5200,7 +5260,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;textBoxSeqInfo.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -5233,7 +5293,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="buttonAddInputFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -5269,7 +5329,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonAddInputFile.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="dataGridViewInputFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -8220,7 +8280,7 @@
     <value>9, 46</value>
   </data>
   <data name="dataGridViewInputFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1155, 122</value>
+    <value>1164, 122</value>
   </data>
   <data name="dataGridViewInputFiles.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -8235,7 +8295,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;dataGridViewInputFiles.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="buttonBrowseProteinSequence.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -8294,7 +8354,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;buttonBrowseProteinSequence.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="textBoxProteinSeq.Location" type="System.Drawing.Point, System.Drawing">
     <value>103, 15</value>
@@ -8318,7 +8378,7 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;textBoxProteinSeq.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -8351,13 +8411,13 @@
     <value>groupBoxInputFiles</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="groupBoxInputFiles.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 2</value>
   </data>
   <data name="groupBoxInputFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1176, 217</value>
+    <value>1185, 217</value>
   </data>
   <data name="groupBoxInputFiles.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -8381,7 +8441,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1186, 399</value>
+    <value>1216, 399</value>
   </data>
   <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -8761,7 +8821,7 @@
     <value>1192, 425</value>
   </data>
   <data name="tabControlMainWindow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1194, 425</value>
+    <value>1224, 425</value>
   </data>
   <data name="tabControlMainWindow.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -8791,7 +8851,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>1194, 473</value>
+    <value>1224, 473</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

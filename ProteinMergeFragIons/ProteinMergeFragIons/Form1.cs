@@ -271,7 +271,7 @@ namespace ProteinMergeFragIons
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item5.Equals("25") || a.Item5.Equals("20"))).ToList();
             //colors.Add(("22", "255#255#0#0"));
             //colors.Add(("17", "255#0#255#0"));
-            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1  && (a.Item2 == 22 /*|| a.Item2 == 17*/)/* && (a.Item5.Equals("20") || a.Item5.Equals("25"))*/).ToList();
+            currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && a.Item6 == 1 && (a.Item2 == 22 /*|| a.Item2 == 17*/)/* && (a.Item5.Equals("20") || a.Item5.Equals("25"))*/).ToList();
             _key = "Precursor Charge State#Fragmentation Method#CID#0";
             DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, colors));
 
@@ -289,7 +289,7 @@ namespace ProteinMergeFragIons
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("HCD") /*&& (a.Item2 == 17)*/).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#HCD#17#1";
-            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string,string)>()));
+            //DictMaps.Add(_key, ("Fragmentation Method", "Activation Level", "Replicates", currentFragIons, true, true, new List<(string, string)>()));
 
             //currentFragIons = fragIons.Where(a => a.Item1.Equals("CID") && (a.Item2 == 22)).ToList();
             //_key = "Precursor Charge State#Fragmentation Method#CID#22#2";
@@ -364,10 +364,10 @@ namespace ProteinMergeFragIons
             currentFragIons = currentNtermFragIons.Concat(currentCtermFragIons).ToList();
             #endregion
 
-            _key = "Merge#Merge#Merge#0";
-            DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false, new List<(string, string)>()));
+            //_key = "Merge#Merge#Merge#0";
+            //DictMaps.Add(_key, ("Merge", "Merge", "Merge", currentFragIons, false, false, new List<(string, string)>()));
 
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", true, true, true, true);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(DictMaps, protein, "N-Term Pyro-Glu", "I20 (Acetylation)", true, false, false, false);
 
             return;
 

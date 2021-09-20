@@ -240,6 +240,7 @@ namespace TDFragMapper
             ProgramParams myParams = new ProgramParams();
             myParams.ProteinSequenceFile = textBoxProteinSeq.Text;
             myParams.SequenceInformation = textBoxSeqInfo.Text;
+            myParams.ModificationSites = textBoxModSites.Text;
 
             /// <summary>
             /// List<(MS/MS Data, Fragmentation Method, Activation Level, Precursor Charge State, Replicate, Intesity Data)>

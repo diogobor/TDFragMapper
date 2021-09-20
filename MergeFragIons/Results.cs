@@ -39,7 +39,7 @@ namespace TDFragMapper
         {
             MyGui = _gui;
             Core = core;
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.Has_And_LocalNormalization, core.GlobalNormalization, false, false, core.IsRelativeIntensity);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(core.DictMaps, core.ProteinSequence, core.SequenceInformation, core.programParams.ModificationSites, core.Has_And_LocalNormalization, core.GlobalNormalization, false, false, core.IsRelativeIntensity);
             this.userControlFilterCondition1.Setup(Core, false);
             this.UpdateIntensities();
             this.FillListBoxMergeConditions();
@@ -117,7 +117,7 @@ namespace TDFragMapper
                 Core.HasMergeMaps = false;
             }
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, false, Core.IsRelativeIntensity);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.programParams.ModificationSites, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, false, Core.IsRelativeIntensity);
             this.tabControl1.SelectedIndex = 0;
         }
 
@@ -522,7 +522,7 @@ namespace TDFragMapper
             Core.GlobalNormalization = true;
 
             this.proteinFragIons1.Clear();
-            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, checkBoxAddCleavageFrequency.Checked);
+            this.proteinFragIons1.SetFragMethodDictionary_Plot(Core.DictMaps, Core.ProteinSequence, Core.SequenceInformation, Core.programParams.ModificationSites, Core.Has_And_LocalNormalization, Core.GlobalNormalization, Core.HasMergeMaps, checkBoxAddCleavageFrequency.Checked);
             this.tabControl1.SelectedIndex = 0;
 
             Core.DictMaps = DictMapsWithoutMergeConditions;

@@ -40,6 +40,8 @@ namespace TDFragMapper.Utils
         public byte[] ProgramVersion { get; set; }
         [ProtoMember(6)]
         public bool HasIntensities { get; set; }
+        [ProtoMember(7)]
+        public string ModificationSites { get; set; }
 
         public string msgErrorInputFiles { get; set; }
 

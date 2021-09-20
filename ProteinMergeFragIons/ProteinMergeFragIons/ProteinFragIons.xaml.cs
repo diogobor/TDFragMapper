@@ -34,6 +34,7 @@ namespace ProteinMergeFragIons
         private const int FONTSIZE_PROTEINSEQUENCE = 42;
         private const int FONTSIZE_AMINOACID_POSITION = 25;
         private const int WIDTH_LINE = 12;
+        private const int AMINOACID_FREQUENCE_ON_THE_TOP_PTN_SEQ = 25;
 
         private string ProteinSequence { get; set; }
         private bool ContainsCCBond { get { return ProteinSequence.Contains("C"); } }
@@ -59,6 +60,7 @@ namespace ProteinMergeFragIons
         private bool IsRelativeIntensity { get; set; } = false;
 
         private Dictionary<string, List<string>> FragMethodsWithPrecursorChargeOrActivationLevelDict { get; set; }
+        private List<(int position, string description)> ModificationsSitesList { get; set; }
 
         private int SPACER_Y = 0;
         private string[] PrecursorChargeStatesOrActivationLevelsOrReplicatesColors { get; set; }
@@ -130,9 +132,36 @@ namespace ProteinMergeFragIons
             MyCanvas.Width = width;
             MyCanvas.Height = height;
         }
+
+        private List<(int position, string description)> processModSites(string modificationsSites)
+        {
+            List<(int position, string description)> returnList = new List<(int position, string description)>();
+
+            //D7 (modification); C8 (modification)
+            string[] modifications = Regex.Split(modificationsSites, ";");
+
+            //D7 (modification)
+            //C8 (modification)
+            foreach (string mod in modifications)
+            {
+                //D7
+                //modification
+                MatchCollection modif = Regex.Matches(mod, "\\w+");
+
+                if (modif.Count < 2) continue;
+                Match pos = Regex.Match(modif[0].Value, "[\\d]+");
+
+                returnList.Add((Convert.ToInt32(pos.Value), modif[1].Value));
+
+            }
+
+            return returnList;
+        }
+
         public void SetFragMethodDictionary_Plot(Dictionary<string, (string, string, string, List<(string, int, string, int, string, int, double, double)>, bool, bool, List<(string, string)>)> DictMaps,
             string proteinSequence,
             string proteinSequenceInformation,
+            string modificationsSites,
             bool hasIntensityperMap = false,
             bool isGlobalIntensityMap = false,
             bool hasMergeMaps = false,
@@ -146,6 +175,10 @@ namespace ProteinMergeFragIons
             IsGlobalIntensityMap = isGlobalIntensityMap;
             ProteinSequence = proteinSequence;
             ProteinSequenceInformation = proteinSequenceInformation;
+
+            if (!String.IsNullOrEmpty(modificationsSites))
+                ModificationsSitesList = processModSites(modificationsSites);
+
             HasMergeConditions = hasMergeMaps;
             AddCleavageFrequency = addCleavageFrequency;
             IsRelativeIntensity = isRelativeIntensity;
@@ -730,6 +763,10 @@ namespace ProteinMergeFragIons
                     }
                     #endregion
 
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, initialYLine + HeightRectB_Nterm - 5 + offSetY, numberOfMap, hasIntensityperMap);
+                    #endregion
+
                     #region Update protein position
                     double proteinY = HeightRectB_Nterm + 10;
                     PlotAminoAcidNumberOnTheTopOfProteinSequence(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE);
@@ -863,9 +900,13 @@ namespace ProteinMergeFragIons
                     }
                     #endregion
 
-                    #region Update protein position
                     offSetY += (int)HeightRectC + 2 * FRAGMENT_ION_HEIGHT + 10;
 
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, offSetY - 10, numberOfMap, hasIntensityperMap);
+                    #endregion
+
+                    #region Update protein position
                     PlotAminoAcidNumberOnTheTopOfProteinSequence(leftOffsetProtein, offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE);
                     offSetY += 30;
 
@@ -1015,6 +1056,10 @@ namespace ProteinMergeFragIons
                     }
                     #endregion
 
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, initialYLine + HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT - 5 + offSetY, numberOfMap, hasIntensityperMap);
+                    #endregion
+
                     #region Update protein position
                     double proteinY = HeightRectC - initialYLine + 2 * FRAGMENT_ION_HEIGHT + 10;
                     PlotAminoAcidNumberOnTheTopOfProteinSequence(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE);
@@ -1141,6 +1186,10 @@ namespace ProteinMergeFragIons
                     }
                     #endregion
 
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, initialYLine + HeightRectB_Nterm - 5 + offSetY, numberOfMap, hasIntensityperMap);
+                    #endregion
+
                     #region Update protein position
                     double proteinY = HeightRectB_Nterm + 10;
                     PlotAminoAcidNumberOnTheTopOfProteinSequence(leftOffsetProtein, initialYLine + proteinY + offSetY, PtnCharPositions, COLOR_SERIES_RECTANGLE);
@@ -1243,6 +1292,10 @@ namespace ProteinMergeFragIons
                         // create Background rect Serie C
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
+                    #endregion
+
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, initialYLine + HeightRectC - 5 + offSetY, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein position
@@ -1393,6 +1446,10 @@ namespace ProteinMergeFragIons
                         // create Background rect Serie C
                         CreateSerieRectangle(initialXLine, initialYLine, COLOR_SERIES_RECTANGLE, HeightRectC, backgroundColor, blackBrush, proteinCharsAndSpaces, offSetY, "C");
                     }
+                    #endregion
+
+                    #region Plot modification sites
+                    PlotModificationSites(proteinCharsAndSpaces, initialYLine + HeightRectB_Nterm - 5 + offSetY, numberOfMap, hasIntensityperMap);
                     #endregion
 
                     #region Update protein position
@@ -1736,6 +1793,26 @@ namespace ProteinMergeFragIons
 
             Color interpolate_color = Color.FromArgb((byte)A, (byte)R, (byte)G, (byte)B);
             return interpolate_color;
+        }
+
+        private void PlotModificationSites(List<Label> proteinCharsAndSpaces, double posYrow1Start, int numberOfMap = -1, bool hasIntensityMap = false)
+        {
+            foreach ((int position, string description) modification in ModificationsSitesList)
+            {
+                Label modLabel = new Label();
+                modLabel.FontFamily = new FontFamily("Courier New");
+                modLabel.FontWeight = FontWeights.Bold;
+                modLabel.FontSize = FONTSIZE_PROTEINSEQUENCE + 5;
+                modLabel.Content = "•";
+                modLabel.LayoutTransform = new System.Windows.Media.ScaleTransform(1.0, 1.0);
+                modLabel.Foreground = Brushes.DarkOrange;
+                modLabel.ToolTip = "Name: " + modification.description + "\nPosition: " + modification.position;
+                modLabel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                double starCharPosX = Canvas.GetLeft(proteinCharsAndSpaces[modification.position - 1]);
+                MyCanvas.Children.Add(modLabel);
+                Canvas.SetLeft(modLabel, starCharPosX);
+                Canvas.SetTop(modLabel, posYrow1Start);
+            }
         }
 
         private void PlotStartsGoldenComplementaryPairs(List<(string, int[], int)> ProteinGoldenComplementaryPairs, Dictionary<string, List<int>> TotalNumberOfGoldenComplementaryPairsPerCondition, List<Label> proteinCharsAndSpaces, double posYrow1Start, int numberOfMap = -1, bool hasIntensityMap = false)
@@ -2711,9 +2788,9 @@ namespace ProteinMergeFragIons
             //Canvas.SetLeft(AANumberRectangle, leftOffset + 40);
             //Canvas.SetTop(AANumberRectangle, offsetYProtein);
 
-            for (int i = 0; i <= ProteinSequence.Length; i += 50)
+            for (int i = 0; i <= ProteinSequence.Length; i += AMINOACID_FREQUENCE_ON_THE_TOP_PTN_SEQ)
             {
-                if (i % 50 == 0 && i > 0)
+                if (i % AMINOACID_FREQUENCE_ON_THE_TOP_PTN_SEQ == 0 && i > 0)
                 {
                     Label numberAATop = new Label();
                     numberAATop.FontFamily = new FontFamily("Courier New");
@@ -2727,7 +2804,7 @@ namespace ProteinMergeFragIons
                 }
             }
 
-            if (ProteinSequence.Length % 50 != 0)//Print the last AAnumber
+            if (ProteinSequence.Length % AMINOACID_FREQUENCE_ON_THE_TOP_PTN_SEQ != 0)//Print the last AAnumber
             {
                 Label numberAATop = new Label();
                 numberAATop.FontFamily = new FontFamily("Courier New");
